@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Win どうぶつ合体</title>
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="どうぶつ合体">
+<meta name="theme-color" content="#fdf3e4">
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#fdf3e4;color:#4a3f36;font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;display:flex;justify-content:center;user-select:none;-webkit-user-select:none}
+.wrap{width:100%;max-width:440px;padding:14px 14px 24px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+h1{margin:0;font-size:22px}
+h1 small{display:block;font-size:11px;font-weight:400;color:#9a8b7d;margin-top:3px}
+.info{display:flex;gap:6px;align-items:stretch}
+.box{background:#fff;border-radius:10px;padding:5px 10px;text-align:center;min-width:62px;box-shadow:0 1px 0 #ead9c3}
+.box span{display:block;font-size:10px;color:#9a8b7d}
+.box b{font-size:18px}
+#next{font-size:22px;line-height:1.2}
+.stage{position:relative;margin-top:10px}
+canvas{display:block;width:100%;border-radius:16px;background:#fffaf2;touch-action:none;box-shadow:inset 0 0 0 3px #e7d3b8}
+.over{position:absolute;inset:0;border-radius:16px;background:rgba(253,243,228,.88);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.over h2{margin:0;font-size:30px}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:10px 18px;background:#c2553a;color:#fff;cursor:pointer}
+.chain{display:flex;flex-wrap:wrap;justify-content:center;gap:2px;font-size:20px;margin-top:10px}
+.chain i{font-style:normal;color:#c9b8a5;font-size:12px;align-self:center}
+.help{font-size:12px;color:#9a8b7d;text-align:center;margin:6px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>どうぶつ合体<small>同じ動物をくっつけて進化させよう</small></h1>
+    <div class="info">
+      <div class="box"><span>つぎ</span><div id="next"></div></div>
+      <div class="box"><span>スコア</span><b id="score">0</b></div>
+      <div class="box"><span>ベスト</span><b id="best">0</b></div>
+    </div>
+  </div>
+  <div class="stage">
+    <canvas id="cv"></canvas>
+    <div class="over" id="over"><h2>ゲームオーバー</h2><div id="final"></div><button id="again">もう一度</button></div>
+  </div>
+  <div class="chain" id="chain"></div>
+  <p class="help">指で左右に動かして、はなすと落ちます。赤い線より上に積み上がるとゲームオーバー。</p>
+</div>
+<script>
+const E=["🐭","🐹","🐰","🐱","🐶","🦊","🐼","🐻","🦁","🐘"];
+const R=[15,20,26,32,39,47,56,65,75,86];
+const C=["#ffd6d6","#ffe2b8","#fff1a8","#d9f2b4","#bfeedd","#bfe0f7","#d4d0fa","#f2cdf0","#ffc7a1","#c9e7c0"];
+const W=400,H=600,LINE=110,G=1500;
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
+let scale=1;
+function resize(){const w=cv.clientWidth;const dpr=window.devicePixelRatio||1;cv.width=w*dpr;cv.height=w*H/W*dpr;cv.style.height=(w*H/W)+"px";scale=cv.width/W}
+window.addEventListener("resize",resize);
+document.getElementById("chain").innerHTML=E.map((e,i)=>(i?"<i>›</i>":"")+e).join("");
+
+let balls,cur,nxt,aimX,score,best=0,canDrop,overTimer,gameOver,idc=0;
+try{best=+localStorage.getItem("win-drop-best")||0}catch(e){}
+const rnd=()=>Math.random()*5|0;
+function start(){balls=[];cur=rnd();nxt=rnd();aimX=W/2;score=0;canDrop=true;overTimer=0;gameOver=false;document.getElementById("over").style.display="none";ui()}
+function ui(){
+  document.getElementById("score").textContent=score;
+  if(score>best){best=score;try{localStorage.setItem("win-drop-best",best)}catch(e){}}
+  document.getElementById("best").textContent=best;
+  document.getElementById("next").textContent=E[nxt];
+}
+function drop(){
+  if(!canDrop||gameOver)return;
+  const r=R[cur];const x=Math.min(W-r,Math.max(r,aimX));
+  balls.push({id:idc++,x,y:LINE-r-6,vx:0,vy:0,l:cur,age:0});
+  cur=nxt;nxt=rnd();canDrop=false;setTimeout(()=>canDrop=true,450);ui();
+}
+function toLocal(e){const rect=cv.getBoundingClientRect();return (e.clientX-rect.left)/rect.width*W}
+cv.addEventListener("pointerdown",e=>{aimX=toLocal(e);cv.setPointerCapture(e.pointerId)});
+cv.addEventListener("pointermove",e=>{aimX=toLocal(e)});
+cv.addEventListener("pointerup",e=>{aimX=toLocal(e);drop()});
+document.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")aimX-=20;if(e.key==="ArrowRight")aimX+=20;if(e.key===" "||e.key==="ArrowDown"){e.preventDefault();drop()}});
+document.getElementById("again").onclick=start;
+
+function physics(dt){
+  for(const b of balls){
+    const r=R[b.l];b.age+=dt;
+    b.vy+=G*dt;b.x+=b.vx*dt;b.y+=b.vy*dt;
+    if(b.x<r){b.x=r;b.vx*=-0.2}
+    if(b.x>W-r){b.x=W-r;b.vx*=-0.2}
+    if(b.y>H-r){b.y=H-r;b.vy*=-0.15;b.vx*=0.96}
+  }
+  const born=[];const dead=new Set();
+  for(let k=0;k<3;k++){
+    for(let i=0;i<balls.length;i++){
+      const a=balls[i];if(dead.has(a.id))continue;
+      for(let j=i+1;j<balls.length;j++){
+        const b=balls[j];if(dead.has(b.id))continue;
+        const ra=R[a.l],rb=R[b.l];
+        const dx=b.x-a.x,dy=b.y-a.y;const d=Math.hypot(dx,dy)||0.01;
+        const ov=ra+rb-d;if(ov<=0)continue;
+        if(a.l===b.l){
+          dead.add(a.id);dead.add(b.id);
+          score+=(a.l+1)*(a.l+2);
+          if(a.l<E.length-1)born.push({id:idc++,x:(a.x+b.x)/2,y:(a.y+b.y)/2,vx:(a.vx+b.vx)/2,vy:Math.min(a.vy,b.vy)/2-80,l:a.l+1,age:1,pop:1});
+          else score+=500;
+          break;
+        }
+        const nx=dx/d,ny=dy/d,ma=ra*ra,mb=rb*rb,tot=ma+mb;
+        a.x-=nx*ov*mb/tot;a.y-=ny*ov*mb/tot;b.x+=nx*ov*ma/tot;b.y+=ny*ov*ma/tot;
+        const rel=(b.vx-a.vx)*nx+(b.vy-a.vy)*ny;
+        if(rel<0){const imp=-(1.1)*rel/(1/ma+1/mb);a.vx-=imp/ma*nx;a.vy-=imp/ma*ny;b.vx+=imp/mb*nx;b.vy+=imp/mb*ny}
+      }
+    }
+  }
+  if(dead.size){balls=balls.filter(b=>!dead.has(b.id)).concat(born);ui()}
+  for(const b of balls){b.vx*=0.995;if(b.pop)b.pop=Math.max(0,b.pop-dt*4)}
+}
+function checkOver(dt){
+  const danger=balls.some(b=>b.age>1.2&&b.y-R[b.l]<LINE&&Math.abs(b.vy)<60);
+  overTimer=danger?overTimer+dt:Math.max(0,overTimer-dt);
+  if(overTimer>1.6){gameOver=true;document.getElementById("final").textContent="スコア "+score;document.getElementById("over").style.display="flex"}
+}
+function draw(){
+  ctx.setTransform(scale,0,0,scale,0,0);
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle=overTimer>0?"rgba(226,75,74,.9)":"rgba(226,75,74,.35)";ctx.lineWidth=2;ctx.setLineDash([8,8]);
+  ctx.beginPath();ctx.moveTo(0,LINE);ctx.lineTo(W,LINE);ctx.stroke();ctx.setLineDash([]);
+  if(!gameOver){
+    const r=R[cur];const x=Math.min(W-r,Math.max(r,aimX));
+    ctx.strokeStyle="rgba(74,63,54,.15)";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,LINE-r);ctx.lineTo(x,H);ctx.stroke();
+    if(canDrop)ball(x,LINE-r-6,cur,0);
+  }
+  for(const b of balls)ball(b.x,b.y,b.l,b.pop||0);
+}
+function ball(x,y,l,pop){
+  const r=R[l]*(1+pop*0.15);
+  ctx.fillStyle=C[l];ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="rgba(74,63,54,.18)";ctx.lineWidth=2;ctx.stroke();
+  ctx.font=`${Math.round(r*1.15)}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
+  ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(E[l],x,y+r*0.06);
+}
+let last=performance.now();
+function loop(t){
+  let dt=Math.min(0.05,(t-last)/1000);last=t;
+  if(!gameOver){const steps=4;for(let i=0;i<steps;i++)physics(dt/steps);checkOver(dt)}
+  draw();requestAnimationFrame(loop);
+}
+resize();start();requestAnimationFrame(loop);
+</script>
+</body>
+</html>

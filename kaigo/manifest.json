@@ -1,0 +1,20 @@
+{
+ "name": "Win 介護手帳",
+ "short_name": "Win 介護手帳",
+ "start_url": ".",
+ "display": "standalone",
+ "background_color": "#c2553a",
+ "theme_color": "#c2553a",
+ "icons": [
+  {
+   "src": "icon-180.png",
+   "sizes": "180x180",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  }
+ ]
+}

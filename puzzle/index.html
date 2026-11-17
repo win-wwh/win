@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Win パズル 2048</title>
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Win パズル">
+<meta name="theme-color" content="#edc53f">
+
+<style>
+:root{--bg:#faf6f0;--board:#d9cbbd;--cell:#ece2d6;--ink:#4a3f36;--accent:#c2553a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Sans","Noto Sans JP",system-ui,sans-serif;display:flex;justify-content:center;min-height:100vh;user-select:none;-webkit-user-select:none}
+.wrap{width:100%;max-width:440px;padding:18px 16px 30px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{margin:0;font-size:26px;line-height:1.1}
+h1 small{display:block;font-size:12px;font-weight:400;color:#8a7c70;margin-top:4px}
+.scores{display:flex;gap:6px}
+.sc{background:var(--board);color:#fff;border-radius:10px;padding:6px 12px;text-align:center;min-width:70px}
+.sc b{display:block;font-size:20px}
+.sc span{font-size:11px;opacity:.9}
+.bar{display:flex;justify-content:space-between;align-items:center;margin:14px 0 12px;font-size:13px;color:#8a7c70}
+button{font:inherit;border:0;border-radius:10px;padding:10px 16px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}
+button.ghost{background:#e9dfd3;color:var(--ink)}
+.board{position:relative;background:var(--board);border-radius:14px;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;touch-action:none;aspect-ratio:1}
+.cell{background:var(--cell);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:clamp(20px,8vw,36px);color:var(--ink);transition:background .1s}
+.cell.pop{animation:pop .18s ease}
+.cell.new{animation:appear .18s ease}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+@keyframes appear{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+.over{position:absolute;inset:0;border-radius:14px;background:rgba(250,246,240,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center}
+.over h2{margin:0;font-size:30px}
+.over p{margin:0;color:#8a7c70}
+.help{font-size:13px;color:#8a7c70;line-height:1.7;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>Win パズル<small>同じ数字をくっつけて 2048 を目指そう</small></h1>
+    <div class="scores">
+      <div class="sc"><span>スコア</span><b id="score">0</b></div>
+      <div class="sc"><span>ベスト</span><b id="best">0</b></div>
+    </div>
+  </div>
+  <div class="bar">
+    <span>スワイプで動かす</span>
+    <div style="display:flex;gap:6px">
+      <button class="ghost" id="undo">↩ 戻す</button>
+      <button id="restart">新しく始める</button>
+    </div>
+  </div>
+  <div class="board" id="board"></div>
+  <p class="help">上下左右にスワイプすると、全部のタイルがその方向に動きます。同じ数字がぶつかると合体して、2倍の数字になります。<br>パソコンでは矢印キーでも遊べます。</p>
+</div>
+<script>
+const N=4;
+const COLORS={2:["#eee4da","#4a3f36"],4:["#ede0c8","#4a3f36"],8:["#f2b179","#fff"],16:["#f59563","#fff"],32:["#f67c5f","#fff"],64:["#f65e3b","#fff"],128:["#edcf72","#fff"],256:["#edcc61","#fff"],512:["#edc850","#fff"],1024:["#edc53f","#fff"],2048:["#c2553a","#fff"]};
+let grid,score,best=0,prev=null,won=false,keepGoing=false,overMsg=null;
+try{best=+localStorage.getItem("win2048-best")||0}catch(e){}
+const board=document.getElementById("board");
+const cells=[];
+for(let i=0;i<N*N;i++){const d=document.createElement("div");d.className="cell";board.appendChild(d);cells.push(d)}
+
+function empty(){return Array.from({length:N},()=>Array(N).fill(0))}
+function addTile(){
+  const free=[];for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(!grid[r][c])free.push([r,c]);
+  if(!free.length)return null;
+  const [r,c]=free[Math.random()*free.length|0];grid[r][c]=Math.random()<.9?2:4;return r*N+c;
+}
+function start(){grid=empty();score=0;prev=null;won=false;keepGoing=false;overMsg=null;const a=addTile(),b=addTile();render([a,b],[])}
+function slideLine(line){
+  const v=line.filter(x=>x);const out=[];const merged=[];let gain=0;
+  for(let i=0;i<v.length;i++){
+    if(v[i]===v[i+1]){out.push(v[i]*2);gain+=v[i]*2;merged.push(out.length-1);i++}
+    else out.push(v[i]);
+  }
+  while(out.length<N)out.push(0);
+  return {out,merged,gain};
+}
+function move(dir){
+  if(overMsg)return;
+  const before=JSON.stringify(grid);const snapshot={grid:grid.map(r=>r.slice()),score};
+  const mergedIdx=[];let gain=0;
+  for(let k=0;k<N;k++){
+    let idx=[];
+    for(let j=0;j<N;j++){
+      if(dir==="left")idx.push([k,j]);
+      if(dir==="right")idx.push([k,N-1-j]);
+      if(dir==="up")idx.push([j,k]);
+      if(dir==="down")idx.push([N-1-j,k]);
+    }
+    const res=slideLine(idx.map(([r,c])=>grid[r][c]));
+    idx.forEach(([r,c],j)=>{grid[r][c]=res.out[j]});
+    res.merged.forEach(j=>{const [r,c]=idx[j];mergedIdx.push(r*N+c)});
+    gain+=res.gain;
+  }
+  if(JSON.stringify(grid)===before)return;
+  prev=snapshot;score+=gain;
+  const n=addTile();
+  render(n==null?[]:[n],mergedIdx);
+}
+function canMove(){
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    if(!grid[r][c])return true;
+    if(c<N-1&&grid[r][c]===grid[r][c+1])return true;
+    if(r<N-1&&grid[r][c]===grid[r+1][c])return true;
+  }
+  return false;
+}
+function render(newIdx,mergedIdx){
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const i=r*N+c,v=grid[r][c],el=cells[i];
+    el.className="cell";el.textContent=v||"";
+    const col=COLORS[v]||["#3c3a32","#fff"];
+    el.style.background=v?col[0]:"";el.style.color=v?col[1]:"";
+    el.style.fontSize=v>=1024?"clamp(16px,6vw,28px)":v>=128?"clamp(18px,7vw,32px)":"";
+    if(newIdx.includes(i)){void el.offsetWidth;el.classList.add("new")}
+    if(mergedIdx.includes(i)){void el.offsetWidth;el.classList.add("pop")}
+  }
+  document.getElementById("score").textContent=score;
+  if(score>best){best=score;try{localStorage.setItem("win2048-best",best)}catch(e){}}
+  document.getElementById("best").textContent=best;
+  const old=board.querySelector(".over");if(old)old.remove();
+  if(!won&&!keepGoing&&grid.some(r=>r.includes(2048))){won=true;showOver("2048 達成！🎉","すごい！このまま続けられます",true)}
+  else if(!canMove()){showOver("ゲームオーバー","スコア "+score,false)}
+}
+function showOver(title,msg,isWin){
+  overMsg=title;
+  const o=document.createElement("div");o.className="over";
+  o.innerHTML=`<h2>${title}</h2><p>${msg}</p>`;
+  if(isWin){const k=document.createElement("button");k.textContent="続ける";k.onclick=()=>{keepGoing=true;overMsg=null;o.remove()};o.appendChild(k)}
+  const b=document.createElement("button");b.className=isWin?"ghost":"";b.textContent="もう一度";b.onclick=start;o.appendChild(b);
+  board.appendChild(o);
+}
+document.getElementById("restart").onclick=start;
+document.getElementById("undo").onclick=()=>{if(!prev)return;grid=prev.grid;score=prev.score;prev=null;overMsg=null;render([],[])};
+document.addEventListener("keydown",e=>{
+  const m={ArrowLeft:"left",ArrowRight:"right",ArrowUp:"up",ArrowDown:"down"}[e.key];
+  if(m){e.preventDefault();move(m)}
+});
+let sx=0,sy=0,touching=false;
+board.addEventListener("touchstart",e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;touching=true},{passive:true});
+board.addEventListener("touchmove",e=>{e.preventDefault()},{passive:false});
+board.addEventListener("touchend",e=>{
+  if(!touching)return;touching=false;
+  const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
+  if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;
+  if(Math.abs(dx)>Math.abs(dy))move(dx>0?"right":"left");else move(dy>0?"down":"up");
+});
+let px=0,py=0,pdown=false;
+board.addEventListener("pointerdown",e=>{if(e.pointerType==="touch")return;px=e.clientX;py=e.clientY;pdown=true});
+board.addEventListener("pointerup",e=>{
+  if(!pdown)return;pdown=false;const dx=e.clientX-px,dy=e.clientY-py;
+  if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;
+  if(Math.abs(dx)>Math.abs(dy))move(dx>0?"right":"left");else move(dy>0?"down":"up");
+});
+start();
+</script>
+</body>
+</html>

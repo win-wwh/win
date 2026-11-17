@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Win 介護手帳</title>
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Win 介護手帳">
+<meta name="theme-color" content="#c2553a">
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+Myanmar:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f3ee; --card:#fff; --ink:#2b2622; --sub:#7a6f66; --line:#e6dfd6;
+  --accent:#c2553a; --accent-soft:#f6e3dc; --ok:#3f8a5a; --ng:#c0392b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans JP","Noto Sans Myanmar",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Text","Padauk",sans-serif;line-height:1.9}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 16px 0}
+h1{font-size:20px;margin:0}
+h1 small{display:block;font-size:12px;color:var(--sub);font-weight:400;margin-top:2px}
+nav.modes{display:flex;gap:6px;margin:12px 0 0;border-bottom:1px solid var(--line)}
+nav.modes button{flex:1;border:0;background:none;padding:10px 0 9px;font:inherit;font-size:14px;color:var(--sub);border-bottom:3px solid transparent;cursor:pointer}
+nav.modes button.on{color:var(--accent);border-color:var(--accent);font-weight:700}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink)}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+main{padding:0 16px 40px;max-width:640px;margin:0 auto}
+.search{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:15px;background:var(--card);margin-bottom:10px}
+.count{font-size:12px;color:var(--sub);margin:0 2px 8px}
+.item{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;box-shadow:0 1px 0 var(--line)}
+.item .body{flex:1;min-width:0}
+.jp{font-size:18px;font-weight:700}
+.kana{font-size:12px;color:var(--sub)}
+.item .mm{font-size:15px;margin-top:4px}
+.icon{border:0;background:none;font-size:20px;padding:4px;cursor:pointer;line-height:1;color:var(--sub)}
+.icon.fav{color:#e0a400}
+.empty{text-align:center;color:var(--sub);padding:40px 0}
+/* flashcard */
+.flash{perspective:1000px;margin:8px 0 14px}
+.fcard{position:relative;height:260px;transition:transform .45s;transform-style:preserve-3d;cursor:pointer}
+.fcard.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;background:var(--card);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;backface-visibility:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.face.back{transform:rotateY(180deg);background:var(--accent-soft)}
+.face .jp{font-size:30px}
+.face .kana{font-size:15px;margin-top:6px}
+.face .mm{font-size:22px}
+.hint{font-size:12px;color:var(--sub);margin-top:14px}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.btn{border:0;border-radius:10px;padding:12px 14px;font:inherit;font-size:14px;cursor:pointer;background:var(--card);color:var(--ink);box-shadow:0 1px 0 var(--line)}
+.btn.primary{background:var(--accent);color:#fff}
+.btn:disabled{opacity:.4}
+.prog{text-align:center;font-size:13px;color:var(--sub)}
+.toggle{display:flex;gap:6px;margin:6px 0 4px}
+.toggle .chip{font-size:12px}
+/* quiz */
+.q{background:var(--card);border-radius:16px;padding:22px 16px;text-align:center;margin:8px 0 12px}
+.q .jp{font-size:26px}
+.q .mm{font-size:20px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink)}
+.opt.ok{border-color:var(--ok);background:#e5f3ea}
+.opt.ng{border-color:var(--ng);background:#fbe6e3}
+.score{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-top:6px}
+.result{text-align:center;padding:30px 10px}
+.result .big{font-size:44px;font-weight:700;color:var(--accent)}
+footer{font-size:11px;color:var(--sub);text-align:center;padding:10px 16px 30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Win 介護手帳 <small class="mm">ပြုစုစောင့်ရှောက်ရေး ဂျပန်စကားလုံး</small></h1>
+  <nav class="modes">
+    <button data-mode="list" class="on">📖 一覧</button>
+    <button data-mode="card">🃏 カード</button>
+    <button data-mode="quiz">✏️ クイズ</button>
+  </nav>
+</header>
+<div class="chips" id="chips"></div>
+<main id="main"></main>
+<footer>🔊 で日本語の発音を聞けます ・ <span class="mm">🔊 ကိုနှိပ်ပြီး ဂျပန်အသံထွက် နားထောင်ပါ</span></footer>
+
+<script>
+const CATS = [
+  {id:"all",  jp:"すべて",   mm:"အားလုံး"},
+  {id:"fav",  jp:"★ お気に入り", mm:"သိမ်းထားသည်"},
+  {id:"body", jp:"からだ",   mm:"ခန္ဓာကိုယ်"},
+  {id:"care", jp:"介助",     mm:"ကူညီပြုစုခြင်း"},
+  {id:"tool", jp:"道具",     mm:"ပစ္စည်းကိရိယာ"},
+  {id:"sym",  jp:"体調・症状", mm:"ကျန်းမာရေး/လက္ခဏာ"},
+  {id:"vital",jp:"バイタル",  mm:"အသက်ဓာတ်လက္ခဏာ"},
+  {id:"talk", jp:"声かけ",   mm:"ပြောဆိုခြင်း"},
+  {id:"work", jp:"職場",     mm:"အလုပ်ခွင်"},
+  {id:"meal",  jp:"食事", mm:"အစားအသောက်"},
+  {id:"bath",  jp:"入浴・排泄", mm:"ရေချိုး・အိမ်သာ"},
+  {id:"move",  jp:"動作・姿勢", mm:"လှုပ်ရှားမှု・ကိုယ်ဟန်"},
+  {id:"mind",  jp:"認知症・気持ち", mm:"စိတ်ခံစားမှု・ဒီမင်းရှား"},
+  {id:"rec",  jp:"記録・報告", mm:"မှတ်တမ်း・အစီရင်ခံ"},
+  {id:"med",  jp:"医療・薬", mm:"ဆေးဘက်・ဆေးဝါး"},
+  {id:"life",  jp:"生活・掃除", mm:"နေ့စဉ်ဘဝ・သန့်ရှင်းရေး"},
+  {id:"exam",  jp:"介護福祉士試験", mm:"ကိုင်ဂို ဖုကုရှိရှိ စာမေးပွဲ"},
+];
+// [カテゴリ, 日本語, よみ, ミャンマー語]
+const W = [
+ ["body","頭","あたま","ခေါင်း"],
+ ["body","顔","かお","မျက်နှာ"],
+ ["body","目","め","မျက်စိ"],
+ ["body","耳","みみ","နား"],
+ ["body","口","くち","ပါးစပ်"],
+ ["body","歯","は","သွား"],
+ ["body","首","くび","လည်ပင်း"],
+ ["body","肩","かた","ပခုံး"],
+ ["body","手","て","လက်"],
+ ["body","足","あし","ခြေထောက်"],
+ ["body","腰","こし","ခါး"],
+ ["body","背中","せなか","ကျော"],
+ ["body","お腹","おなか","ဗိုက်"],
+ ["body","膝","ひざ","ဒူး"],
+ ["body","お尻","おしり","တင်ပါး"],
+
+ ["care","食事介助","しょくじかいじょ","အစားအသောက် ကျွေးပေးခြင်း"],
+ ["care","入浴介助","にゅうよくかいじょ","ရေချိုးပေးခြင်း"],
+ ["care","排泄介助","はいせつかいじょ","ဆီးဝမ်းသွားရာတွင် ကူညီခြင်း"],
+ ["care","移乗","いじょう","နေရာပြောင်းရွှေ့ပေးခြင်း (ကုတင် ↔ ဘီးတပ်ကုလားထိုင်)"],
+ ["care","体位変換","たいいへんかん","ခန္ဓာကိုယ် အနေအထား ပြောင်းပေးခြင်း"],
+ ["care","着替え","きがえ","အဝတ်လဲပေးခြင်း"],
+ ["care","口腔ケア","こうくうケア","ပါးစပ်နှင့် သွားသန့်ရှင်းရေး"],
+ ["care","歩行介助","ほこうかいじょ","လမ်းလျှောက်ရာတွင် ကူညီခြင်း"],
+ ["care","清拭","せいしき","အဝတ်စိုဖြင့် ကိုယ်ခန္ဓာ သုတ်ပေးခြင်း"],
+ ["care","見守り","みまもり","စောင့်ကြည့်ခြင်း"],
+ ["care","おむつ交換","おむつこうかん","အနှီးလဲပေးခြင်း"],
+ ["care","洗髪","せんぱつ","ခေါင်းလျှော်ပေးခြင်း"],
+
+ ["tool","車椅子","くるまいす","ဘီးတပ်ကုလားထိုင်"],
+ ["tool","杖","つえ","တောင်ဝှေး"],
+ ["tool","歩行器","ほこうき","လမ်းလျှောက်အထောက်အကူ ကိရိယာ"],
+ ["tool","介護ベッド","かいごベッド","လူနာကုတင်"],
+ ["tool","おむつ","おむつ","အနှီး (သေးခံ)"],
+ ["tool","ポータブルトイレ","ポータブルトイレ","ရွှေ့လို့ရသော အိမ်သာ"],
+ ["tool","手すり","てすり","လက်ရန်း"],
+ ["tool","エプロン","エプロン","ခါးစည်း (အေပရွန်)"],
+ ["tool","手袋","てぶくろ","လက်အိတ်"],
+ ["tool","タオル","タオル","မျက်နှာသုတ်ပုဝါ"],
+ ["tool","ナースコール","ナースコール","သူနာပြုခေါ်ခလုတ်"],
+
+ ["sym","熱","ねつ","အဖျား"],
+ ["sym","咳","せき","ချောင်းဆိုးခြင်း"],
+ ["sym","痛い","いたい","နာသည်"],
+ ["sym","吐き気","はきけ","ပျို့အန်ချင်ခြင်း"],
+ ["sym","下痢","げり","ဝမ်းလျှောခြင်း"],
+ ["sym","便秘","べんぴ","ဝမ်းချုပ်ခြင်း"],
+ ["sym","めまい","めまい","ခေါင်းမူးခြင်း"],
+ ["sym","むくみ","むくみ","ရောင်ယမ်းခြင်း"],
+ ["sym","床ずれ","とこずれ","အိပ်ရာနာ"],
+ ["sym","脱水","だっすい","ရေဓာတ်ခန်းခြောက်ခြင်း"],
+ ["sym","誤嚥","ごえん","အစာ/ရေ လေပြွန်ထဲ ဝင်သွားခြင်း"],
+ ["sym","転倒","てんとう","လဲကျခြင်း"],
+ ["sym","認知症","にんちしょう","သိမှုချို့ယွင်းရောဂါ (ဒီမင်းရှား)"],
+ ["sym","麻痺","まひ","သွက်ချာပါဒ (လှုပ်ရှား၍မရခြင်း)"],
+
+ ["vital","体温","たいおん","ကိုယ်အပူချိန်"],
+ ["vital","血圧","けつあつ","သွေးပေါင်ချိန်"],
+ ["vital","脈拍","みゃくはく","သွေးခုန်နှုန်း"],
+ ["vital","呼吸","こきゅう","အသက်ရှူခြင်း"],
+ ["vital","水分補給","すいぶんほきゅう","ရေဓာတ်ဖြည့်ခြင်း"],
+ ["vital","食事量","しょくじりょう","စားသောက်သည့်ပမာဏ"],
+ ["vital","排便","はいべん","ဝမ်းသွားခြင်း"],
+ ["vital","排尿","はいにょう","ဆီးသွားခြင်း"],
+
+ ["talk","おはようございます","おはようございます","မင်္ဂလာနံနက်ခင်းပါ"],
+ ["talk","大丈夫ですか","だいじょうぶですか","အဆင်ပြေရဲ့လား"],
+ ["talk","痛いところはありますか","いたいところはありますか","နာတဲ့နေရာ ရှိပါသလား"],
+ ["talk","お手伝いしましょうか","おてつだいしましょうか","ကူညီပေးရမလား"],
+ ["talk","立ちましょう","たちましょう","ထရအောင်"],
+ ["talk","座りましょう","すわりましょう","ထိုင်ရအောင်"],
+ ["talk","ゆっくりでいいですよ","ゆっくりでいいですよ","ဖြည်းဖြည်းလုပ်လို့ရပါတယ်"],
+ ["talk","トイレに行きますか","トイレにいきますか","အိမ်သာ သွားမလား"],
+ ["talk","お水を飲みましょう","おみずをのみましょう","ရေသောက်ရအောင်"],
+ ["talk","少し待ってください","すこしまってください","ခဏစောင့်ပေးပါ"],
+ ["talk","失礼します","しつれいします","ခွင့်ပြုပါ (ဝင်ခါနီး/ထိခါနီး ပြောသည်)"],
+ ["talk","お疲れ様です","おつかれさまです","ပင်ပန်းသွားပြီနော် (လုပ်ဖော်ကိုင်ဖက်ကို နှုတ်ဆက်)"],
+
+ ["work","利用者","りようしゃ","ဝန်ဆောင်မှု အသုံးပြုသူ"],
+ ["work","家族","かぞく","မိသားစု"],
+ ["work","看護師","かんごし","သူနာပြု"],
+ ["work","介護福祉士","かいごふくしし","ပြုစုစောင့်ရှောက်ရေး လူမှုဝန်ထမ်း (အမျိုးသားလက်မှတ်)"],
+ ["work","申し送り","もうしおくり","ဆိုင်းလွှဲချိန် သတင်းလွှဲပြောခြင်း"],
+ ["work","報告","ほうこく","အစီရင်ခံခြင်း"],
+ ["work","記録","きろく","မှတ်တမ်း"],
+ ["work","夜勤","やきん","ညဆိုင်း"],
+ ["work","日勤","にっきん","နေ့ဆိုင်း"],
+ ["work","休憩","きゅうけい","နားချိန်"],
+ ["meal", "朝ごはん", "あさごはん", "မနက်စာ"],
+ ["meal", "昼ごはん", "ひるごはん", "နေ့လယ်စာ"],
+ ["meal", "晩ごはん", "ばんごはん", "ညစာ"],
+ ["meal", "おやつ", "おやつ", "မုန့်စားချိန်"],
+ ["meal", "主食", "しゅしょく", "အဓိကအစာ (ထမင်း・ပေါင်မုန့်)"],
+ ["meal", "副食", "ふくしょく", "ဟင်း (အရံဟင်း)"],
+ ["meal", "汁物", "しるもの", "ဟင်းရည်"],
+ ["meal", "きざみ食", "きざみしょく", "အသေးလေးတွေ လှီးထားသော အစာ"],
+ ["meal", "ミキサー食", "ミキサーしょく", "ကြိတ်ချေထားသော အစာ"],
+ ["meal", "とろみ", "とろみ", "ပျစ်အောင်လုပ်ခြင်း (ရေ・ဟင်းရည်)"],
+ ["meal", "お茶", "おちゃ", "လက်ဖက်ရည်ကြမ်း"],
+ ["meal", "食べこぼし", "たべこぼし", "စားရင်း ဖိတ်ကျခြင်း"],
+ ["meal", "むせる", "むせる", "သီးသည်"],
+ ["meal", "飲み込む", "のみこむ", "မျိုချသည်"],
+ ["meal", "完食", "かんしょく", "အကုန်စားခြင်း"],
+ ["meal", "残す", "のこす", "ချန်ထားသည်"],
+ ["meal", "入れ歯", "いれば", "သွားတု"],
+ ["bath", "浴槽", "よくそう", "ရေချိုးကန်"],
+ ["bath", "シャワー", "シャワー", "ရေပန်း"],
+ ["bath", "シャワーチェア", "シャワーチェア", "ရေချိုးထိုင်ခုံ"],
+ ["bath", "脱衣所", "だついじょ", "အဝတ်လဲခန်း"],
+ ["bath", "湯温", "ゆおん", "ရေအပူချိန်"],
+ ["bath", "保湿", "ほしつ", "အရေပြား အစိုဓာတ်ထိန်းခြင်း"],
+ ["bath", "尿", "にょう", "ဆီး"],
+ ["bath", "便", "べん", "ဝမ်း (မစင်)"],
+ ["bath", "尿意", "にょうい", "ဆီးသွားချင်စိတ်"],
+ ["bath", "便意", "べんい", "ဝမ်းသွားချင်စိတ်"],
+ ["bath", "失禁", "しっきん", "ဆီး・ဝမ်း မထိန်းနိုင်ခြင်း"],
+ ["bath", "尿取りパッド", "にょうとりパッド", "ဆီးခံပြား"],
+ ["bath", "陰部洗浄", "いんぶせんじょう", "လျှို့ဝှက်အင်္ဂါ ဆေးကြောခြင်း"],
+ ["bath", "トイレ誘導", "トイレゆうどう", "အိမ်သာသို့ ခေါ်ဆောင်ခြင်း"],
+ ["bath", "差し込み便器", "さしこみべんき", "အိပ်ရာပေါ်သုံး ဆီးဝမ်းခံ"],
+ ["move", "起き上がる", "おきあがる", "ထထိုင်သည်"],
+ ["move", "寝返り", "ねがえり", "အိပ်ရာပေါ်တွင် လှည့်ခြင်း"],
+ ["move", "座位", "ざい", "ထိုင်လျက် အနေအထား"],
+ ["move", "立位", "りつい", "မတ်တပ်ရပ် အနေအထား"],
+ ["move", "仰臥位", "ぎょうがい", "ပက်လက်အိပ် အနေအထား"],
+ ["move", "側臥位", "そくがい", "ဘေးစောင်းအိပ် အနေအထား"],
+ ["move", "端座位", "たんざい", "ကုတင်အစွန်းတွင် ထိုင်ခြင်း"],
+ ["move", "健側", "けんそく", "ကောင်းသောဘက် (လှုပ်နိုင်သောဘက်)"],
+ ["move", "患側", "かんそく", "ချို့ယွင်းသောဘက် (လှုပ်ရခက်သောဘက်)"],
+ ["move", "支える", "ささえる", "ထိန်းပေးသည်"],
+ ["move", "持ち上げる", "もちあげる", "မ ပေးသည်"],
+ ["move", "ブレーキ", "ブレーキ", "ဘရိတ်"],
+ ["move", "フットサポート", "フットサポート", "ခြေတင်ခုံ"],
+ ["move", "リハビリ", "リハビリ", "ပြန်လည်ထူထောင်ရေး လေ့ကျင့်ခန်း"],
+ ["move", "ストレッチャー", "ストレッチャー", "လူနာတင် ထမ်းစင်"],
+ ["mind", "徘徊", "はいかい", "ရည်ရွယ်ချက်မဲ့ လှည့်လည်လမ်းလျှောက်ခြင်း"],
+ ["mind", "物忘れ", "ものわすれ", "မေ့လွယ်ခြင်း"],
+ ["mind", "帰宅願望", "きたくがんぼう", "အိမ်ပြန်ချင်စိတ်"],
+ ["mind", "不穏", "ふおん", "စိတ်မငြိမ်ဖြစ်ခြင်း"],
+ ["mind", "暴言", "ぼうげん", "ရိုင်းစိုင်းသော စကား"],
+ ["mind", "妄想", "もうそう", "မဟုတ်တာကို အမှန်ထင်ခြင်း"],
+ ["mind", "傾聴", "けいちょう", "စိတ်ဝင်တစား နားထောင်ခြင်း"],
+ ["mind", "寄り添う", "よりそう", "အနားမှာ နေပေးသည် (စိတ်ပါ ကူညီသည်)"],
+ ["mind", "笑顔", "えがお", "အပြုံး"],
+ ["mind", "不安", "ふあん", "စိုးရိမ်ပူပန်ခြင်း"],
+ ["mind", "さみしい", "さみしい", "အထီးကျန်သည်"],
+ ["mind", "うれしい", "うれしい", "ဝမ်းသာသည်"],
+ ["mind", "怒る", "おこる", "စိတ်ဆိုးသည်"],
+ ["mind", "眠れない", "ねむれない", "အိပ်မပျော်ဘူး"],
+ ["rec", "様子", "ようす", "အခြေအနေ"],
+ ["rec", "変化なし", "へんかなし", "ပြောင်းလဲမှု မရှိ"],
+ ["rec", "異常なし", "いじょうなし", "ထူးခြားမှု မရှိ (ပုံမှန်)"],
+ ["rec", "様子を見る", "ようすをみる", "ဆက်စောင့်ကြည့်မည်"],
+ ["rec", "訴え", "うったえ", "ဝေဒနာ ပြောပြချက်"],
+ ["rec", "全介助", "ぜんかいじょ", "အပြည့်အဝ ကူညီရခြင်း"],
+ ["rec", "一部介助", "いちぶかいじょ", "တစ်စိတ်တစ်ပိုင်း ကူညီရခြင်း"],
+ ["rec", "自立", "じりつ", "ကိုယ်တိုင် လုပ်နိုင်ခြင်း"],
+ ["rec", "ヒヤリハット", "ヒヤリハット", "အန္တရာယ် နီးပါးဖြစ်ရပ်"],
+ ["rec", "事故報告書", "じこほうこくしょ", "မတော်တဆမှု အစီရင်ခံစာ"],
+ ["rec", "服薬", "ふくやく", "ဆေးသောက်ခြင်း"],
+ ["rec", "受診", "じゅしん", "ဆရာဝန်ပြခြင်း"],
+ ["rec", "入院", "にゅういん", "ဆေးရုံတက်ခြင်း"],
+ ["rec", "退院", "たいいん", "ဆေးရုံဆင်းခြင်း"],
+ ["rec", "ケアプラン", "ケアプラン", "ပြုစုစောင့်ရှောက်မှု အစီအစဉ်"],
+ ["rec", "発赤", "ほっせき", "အရေပြား နီရဲခြင်း"],
+ ["sym", "かゆい", "かゆい", "ယားသည်"],
+ ["sym", "しびれ", "しびれ", "ထုံကျင်ခြင်း"],
+ ["sym", "食欲不振", "しょくよくふしん", "အစားအသောက် ပျက်ခြင်း"],
+ ["sym", "内出血", "ないしゅっけつ", "ပွန်းညိုခြင်း (အတွင်းသွေးယို)"],
+ ["sym", "傷", "きず", "အနာ・ဒဏ်ရာ"],
+ ["sym", "骨折", "こっせつ", "အရိုးကျိုးခြင်း"],
+ ["sym", "嘔吐", "おうと", "အန်ခြင်း"],
+ ["sym", "高血圧", "こうけつあつ", "သွေးတိုးရောဂါ"],
+ ["sym", "糖尿病", "とうにょうびょう", "ဆီးချိုရောဂါ"],
+ ["sym", "脳梗塞", "のうこうそく", "ဦးနှောက်သွေးကြောပိတ်ခြင်း (လေဖြတ်)"],
+ ["talk", "こんにちは", "こんにちは", "မင်္ဂလာပါ"],
+ ["talk", "おやすみなさい", "おやすみなさい", "ကောင်းသောညပါ"],
+ ["talk", "お名前は？", "おなまえは", "နာမည် ဘယ်လိုခေါ်လဲ"],
+ ["talk", "食事の時間です", "しょくじのじかんです", "ထမင်းစားချိန် ရောက်ပါပြီ"],
+ ["talk", "お風呂に入りましょう", "おふろにはいりましょう", "ရေချိုးကြရအောင်"],
+ ["talk", "寒くないですか", "さむくないですか", "မချမ်းဘူးလား"],
+ ["talk", "暑くないですか", "あつくないですか", "မပူဘူးလား"],
+ ["talk", "よく眠れましたか", "よくねむれましたか", "ကောင်းကောင်း အိပ်ပျော်ခဲ့လား"],
+ ["talk", "もう一度言ってください", "もういちどいってください", "နောက်တစ်ခါ ပြောပေးပါ"],
+ ["talk", "ありがとうございます", "ありがとうございます", "ကျေးဇူးတင်ပါတယ်"],
+ ["talk", "すみません", "すみません", "တောင်းပန်ပါတယ်"],
+ ["talk", "体を拭きますね", "からだをふきますね", "ကိုယ်ခန္ဓာ သုတ်ပေးမယ်နော်"],
+ ["talk", "手を貸してください", "てをかしてください", "လက်ကို ပေးပါ"],
+ ["tool", "介助バー", "かいじょバー", "ကုတင် လက်ကိုင်တန်း"],
+ ["tool", "体温計", "たいおんけい", "အပူချိန်တိုင်း ကိရိယာ"],
+ ["tool", "血圧計", "けつあつけい", "သွေးပေါင်တိုင်း ကိရိယာ"],
+ ["tool", "マスク", "マスク", "နှာခေါင်းစည်း"],
+ ["tool", "消毒液", "しょうどくえき", "ပိုးသတ်ဆေးရည်"],
+ ["tool", "シーツ", "シーツ", "အိပ်ရာခင်း"],
+ ["tool", "スライディングボード", "スライディングボード", "နေရာပြောင်းရန် ချော်ပြား"],
+ ["body", "胸", "むね", "ရင်ဘတ်"],
+ ["body", "腕", "うで", "လက်မောင်း"],
+ ["body", "指", "ゆび", "လက်ချောင်း"],
+ ["body", "ひじ", "ひじ", "တံတောင်ဆစ်"],
+ ["body", "かかと", "かかと", "ဖနောင့်"],
+ ["body", "皮膚", "ひふ", "အရေပြား"],
+ ["body", "のど", "のど", "လည်ချောင်း"],
+ ["work", "施設長", "しせつちょう", "စင်တာမှူး"],
+ ["work", "ケアマネジャー", "ケアマネジャー", "ပြုစုစောင့်ရှောက်မှု မန်နေဂျာ"],
+ ["work", "早番", "はやばん", "စောဆိုင်း"],
+ ["work", "遅番", "おそばん", "နောက်ကျဆိုင်း"],
+ ["work", "シフト", "シフト", "အလုပ်ဆိုင်း"],
+ ["work", "欠勤", "けっきん", "အလုပ်ပျက်ခြင်း"],
+ ["work", "遅刻", "ちこく", "နောက်ကျခြင်း"],
+ ["med", "薬", "くすり", "ဆေး"],
+ ["med", "飲み薬", "のみぐすり", "သောက်ဆေး"],
+ ["med", "塗り薬", "ぬりぐすり", "လိမ်းဆေး"],
+ ["med", "目薬", "めぐすり", "မျက်စဉ်း"],
+ ["med", "湿布", "しっぷ", "အကြောဆွဲ ကပ်ဆေးပြား"],
+ ["med", "座薬", "ざやく", "စအိုမှ ထည့်သောဆေး"],
+ ["med", "錠剤", "じょうざい", "ဆေးပြား"],
+ ["med", "粉薬", "こなぐすり", "ဆေးမှုန့်"],
+ ["med", "食前", "しょくぜん", "အစာမစားမီ"],
+ ["med", "食後", "しょくご", "အစာစားပြီးနောက်"],
+ ["med", "食間", "しょっかん", "အစာစားချိန်ကြား"],
+ ["med", "寝る前", "ねるまえ", "မအိပ်မီ"],
+ ["med", "飲み忘れ", "のみわすれ", "ဆေးသောက်ဖို့ မေ့ခြင်း"],
+ ["med", "副作用", "ふくさよう", "ဘေးထွက်ဆိုးကျိုး"],
+ ["med", "点滴", "てんてき", "ဆေးသွင်းခြင်း (ဒရစ်)"],
+ ["med", "注射", "ちゅうしゃ", "ဆေးထိုးခြင်း"],
+ ["med", "吸引", "きゅういん", "သလိပ်စုပ်ထုတ်ခြင်း"],
+ ["med", "酸素", "さんそ", "အောက်ဆီဂျင်"],
+ ["med", "胃ろう", "いろう", "အစာအိမ်ပိုက် (PEG)"],
+ ["med", "経管栄養", "けいかんえいよう", "ပိုက်ဖြင့် အာဟာရပေးခြင်း"],
+ ["med", "カテーテル", "カテーテル", "ပိုက် (ကက်သီတာ)"],
+ ["med", "主治医", "しゅじい", "တာဝန်ခံ ဆရာဝန်"],
+ ["med", "往診", "おうしん", "ဆရာဝန် အိမ်လာကုသခြင်း"],
+ ["med", "救急車", "きゅうきゅうしゃ", "လူနာတင်ကား"],
+ ["med", "心肺蘇生", "しんぱいそせい", "နှလုံးအသက်ရှူ ပြန်လည်လှုပ်နှိုးခြင်း (CPR)"],
+ ["med", "AED", "エーイーディー", "AED (နှလုံးလျှပ်စစ်ရှော့ခ်ပေးစက်)"],
+ ["med", "感染症", "かんせんしょう", "ကူးစက်ရောဂါ"],
+ ["med", "インフルエンザ", "インフルエンザ", "တုပ်ကွေး"],
+ ["med", "手洗い", "てあらい", "လက်ဆေးခြင်း"],
+ ["med", "うがい", "うがい", "ပါးစပ်ကျင်းခြင်း"],
+ ["med", "血糖値", "けっとうち", "သွေးထဲ သကြားဓာတ်ပမာဏ"],
+ ["med", "酸素飽和度", "さんそほうわど", "အောက်ဆီဂျင် ပြည့်ဝမှုနှုန်း (SpO2)"],
+ ["med", "体重", "たいじゅう", "ကိုယ်အလေးချိန်"],
+ ["life", "掃除", "そうじ", "သန့်ရှင်းရေး"],
+ ["life", "洗濯", "せんたく", "အဝတ်လျှော်ခြင်း"],
+ ["life", "洗濯物をたたむ", "せんたくものをたたむ", "အဝတ်ခေါက်သည်"],
+ ["life", "ゴミ", "ゴミ", "အမှိုက်"],
+ ["life", "燃えるゴミ", "もえるゴミ", "မီးရှို့နိုင်သော အမှိုက်"],
+ ["life", "燃えないゴミ", "もえないゴミ", "မီးမရှို့နိုင်သော အမှိုက်"],
+ ["life", "換気", "かんき", "လေဝင်လေထွက် ကောင်းအောင်လုပ်ခြင်း"],
+ ["life", "室温", "しつおん", "အခန်းအပူချိန်"],
+ ["life", "エアコン", "エアコン", "လေအေးပေးစက်"],
+ ["life", "電気をつける", "でんきをつける", "မီးဖွင့်သည်"],
+ ["life", "電気を消す", "でんきをけす", "မီးပိတ်သည်"],
+ ["life", "カーテン", "カーテン", "လိုက်ကာ"],
+ ["life", "居室", "きょしつ", "နေထိုင်ရာအခန်း"],
+ ["life", "食堂", "しょくどう", "ထမင်းစားခန်း"],
+ ["life", "廊下", "ろうか", "စင်္ကြံ"],
+ ["life", "ベッドメイキング", "ベッドメイキング", "အိပ်ရာပြင်ခြင်း"],
+ ["life", "着衣", "ちゃくい", "အဝတ်ဝတ်ခြင်း"],
+ ["life", "ボタン", "ボタン", "ကြယ်သီး"],
+ ["life", "靴", "くつ", "ဖိနပ်"],
+ ["life", "靴下", "くつした", "ခြေအိတ်"],
+ ["life", "パジャマ", "パジャマ", "ညဝတ်အင်္ကျီ"],
+ ["life", "下着", "したぎ", "အတွင်းခံ"],
+ ["life", "爪切り", "つめきり", "လက်သည်းညှပ်ခြင်း"],
+ ["life", "ひげそり", "ひげそり", "မုတ်ဆိတ်ရိတ်ခြင်း"],
+ ["life", "整容", "せいよう", "အသွင်အပြင် သပ်ရပ်အောင်လုပ်ခြင်း"],
+ ["life", "レクリエーション", "レクリエーション", "အပန်းဖြေ လှုပ်ရှားမှု"],
+ ["life", "面会", "めんかい", "လူနာ လာတွေ့ခြင်း"],
+ ["life", "外出", "がいしゅつ", "အပြင်ထွက်ခြင်း"],
+ ["exam", "尊厳", "そんげん", "ဂုဏ်သိက္ခာ"],
+ ["exam", "自立支援", "じりつしえん", "ကိုယ်တိုင်လုပ်နိုင်အောင် ကူညီခြင်း"],
+ ["exam", "個別ケア", "こべつケア", "တစ်ဦးချင်းအလိုက် ပြုစုစောင့်ရှောက်မှု"],
+ ["exam", "QOL", "キューオーエル", "ဘဝအရည်အသွေး"],
+ ["exam", "ADL", "エーディーエル", "နေ့စဉ်လှုပ်ရှားမှုများ (စားခြင်း・ရေချိုးခြင်း စသည်)"],
+ ["exam", "IADL", "アイエーディーエル", "ရှုပ်ထွေးသော နေ့စဉ်လုပ်ငန်း (ဈေးဝယ်・ချက်ပြုတ် စသည်)"],
+ ["exam", "プライバシー", "プライバシー", "ကိုယ်ရေးကိုယ်တာ လွတ်လပ်ခွင့်"],
+ ["exam", "守秘義務", "しゅひぎむ", "လျှို့ဝှက်ချက် ထိန်းသိမ်းရမည့် တာဝန်"],
+ ["exam", "虐待", "ぎゃくたい", "နှိပ်စက်ညှဉ်းပန်းခြင်း"],
+ ["exam", "身体拘束", "しんたいこうそく", "ခန္ဓာကိုယ်ကို ချုပ်နှောင်ခြင်း"],
+ ["exam", "インフォームドコンセント", "インフォームドコンセント", "ရှင်းပြပြီး သဘောတူညီချက်ယူခြင်း"],
+ ["exam", "ノーマライゼーション", "ノーマライゼーション", "ပုံမှန်လူ့ဘဝ နေထိုင်နိုင်ရေး အယူအဆ"],
+ ["exam", "エンパワメント", "エンパワメント", "ကိုယ့်အားကိုယ်ကိုး စွမ်းရည်မြှင့်ခြင်း"],
+ ["exam", "アセスメント", "アセスメント", "အခြေအနေ ဆန်းစစ်အကဲဖြတ်ခြင်း"],
+ ["exam", "モニタリング", "モニタリング", "စောင့်ကြည့်စစ်ဆေးခြင်း"],
+ ["exam", "チームケア", "チームケア", "အဖွဲ့လိုက် ပြုစုစောင့်ရှောက်မှု"],
+ ["exam", "多職種連携", "たしょくしゅれんけい", "အလုပ်အကိုင်မျိုးစုံ ပူးပေါင်းဆောင်ရွက်ခြင်း"],
+ ["exam", "介護保険", "かいごほけん", "ပြုစုစောင့်ရှောက်မှု အာမခံ"],
+ ["exam", "要介護", "ようかいご", "ပြုစုစောင့်ရှောက်မှု လိုအပ်သူ (အဆင့်)"],
+ ["exam", "要支援", "ようしえん", "အထောက်အပံ့ လိုအပ်သူ (အဆင့်)"],
+ ["exam", "特別養護老人ホーム", "とくべつようごろうじんホーム", "အထူး သက်ကြီးရွယ်အို စောင့်ရှောက်ရေးဂေဟာ"],
+ ["exam", "デイサービス", "デイサービス", "နေ့ပိုင်း ပြုစုစောင့်ရှောက်ရေးဝန်ဆောင်မှု"],
+ ["exam", "ショートステイ", "ショートステイ", "ခဏတာ တည်းခိုစောင့်ရှောက်မှု"],
+ ["exam", "訪問介護", "ほうもんかいご", "အိမ်အရောက် ပြုစုစောင့်ရှောက်မှု"],
+ ["exam", "グループホーム", "グループホーム", "ဒီမင်းရှားလူနာ အုပ်စုလိုက်နေအိမ်"],
+ ["exam", "看取り", "みとり", "နောက်ဆုံးအချိန် စောင့်ရှောက်ခြင်း"],
+ ["exam", "廃用症候群", "はいようしょうこうぐん", "မလှုပ်ရှားသဖြင့် ခန္ဓာကိုယ် အားနည်းလာခြင်း"],
+ ["exam", "拘縮", "こうしゅく", "အဆစ်များ တောင့်တင်းခြင်း"],
+ ["exam", "ボディメカニクス", "ボディメカニクス", "ခန္ဓာကိုယ်ကို မှန်ကန်စွာ အသုံးပြုသော နည်းစနစ်"],
+ ["exam", "コミュニケーション", "コミュニケーション", "ဆက်သွယ်ပြောဆိုခြင်း"],
+ ["exam", "受容", "じゅよう", "လက်ခံပေးခြင်း"],
+ ["exam", "共感", "きょうかん", "စာနာနားလည်ခြင်း"],
+ ["exam", "非言語コミュニケーション", "ひげんごコミュニケーション", "စကားမပါသော ဆက်သွယ်မှု (မျက်နှာ・လက်ဟန်)"],
+ ["exam", "閉じられた質問", "とじられたしつもん", "ဟုတ်/မဟုတ် ဖြေရသော မေးခွန်း"],
+ ["exam", "開かれた質問", "ひらかれたしつもん", "လွတ်လပ်စွာ ဖြေနိုင်သော မေးခွန်း"],
+ ["talk", "大丈夫ですよ", "だいじょうぶですよ", "စိတ်မပူပါနဲ့၊ အဆင်ပြေပါတယ်"],
+ ["talk", "足元に気をつけてください", "あしもとにきをつけてください", "ခြေလှမ်း သတိထားပါ"],
+ ["talk", "右を向きます", "みぎをむきます", "ညာဘက် လှည့်ပါမယ်"],
+ ["talk", "左を向きます", "ひだりをむきます", "ဘယ်ဘက် လှည့်ပါမယ်"],
+ ["talk", "腕を組んでください", "うでをくんでください", "လက်ပိုက်ထားပေးပါ"],
+ ["talk", "ひざを立ててください", "ひざをたててください", "ဒူးကို ထောင်ထားပေးပါ"],
+ ["talk", "口を開けてください", "くちをあけてください", "ပါးစပ် ဟပေးပါ"],
+ ["talk", "もう少しです", "もうすこしです", "နောက်နည်းနည်းပဲ ကျန်ပါတော့တယ်"],
+ ["talk", "何か飲みますか", "なにかのみますか", "တစ်ခုခု သောက်မလား"],
+ ["talk", "どこが痛いですか", "どこがいたいですか", "ဘယ်နေရာ နာလဲ"],
+ ["talk", "お薬の時間です", "おくすりのじかんです", "ဆေးသောက်ချိန် ရောက်ပါပြီ"],
+ ["talk", "看護師を呼びます", "かんごしをよびます", "သူနာပြုကို ခေါ်ပေးမယ်"],
+ ["talk", "すぐ戻ります", "すぐもどります", "ချက်ချင်း ပြန်လာမယ်"],
+ ["work", "休み", "やすみ", "အားလပ်ရက်"],
+ ["work", "有給休暇", "ゆうきゅうきゅうか", "လစာပေး ခွင့်"],
+ ["work", "残業", "ざんぎょう", "အချိန်ပို"],
+ ["work", "給料", "きゅうりょう", "လစာ"],
+ ["work", "研修", "けんしゅう", "သင်တန်း"],
+ ["work", "先輩", "せんぱい", "အလုပ်ခွင် အကို/အမ (အရင်ဝင်သူ)"],
+ ["work", "リーダー", "リーダー", "ခေါင်းဆောင်"],
+ ["work", "連絡", "れんらく", "ဆက်သွယ်အကြောင်းကြားခြင်း"],
+ ["work", "相談", "そうだん", "တိုင်ပင်ခြင်း"],
+ ["work", "確認", "かくにん", "အတည်ပြုစစ်ဆေးခြင်း"],
+ ["sym", "発疹", "ほっしん", "အဖုအပိမ့်"],
+ ["sym", "脱臼", "だっきゅう", "အဆစ်လွဲခြင်း"],
+ ["sym", "貧血", "ひんけつ", "သွေးအားနည်းခြင်း"],
+ ["sym", "息苦しい", "いきぐるしい", "အသက်ရှူကျပ်သည်"],
+ ["sym", "顔色が悪い", "かおいろがわるい", "မျက်နှာအရောင် မကောင်းဘူး"],
+ ["sym", "ぐったり", "ぐったり", "အားအင်ကုန်ခမ်းနေခြင်း"],
+ ["sym", "意識がない", "いしきがない", "သတိမရှိ"],
+ ["sym", "けいれん", "けいれん", "တက်ခြင်း"],
+].map((r,i)=>({id:i,cat:r[0],jp:r[1],kana:r[2],mm:r[3]}));
+
+let favs = new Set();
+try{ favs = new Set(JSON.parse(localStorage.getItem("kaigo-fav")||"[]")); }catch(e){}
+function saveFav(){ try{localStorage.setItem("kaigo-fav",JSON.stringify([...favs]))}catch(e){} }
+
+let mode="list", cat="all", q="";
+let cardIdx=0, cardDir="jp", cardOrder=[];
+let quiz=null, quizDir="jp";
+
+const $=s=>document.querySelector(s);
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+
+let jaVoice=null;
+function pickVoice(){ try{ jaVoice=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("ja"))||null }catch(e){} }
+try{ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }catch(e){}
+function speak(t){
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.85; if(jaVoice)u.voice=jaVoice; speechSynthesis.speak(u);}catch(e){}
+}
+
+function words(){
+  let w = cat==="all"?W : cat==="fav"?W.filter(x=>favs.has(x.id)) : W.filter(x=>x.cat===cat);
+  if(q && mode==="list"){ const s=q.toLowerCase(); w=w.filter(x=>x.jp.includes(q)||x.kana.includes(q)||x.mm.includes(q)||x.jp.toLowerCase().includes(s)); }
+  return w;
+}
+
+function renderChips(){
+  $("#chips").innerHTML = CATS.map(c=>`<button class="chip ${c.id===cat?"on":""}" data-cat="${c.id}">${c.jp}</button>`).join("");
+}
+
+function renderList(){
+  const w=words();
+  $("#main").innerHTML = `<input class="search" id="search" placeholder="検索 / ရှာဖွေရန်" value="${esc(q)}">
+  <div class="count">${w.length} 語</div>
+  ${w.length? w.map(x=>`<div class="item">
+     <div class="body"><div class="jp">${x.jp}</div>${x.kana!==x.jp?`<div class="kana">${x.kana}</div>`:""}<div class="mm">${x.mm}</div></div>
+     <button class="icon" data-say="${x.id}" aria-label="発音">🔊</button>
+     <button class="icon ${favs.has(x.id)?"fav":""}" data-fav="${x.id}" aria-label="お気に入り">${favs.has(x.id)?"★":"☆"}</button>
+   </div>`).join("") : `<div class="empty">${cat==="fav"?"☆ を押してお気に入りに追加<br><span class='mm'>☆ နှိပ်ပြီး သိမ်းထားပါ</span>":"見つかりません"}</div>`}`;
+  const s=$("#search");
+  s.oninput=e=>{q=e.target.value; const pos=s.selectionStart; renderList(); const n=$("#search"); n.focus(); n.setSelectionRange(pos,pos);};
+}
+
+function startCards(){ cardOrder=shuffle(words()); cardIdx=0; }
+function renderCard(){
+  if(!cardOrder.length){ $("#main").innerHTML=`<div class="empty">単語がありません</div>`; return; }
+  const x=cardOrder[cardIdx];
+  const jpFace=`<div class="jp">${x.jp}</div>${x.kana!==x.jp?`<div class="kana">${x.kana}</div>`:""}`;
+  const mmFace=`<div class="mm">${x.mm}</div>`;
+  $("#main").innerHTML=`
+  <div class="toggle">
+    <button class="chip ${cardDir==="jp"?"on":""}" data-dir="jp">日本語 → မြန်မာ</button>
+    <button class="chip ${cardDir==="mm"?"on":""}" data-dir="mm">မြန်မာ → 日本語</button>
+  </div>
+  <div class="flash"><div class="fcard" id="fcard">
+    <div class="face">${cardDir==="jp"?jpFace:mmFace}<div class="hint">タップでめくる ・ <span class="mm">နှိပ်ပြီး လှန်ပါ</span></div></div>
+    <div class="face back">${cardDir==="jp"?mmFace:jpFace}</div>
+  </div></div>
+  <div class="row">
+    <button class="btn" id="prev" ${cardIdx===0?"disabled":""}>◀ 前</button>
+    <button class="btn" data-say="${x.id}">🔊</button>
+    <button class="btn ${favs.has(x.id)?"":""}" data-fav="${x.id}">${favs.has(x.id)?"★":"☆"}</button>
+    <button class="btn primary" id="next">${cardIdx===cardOrder.length-1?"もう一度":"次 ▶"}</button>
+  </div>
+  <p class="prog">${cardIdx+1} / ${cardOrder.length}</p>`;
+  $("#fcard").onclick=()=>$("#fcard").classList.toggle("flip");
+  $("#prev").onclick=()=>{cardIdx--;renderCard()};
+  $("#next").onclick=()=>{ if(cardIdx===cardOrder.length-1){startCards()}else cardIdx++; renderCard(); };
+}
+
+function startQuiz(){
+  const pool=words();
+  const qs=shuffle(pool).slice(0,10);
+  quiz={qs, i:0, score:0, answered:false, opts:null, pool};
+}
+function makeOpts(x){
+  const base = quiz.pool.length>=4 ? quiz.pool : W;
+  let others=shuffle(base.filter(y=>y.id!==x.id && y.cat===x.cat));
+  if(others.length<3) others=others.concat(shuffle(W.filter(y=>y.id!==x.id && !others.includes(y))));
+  return shuffle([x,...others.slice(0,3)]);
+}
+function renderQuiz(){
+  if(!quiz) startQuiz();
+  if(quiz.qs.length<1){ $("#main").innerHTML=`<div class="empty">単語がありません</div>`; return; }
+  if(quiz.i>=quiz.qs.length){
+    const pct=Math.round(quiz.score/quiz.qs.length*100);
+    $("#main").innerHTML=`<div class="result"><div class="big">${quiz.score} / ${quiz.qs.length}</div>
+      <p>${pct===100?"満点！すばらしい！🎉":pct>=70?"よくできました！👏":"もう一度がんばりましょう💪"}</p>
+      <p class="mm">${pct===100?"အမှတ်ပြည့်! အရမ်းတော်တယ်!":pct>=70?"တော်တယ်!":"နောက်တစ်ခါ ထပ်ကြိုးစားကြရအောင်"}</p>
+      <button class="btn primary" id="again">もう一度 ・ <span class="mm">ထပ်ဖြေမယ်</span></button></div>`;
+    $("#again").onclick=()=>{startQuiz();renderQuiz()};
+    return;
+  }
+  const x=quiz.qs[quiz.i];
+  if(!quiz.opts) quiz.opts=makeOpts(x);
+  const qHtml = quizDir==="jp" ? `<div class="jp">${x.jp}</div>${x.kana!==x.jp?`<div class="kana">${x.kana}</div>`:""}` : `<div class="mm">${x.mm}</div>`;
+  $("#main").innerHTML=`
+  <div class="toggle">
+    <button class="chip ${quizDir==="jp"?"on":""}" data-qdir="jp">日本語 → မြန်မာ</button>
+    <button class="chip ${quizDir==="mm"?"on":""}" data-qdir="mm">မြန်မာ → 日本語</button>
+  </div>
+  <div class="q">${qHtml}${quizDir==="jp"?`<div><button class="icon" data-say="${x.id}">🔊</button></div>`:""}</div>
+  <div class="opts">${quiz.opts.map(o=>`<button class="opt ${quizDir==="jp"?"mm":""}" data-ans="${o.id}">${quizDir==="jp"?o.mm:`${o.jp}${o.kana!==o.jp?` <span class="kana">（${o.kana}）</span>`:""}`}</button>`).join("")}</div>
+  <div class="score"><span>${quiz.i+1} / ${quiz.qs.length}</span><span>正解 ${quiz.score}</span></div>
+  <div id="nextwrap" style="margin-top:12px"></div>`;
+  document.querySelectorAll("[data-ans]").forEach(b=>b.onclick=()=>{
+    if(quiz.answered) return; quiz.answered=true;
+    const ok=+b.dataset.ans===x.id; if(ok) quiz.score++;
+    document.querySelectorAll("[data-ans]").forEach(c=>{ if(+c.dataset.ans===x.id)c.classList.add("ok"); else if(c===b)c.classList.add("ng"); });
+    speak(x.kana);
+    $("#nextwrap").innerHTML=`<button class="btn primary" style="width:100%" id="qnext">${quiz.i===quiz.qs.length-1?"結果を見る":"次へ ▶"}</button>`;
+    $("#qnext").onclick=()=>{quiz.i++;quiz.answered=false;quiz.opts=null;renderQuiz()};
+  });
+}
+
+function render(){
+  renderChips();
+  if(mode==="list") renderList();
+  else if(mode==="card") renderCard();
+  else renderQuiz();
+}
+
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button"); if(!t) return;
+  if(t.dataset.mode){ mode=t.dataset.mode; document.querySelectorAll("nav.modes button").forEach(b=>b.classList.toggle("on",b===t)); if(mode==="card")startCards(); if(mode==="quiz")startQuiz(); render(); window.scrollTo(0,0); }
+  else if(t.dataset.cat){ cat=t.dataset.cat; if(mode==="card")startCards(); if(mode==="quiz")startQuiz(); render(); }
+  else if(t.dataset.say!==undefined){ e.stopPropagation(); const x=W[+t.dataset.say]; speak(x.kana); }
+  else if(t.dataset.fav!==undefined){ const id=+t.dataset.fav; favs.has(id)?favs.delete(id):favs.add(id); saveFav(); render(); }
+  else if(t.dataset.dir){ cardDir=t.dataset.dir; renderCard(); }
+  else if(t.dataset.qdir){ quizDir=t.dataset.qdir; quiz.opts=null; renderQuiz(); }
+});
+render();
+</script>
+</body>
+</html>

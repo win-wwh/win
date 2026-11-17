@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ゆっくり トト ｜ Toto Takes It Slow</title>
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ゆっくり トト">
+<meta name="theme-color" content="#e98a5b">
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#fff8ec;color:#4a3b2f;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;display:flex;justify-content:center;min-height:100vh}
+.wrap{width:100%;max-width:520px;padding:14px 14px 30px}
+.langs{display:flex;gap:6px;justify-content:center;margin-bottom:10px;flex-wrap:wrap}
+.chip{border:1.5px solid #e8d4b8;background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;color:#4a3b2f;cursor:pointer}
+.chip.on{background:#e98a5b;border-color:#e98a5b;color:#fff}
+.page{background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 4px 0 #f0dfc5}
+svg{display:block;width:100%;height:auto}
+.text{padding:16px 18px 18px}
+.line{display:flex;gap:8px;align-items:flex-start;margin:0 0 12px}
+.line:last-child{margin-bottom:0}
+.tag{flex:none;font-size:10px;font-weight:700;border-radius:6px;padding:2px 6px;margin-top:4px;color:#fff}
+.t-ja{background:#e98a5b}.t-mm{background:#5fae8b}.t-en{background:#6b8fd6}
+.ja{font-size:20px;line-height:1.7;font-weight:500}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Text",sans-serif;font-size:17px;line-height:2}
+.en{font-size:17px;line-height:1.6;font-family:Georgia,serif}
+.say{flex:none;border:0;background:#fff3e3;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.nav button{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 20px;font-size:16px;cursor:pointer;background:#e98a5b;color:#fff}
+.nav button:disabled{background:#eadfce;color:#b9a891}
+.dots{display:flex;gap:5px}
+.dots i{width:8px;height:8px;border-radius:50%;background:#eadfce}
+.dots i.on{background:#e98a5b}
+.cover h1{margin:0 0 6px;font-size:30px;text-align:center}
+.cover .sub{text-align:center;color:#8a7766}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="langs" id="langs"></div>
+  <div class="langs">
+    <button class="chip" id="bgm">🎵 おんがく</button>
+    <button class="chip" id="sfx">🔔 こうかおん</button>
+    <button class="chip" id="auto">📢 じどうでよむ</button>
+  </div>
+  <div class="page" id="page"></div>
+  <div class="nav">
+    <button id="prev">◀ まえ</button>
+    <div class="dots" id="dots"></div>
+    <button id="next">つぎ ▶</button>
+  </div>
+</div>
+<script>
+const SKY="#cfeaf7",GRASS="#a8d98a";
+const turtle=(x,y,s=1)=>`<g transform="translate(${x},${y}) scale(${s})">
+<ellipse cx="-38" cy="6" rx="14" ry="11" fill="#8fcf7a"/><circle cx="-42" cy="2" r="2.6" fill="#3a2e24"/>
+<path d="M-22 -2 Q-24 -10 -16 -10" stroke="#8fcf7a" stroke-width="8" fill="none"/>
+<ellipse cx="-16" cy="22" rx="7" ry="6" fill="#8fcf7a"/><ellipse cx="16" cy="22" rx="7" ry="6" fill="#8fcf7a"/>
+<path d="M-28 16 Q0 -40 28 16 Z" fill="#6aa84f"/><path d="M-14 4 L0 -12 L14 4 L0 12 Z" fill="#88c36b"/>
+<path d="M-28 16 L28 16" stroke="#4f8a3a" stroke-width="3"/></g>`;
+const rabbit=(x,y,s=1,sad=false)=>`<g transform="translate(${x},${y}) scale(${s})">
+<ellipse cx="-8" cy="-50" rx="6" ry="20" fill="#fff" stroke="#e7d6c6" stroke-width="2"/><ellipse cx="8" cy="-50" rx="6" ry="20" fill="#fff" stroke="#e7d6c6" stroke-width="2"/>
+<ellipse cx="-8" cy="-50" rx="2.5" ry="13" fill="#f7c1c9"/><ellipse cx="8" cy="-50" rx="2.5" ry="13" fill="#f7c1c9"/>
+<ellipse cx="0" cy="8" rx="22" ry="20" fill="#fff" stroke="#e7d6c6" stroke-width="2"/>
+<circle cx="0" cy="-20" r="17" fill="#fff" stroke="#e7d6c6" stroke-width="2"/>
+<circle cx="-6" cy="-22" r="2.4" fill="#3a2e24"/><circle cx="6" cy="-22" r="2.4" fill="#3a2e24"/>
+${sad?`<path d="M-5 -10 Q0 -14 5 -10" stroke="#3a2e24" stroke-width="2" fill="none"/><path d="M-7 -18 q-2 5 0 7" stroke="#7fc4f0" stroke-width="2.5" fill="none"/>`:`<path d="M-5 -13 Q0 -8 5 -13" stroke="#3a2e24" stroke-width="2" fill="none"/>`}
+<circle cx="-11" cy="-15" r="3" fill="#f7c1c9" opacity=".7"/><circle cx="11" cy="-15" r="3" fill="#f7c1c9" opacity=".7"/></g>`;
+const flower=(x,y,c="#f6a5c0")=>`<g transform="translate(${x},${y})"><path d="M0 0 V14" stroke="#5c9a46" stroke-width="2"/>${[0,72,144,216,288].map(a=>`<circle cx="${6*Math.cos(a*Math.PI/180)}" cy="${6*Math.sin(a*Math.PI/180)}" r="4.5" fill="${c}"/>`).join("")}<circle r="3.5" fill="#ffd95a"/></g>`;
+const tree=(x,y)=>`<g transform="translate(${x},${y})"><rect x="-7" y="0" width="14" height="40" rx="4" fill="#b98a5e"/><circle cx="0" cy="-10" r="30" fill="#7cc36a"/><circle cx="-20" cy="5" r="20" fill="#86ca72"/><circle cx="20" cy="5" r="20" fill="#86ca72"/></g>`;
+const scene=(inner,sky=SKY,ground=GRASS,hill=false)=>`<svg viewBox="0 0 400 240" role="img"><rect width="400" height="240" fill="${sky}"/>${hill?`<path d="M0 240 Q200 60 400 240 Z" fill="#bfe3a2"/>`:""}<path d="M0 190 Q100 170 200 185 T400 180 V240 H0Z" fill="${ground}"/>${inner}</svg>`;
+const cloud=(x,y)=>`<g fill="#fff" opacity=".9"><circle cx="${x}" cy="${y}" r="14"/><circle cx="${x+16}" cy="${y-6}" r="17"/><circle cx="${x+34}" cy="${y}" r="13"/></g>`;
+
+const PAGES=[
+ {cover:true,svg:scene(tree(60,120)+tree(340,110)+turtle(170,192,1.1)+rabbit(250,190,0.95)+cloud(110,40)+cloud(260,30)+flower(110,200)+flower(300,205,"#c8a6f2")),
+  ja:"ゆっくり トト",mm:"ဖြည်းဖြည်း တိုတို",en:"Toto Takes It Slow"},
+ {svg:scene(tree(70,115)+tree(330,120)+turtle(200,192,1.2)+cloud(90,40)+flower(130,205)+flower(280,200,"#ffd95a")),
+  ja:"もりに、ちいさな カメの トトが すんでいました。トトは、とっても ゆっくり あるきます。",
+  mm:"တောထဲမှာ လိပ်ကလေး တိုတို နေထိုင်ပါတယ်။ တိုတိုက အရမ်း ဖြည်းဖြည်းလေး လမ်းလျှောက်ပါတယ်။",
+  en:"In the forest lived a little turtle named Toto. Toto walked very, very slowly."},
+ {svg:scene(`<path d="M250 70 Q320 20 390 70" fill="none"/>`+turtle(130,192,1.1)+rabbit(260,188,1)+`<g transform="translate(330,60)"><ellipse rx="40" ry="22" fill="#fff"/><path d="M-10 18 L-20 34 L4 20" fill="#fff"/>${flower(-14,-6)}${flower(4,-4,"#c8a6f2")}${flower(20,-6,"#ffd95a")}</g>`,SKY,GRASS,true),
+  ja:"あるひ、ウサギの ピョンが いいました。「トト、いっしょに おかの うえの おはなばたけへ いこうよ！」",
+  mm:"တစ်နေ့မှာ ယုန်ကလေး ပြုံက ပြောပါတယ်။ “တိုတို၊ တောင်ကုန်းပေါ်က ပန်းခင်းဆီ အတူတူ သွားကြရအောင်!”",
+  en:"One day, Pyon the rabbit said, \"Toto, let's go to the flower field on the hill together!\""},
+ {svg:scene(turtle(90,195,1)+rabbit(330,150,0.7)+`<g stroke="#c9b18f" stroke-width="3" stroke-linecap="round"><path d="M280 165 l-18 0"/><path d="M285 150 l-22 0"/></g><text x="150" y="140" font-size="22" fill="#4a3b2f" font-family="sans-serif">〜</text>`+cloud(60,40)+cloud(200,50),SKY,GRASS,true),
+  ja:"ピョンは ぴょんぴょん はしって、すぐに みえなく なりました。「まって〜」と トトは いいました。",
+  mm:"ပြုံက ခုန်ပေါက်ပြီး ပြေးသွားလို့ ခဏလေးနဲ့ မမြင်ရတော့ပါဘူး။ “စောင့်ပါဦး~” လို့ တိုတိုက ပြောပါတယ်။",
+  en:"Pyon hopped and ran, and soon was out of sight. \"Wait for me!\" said Toto."},
+ {svg:scene(tree(60,120)+rabbit(250,195,1,true)+turtle(130,195,1)+`<circle cx="268" cy="214" r="9" fill="none" stroke="#e98a5b" stroke-width="2" stroke-dasharray="3 3"/>`+flower(340,205)),
+  ja:"しばらく あるくと、ピョンが すわりこんで ないていました。「あしを いためちゃった…」",
+  mm:"ခဏ လျှောက်လာတော့ ပြုံက ထိုင်ပြီး ငိုနေတာ တွေ့ပါတယ်။ “ခြေထောက် နာသွားပြီ…”",
+  en:"After a while, Toto found Pyon sitting on the ground, crying. \"I hurt my foot…\""},
+ {svg:scene(turtle(170,195,1.2)+rabbit(245,192,1)+`<g fill="#f28ba8"><path d="M205 120 c-6 -10 -20 -2 -12 8 l12 12 l12 -12 c8 -10 -6 -18 -12 -8z"/></g>`+flower(70,205,"#ffd95a")+flower(340,200)),
+  ja:"トトは やさしく いいました。「だいじょうぶ。ゆっくりで いいよ。いっしょに いこう」",
+  mm:"တိုတိုက ညင်ညင်သာသာ ပြောပါတယ်။ “ရပါတယ်။ ဖြည်းဖြည်း သွားလို့ ရပါတယ်။ အတူတူ သွားကြမယ်။”",
+  en:"Toto said gently, \"It's okay. We can go slowly. Let's go together.\""},
+ {svg:scene(turtle(200,195,1.2)+rabbit(205,150,0.75)+flower(60,205)+flower(90,212,"#c8a6f2")+flower(320,206,"#ffd95a")+`<g transform="translate(345,180)"><ellipse rx="9" ry="7" fill="#e5484d"/><circle cx="-3" cy="-1" r="1.6" fill="#222"/><circle cx="3" cy="2" r="1.6" fill="#222"/><circle cx="-8" cy="-3" r="3" fill="#222"/></g><g transform="translate(110,222)"><ellipse rx="10" ry="6" fill="#bfc9d6"/><path d="M-4 -2 l3 -2" stroke="#fff" stroke-width="2"/></g>`+cloud(80,40)),
+  ja:"ふたりは ゆっくり ゆっくり あるきました。すると、ちいさな はなや、てんとうむしや、ひかる いしが みえました。",
+  mm:"သူတို့နှစ်ယောက် ဖြည်းဖြည်းလေး လျှောက်သွားကြပါတယ်။ အဲဒီအခါ ပန်းကလေးတွေ၊ ပိုးကောင်လေးတွေ၊ တောက်ပတဲ့ ကျောက်ခဲလေးတွေကို မြင်ရပါတယ်။",
+  en:"The two walked slowly, slowly. Then they saw tiny flowers, a ladybug, and shiny stones."},
+ {svg:`<svg viewBox="0 0 400 240" role="img"><rect width="400" height="240" fill="#ffd9a8"/><circle cx="300" cy="120" r="40" fill="#ff9f68"/><path d="M0 240 Q200 90 400 240 Z" fill="#9fcf7f"/>${[60,90,120,150,250,280,310,340,200,170,230].map((x,i)=>flower(x,180+((i*7)%30),["#f6a5c0","#c8a6f2","#ffd95a"][i%3])).join("")}${turtle(170,178,1)}${rabbit(235,172,0.85)}</svg>`,
+  ja:"ゆうがた、ふたりは おかの うえに つきました。おはなばたけが ゆうひで キラキラ ひかっていました。",
+  mm:"ညနေရောက်တော့ သူတို့ တောင်ကုန်းပေါ် ရောက်သွားကြပါတယ်။ ပန်းခင်းက နေဝင်ရောင်မှာ တလက်လက် တောက်ပနေပါတယ်။",
+  en:"In the evening, they reached the top of the hill. The flower field sparkled in the sunset."},
+ {svg:`<svg viewBox="0 0 400 240" role="img"><rect width="400" height="240" fill="#ffe6c4"/><path d="M0 190 Q200 160 400 190 V240 H0Z" fill="#9fcf7f"/>${turtle(165,192,1.3)}${rabbit(245,188,1.05)}<g fill="#f28ba8">${[[120,70],[200,50],[280,72]].map(([x,y])=>`<path transform="translate(${x},${y}) scale(.8)" d="M0 0 c-6 -10 -20 -2 -12 8 l12 12 l12 -12 c8 -10 -6 -18 -12 -8z"/>`).join("")}</g>${flower(60,200)}${flower(340,200,"#c8a6f2")}</svg>`,
+  ja:"ピョンは にっこり わらいました。「ゆっくり あるくのって、すてきだね。ありがとう、トト」　おしまい",
+  mm:"ပြုံက ပြုံးပြီး ပြောပါတယ်။ “ဖြည်းဖြည်း လျှောက်တာ ကောင်းတယ်နော်။ ကျေးဇူးပါ တိုတို။” ပြီးပါပြီ။",
+  en:"Pyon smiled. \"Walking slowly is wonderful. Thank you, Toto.\" The End."}
+];
+const LANGS=[["all","ぜんぶ"],["ja","にほんご"],["mm","မြန်မာ"],["en","English"]];
+let lang="all",idx=0;
+try{lang=localStorage.getItem("toto-lang")||"all"}catch(e){}
+function speak(text,l){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=l;u.rate=l==="ja-JP"?.8:.85;const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith(l.slice(0,2)));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
+function line(cls,label,text,voice){
+  return `<div class="line"><span class="tag t-${cls}">${label}</span><div class="${cls}" style="flex:1">${text}</div>${voice?`<button class="say" data-say="${cls}" aria-label="よみあげ">🔊</button>`:""}</div>`;
+}
+function render(){
+  const p=PAGES[idx];
+  document.getElementById("langs").innerHTML=LANGS.map(([k,v])=>`<button class="chip ${k===lang?"on":""}" data-lang="${k}">${v}</button>`).join("");
+  const show=k=>lang==="all"||lang===k;
+  let text="";
+  if(p.cover){
+    text=`<div class="cover">${show("ja")?`<h1>${p.ja}</h1>`:""}${show("mm")?`<div class="sub mm">${p.mm}</div>`:""}${show("en")?`<div class="sub en">${p.en}</div>`:""}</div>`;
+  }else{
+    if(show("ja"))text+=line("ja","日本語",p.ja,true);
+    if(show("mm"))text+=line("mm","မြန်မာ",p.mm,false);
+    if(show("en"))text+=line("en","EN",p.en,true);
+  }
+  document.getElementById("page").innerHTML=p.svg+`<div class="text">${text}</div>`;
+  document.getElementById("prev").disabled=idx===0;
+  document.getElementById("next").textContent=idx===PAGES.length-1?"はじめから":"つぎ ▶";
+  document.getElementById("dots").innerHTML=PAGES.map((_,i)=>`<i class="${i===idx?"on":""}"></i>`).join("");
+}
+/* ---- おと ---- */
+let ac=null,master=null,bgmOn=false,sfxOn=true,autoOn=false,bgmTimer=null,nextNote=0,step=0;
+try{const s=JSON.parse(localStorage.getItem("toto-sound")||"{}");sfxOn=s.sfx!==false;autoOn=!!s.auto}catch(e){}
+function saveSound(){try{localStorage.setItem("toto-sound",JSON.stringify({sfx:sfxOn,auto:autoOn}))}catch(e){}}
+function audio(){
+  if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.8;master.connect(ac.destination)}catch(e){return null}}
+  if(ac.state==="suspended")ac.resume();
+  return ac;
+}
+function tone(freq,t,dur,vol,type="sine"){
+  const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=freq;
+  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.05);
+}
+const N=n=>440*Math.pow(2,(n-69)/12);
+const MEL=[76,79,81,79,76,74,72,74, 76,76,74,72,74,76,79,null, 81,84,81,79,76,79,81,null, 79,76,74,76,72,74,72,null];
+const BASS=[48,55,57,52];
+function scheduleBgm(){
+  while(nextNote<ac.currentTime+.4){
+    const n=MEL[step%MEL.length];
+    if(n)tone(N(n),nextNote,.9,.07,"triangle"),tone(N(n+12),nextNote,.5,.015,"sine");
+    if(step%8===0)tone(N(BASS[(step/8)%BASS.length]),nextNote,2.6,.05,"sine");
+    nextNote+=.42;step++;
+  }
+}
+function setBgm(on){
+  bgmOn=on;document.getElementById("bgm").classList.toggle("on",on);
+  if(on){if(!audio())return;nextNote=ac.currentTime+.05;step=0;bgmTimer=setInterval(scheduleBgm,100);scheduleBgm()}
+  else{clearInterval(bgmTimer);bgmTimer=null}
+}
+function pageSound(){
+  if(!sfxOn||!audio())return;const t=ac.currentTime;
+  const len=.25,buf=ac.createBuffer(1,ac.sampleRate*len,ac.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+  const src=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();
+  f.type="bandpass";f.frequency.setValueAtTime(800,t);f.frequency.linearRampToValueAtTime(3000,t+len);g.gain.value=.12;
+  src.buffer=buf;src.connect(f);f.connect(g);g.connect(master);src.start(t);
+  tone(N(84),t+.08,.5,.05);tone(N(88),t+.16,.6,.04);
+}
+function endSound(){if(!sfxOn||!audio())return;const t=ac.currentTime;[72,76,79,84].forEach((n,i)=>tone(N(n),t+i*.12,.8,.06,"triangle"))}
+function autoRead(){
+  if(!autoOn)return;const p=PAGES[idx];
+  if(lang==="en")speak(p.en,"en-US");else if(lang!=="mm")speak(p.ja.replace("おしまい",""),"ja-JP");
+}
+function refreshSoundChips(){
+  document.getElementById("sfx").classList.toggle("on",sfxOn);
+  document.getElementById("auto").classList.toggle("on",autoOn);
+}
+function turned(){pageSound();if(idx===PAGES.length-1)setTimeout(endSound,300);setTimeout(autoRead,450)}
+
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.id==="bgm"){setBgm(!bgmOn);return}
+  if(b.id==="sfx"){sfxOn=!sfxOn;saveSound();refreshSoundChips();if(sfxOn)pageSound();return}
+  if(b.id==="auto"){autoOn=!autoOn;saveSound();refreshSoundChips();if(autoOn){audio();autoRead()}return}
+  if(b.id==="prev"||b.id==="next")setTimeout(turned,0);
+  if(b.dataset.lang){lang=b.dataset.lang;try{localStorage.setItem("toto-lang",lang)}catch(e){}render()}
+  else if(b.dataset.say){const p=PAGES[idx];b.dataset.say==="ja"?speak(p.ja.replace("おしまい",""),"ja-JP"):speak(p.en,"en-US")}
+  else if(b.id==="prev"&&idx>0){idx--;render();window.scrollTo(0,0)}
+  else if(b.id==="next"){idx=idx===PAGES.length-1?0:idx+1;render();window.scrollTo(0,0)}
+});
+let sx=null;
+document.getElementById("page").addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});
+document.getElementById("page").addEventListener("touchend",e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)<50)return;if(dx<0&&idx<PAGES.length-1)idx++;else if(dx>0&&idx>0)idx--;else return;render();turned()});
+render();refreshSoundChips();
+</script>
+</body>
+</html>

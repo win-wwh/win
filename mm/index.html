@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Win やさしいミャンマー語</title>
+<meta name="description" content="日本人のためのミャンマー語。あいさつ・職場のひとこと・数字・食べ物を、カタカナ読みつきで。介護施設や職場で、ミャンマー人の仲間と話してみよう。無料。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Win やさしいミャンマー語">
+<meta property="og:description" content="あいさつ・職場のひとこと・数字を、カタカナ読みつきで。ミャンマー人の仲間と話してみよう。">
+<meta property="og:image" content="https://win-wwh.github.io/win/mm/icon-512.png">
+<meta property="og:url" content="https://win-wwh.github.io/win/mm/">
+<meta name="twitter:card" content="summary">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ミャンマー語">
+<meta name="theme-color" content="#1b7a4a">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Sans+Myanmar:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--g:#1b7a4a;--y:#f4c430;--r:#d62b2b;--bg:#f6f3ea}
+body{margin:0;background:var(--bg);color:#222;font-family:"Noto Sans JP",system-ui,sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.mm{font-family:"Noto Sans Myanmar",sans-serif}
+.wrap{max-width:620px;margin:0 auto;padding:12px 14px 60px}
+header{display:flex;align-items:center;gap:10px;margin:4px 0 12px}
+header h1{font-size:20px;margin:0;flex:1;line-height:1.25}
+header h1 small{display:block;font-size:12px;font-weight:400;color:#6b6b5e}
+.flag{width:40px;height:28px;border-radius:5px;overflow:hidden;flex:none;box-shadow:0 1px 3px #0003;position:relative;background:linear-gradient(var(--y) 0 33.3%,var(--g) 33.3% 66.6%,var(--r) 66.6%)}
+.flag::after{content:"★";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;line-height:1}
+.back{border:0;background:#fff;border-radius:12px;width:42px;height:42px;font-size:22px;box-shadow:0 1px 3px #0002;display:none;flex:none}
+.sub .back{display:block}.sub .flag{display:none}
+.hero{background:linear-gradient(135deg,var(--g),#2a9d63);color:#fff;border-radius:20px;padding:16px 18px;margin-bottom:14px;box-shadow:0 4px 14px #1b7a4a44}
+.hero .big{font-size:30px;font-weight:700;margin:2px 0}
+.hero .k{font-size:15px;opacity:.95}
+.hero .t{font-size:12px;opacity:.85;margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cat{border:0;background:#fff;border-radius:16px;padding:14px 10px;text-align:center;box-shadow:0 1px 4px #0001;font-size:15px;font-weight:700;color:#222}
+.cat .e{font-size:32px;display:block;margin-bottom:2px}
+.cat .n{display:block;font-size:12px;font-weight:400;color:#888}
+.wide{grid-column:1/-1;display:flex;align-items:center;gap:12px;text-align:left;padding:14px 16px}
+.wide .e{margin:0}
+.q-btn{background:var(--y)}
+.search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #ddd5c0;font-size:16px;margin-bottom:12px;background:#fff}
+.card{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px #0001;display:flex;gap:10px;align-items:flex-start}
+.card .main{flex:1;min-width:0}
+.card .jp{font-size:13px;color:#6b6b5e}
+.card .my{font-size:24px;line-height:1.7;margin:2px 0;word-break:break-word}
+.card .kana{font-size:16px;font-weight:700;color:var(--g)}
+.card .note{font-size:12px;color:#8a7d55;margin-top:4px;background:#fbf6e4;border-radius:8px;padding:4px 8px}
+.fav{border:0;background:none;font-size:22px;padding:0 2px;opacity:.35}
+.fav.on{opacity:1}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;border:0;border-radius:12px;padding:10px;font-size:14px;font-weight:700;background:#e8e2cf;color:#6b6b5e}
+.tabs button.on{background:var(--g);color:#fff}
+.flash{background:#fff;border-radius:22px;min-height:300px;box-shadow:0 4px 16px #0002;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.flash .my{font-size:40px;line-height:1.6}
+.flash .kana{font-size:22px;color:var(--g);font-weight:700;margin-top:8px}
+.flash .jp{font-size:26px;font-weight:700}
+.flash .hint{font-size:12px;color:#aaa;margin-top:18px}
+.nav{display:flex;gap:10px;margin-top:12px}
+.nav button{flex:1;border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:700;background:#fff;box-shadow:0 1px 3px #0002}
+.nav .pri{background:var(--g);color:#fff}
+.qbox{background:#fff;border-radius:20px;padding:20px;box-shadow:0 2px 10px #0001}
+.qbox .qt{font-size:13px;color:#888}
+.qbox .qq{font-size:26px;font-weight:700;margin:6px 0 14px;line-height:1.5}
+.opt{display:block;width:100%;border:2px solid #e8e2cf;background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;text-align:left;font-size:18px;line-height:1.6}
+.opt small{display:block;font-size:13px;color:var(--g);font-weight:700}
+.opt.ok{border-color:#2a9d63;background:#e6f6ec}.opt.ng{border-color:var(--r);background:#fde8e8}
+.score{display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px}
+.culture{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px #0001;line-height:1.75;font-size:15px}
+.culture b{color:var(--g)}
+.note2{font-size:12px;color:#8a7d55;margin-top:18px;line-height:1.7;background:#fff;border-radius:12px;padding:10px 12px}
+.empty{text-align:center;color:#999;padding:30px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <button class="back" id="back" aria-label="もどる">‹</button>
+  <div class="flag" aria-hidden="true"></div>
+  <h1 id="ttl">やさしいミャンマー語<small>日本人のための ミャンマー語入門</small></h1>
+</header>
+<main id="main"></main>
+<div class="note2">📝 読み方はカタカナで近い音を書いています。本当の発音は、ミャンマーの友だちに聞いてみてください。きっと喜ばれます😊<br>作った人：Win（ミャンマー出身・日本在住）</div>
+</div>
+<script>
+// [category, japanese, burmese, katakana, note]
+const CATS=[
+ ["hello","👋","あいさつ"],
+ ["work","🤝","職場・介護のひとこと"],
+ ["feel","😊","気持ち・体調"],
+ ["talk","💬","会話で使う"],
+ ["num","🔢","数字"],
+ ["day","📅","曜日・日にち"],
+ ["food","🍜","食べ物"],
+ ["family","👨‍👩‍👧","家族・人"]
+];
+const W=[
+ ["hello","こんにちは","မင်္ဂလာပါ","ミンガラーバー","朝・昼・夜いつでも使える、いちばん大事なあいさつ"],
+ ["hello","ありがとう","ကျေးဇူးတင်ပါတယ်","チェーズー ティンバーデー",""],
+ ["hello","ありがとう（短く）","ကျေးဇူးပါ","チェーズーバー","友だちや仲間に"],
+ ["hello","ごめんなさい","တောင်းပန်ပါတယ်","タウンパン バーデー",""],
+ ["hello","元気ですか？","နေကောင်းလား","ネーカウン ラー",""],
+ ["hello","元気です","နေကောင်းပါတယ်","ネーカウン バーデー",""],
+ ["hello","はい","ဟုတ်ကဲ့","ホウッケ",""],
+ ["hello","いいえ（ちがいます）","မဟုတ်ဘူး","マホウッ ブー",""],
+ ["hello","またね（行きますね）","သွားတော့မယ်နော်","トワードー メーノー","帰るときのあいさつ"],
+ ["hello","おやすみなさい","ကောင်းသောညပါ","カウンドー ニャーバー",""],
+ ["hello","はじめまして（会えてうれしい）","တွေ့ရတာ ဝမ်းသာပါတယ်","トェヤーダー ワンターバーデー",""],
+ ["work","大丈夫？","အဆင်ပြေလား","アスィンピェー ラー","「問題ない？」の意味。とてもよく使う"],
+ ["work","大丈夫です","အဆင်ပြေပါတယ်","アスィンピェー バーデー",""],
+ ["work","お疲れさま","ပင်ပန်းသွားပြီနော်","ピンパン トワービー ノー","「疲れたでしょう」という気持ち"],
+ ["work","休憩してね","နားပါဦး","ナーバ オウン",""],
+ ["work","がんばって","ကြိုးစားပါ","チョーザー バー",""],
+ ["work","上手！すごい！","တော်တယ်","トーデー","ほめるときに"],
+ ["work","助かったよ、ありがとう","ကူညီပေးလို့ ကျေးဇူးပါ","クーニー ペーロウ チェーズーバー",""],
+ ["work","手伝ってください","ကူညီပါ","クーニー バー",""],
+ ["work","気をつけて","သတိထားပါ","タディ ターバー",""],
+ ["work","ゆっくりでいいよ","ဖြည်းဖြည်းလုပ်ပါ","ピェーピェー ロウッバー",""],
+ ["work","心配しないで","စိတ်မပူပါနဲ့","セイッ マプー バーネ",""],
+ ["work","ご飯食べた？","ထမင်းစားပြီးပြီလား","タミン サーピー ビーラー","ミャンマーでは「元気？」と同じくらいよく聞くあいさつ"],
+ ["work","どこが痛い？","ဘယ်နေရာ နာလဲ","ベーネーヤー ナーレー",""],
+ ["work","痛いですか？","နာလား","ナー ラー",""],
+ ["work","体調が悪い？","နေမကောင်းဘူးလား","ネーマカウン ブーラー",""],
+ ["feel","うれしい","ဝမ်းသာတယ်","ワンター デー",""],
+ ["feel","悲しい","ဝမ်းနည်းတယ်","ワンネー デー",""],
+ ["feel","疲れた","ပင်ပန်းတယ်","ピンパン デー",""],
+ ["feel","おなかすいた","ဗိုက်ဆာတယ်","バイッサー デー",""],
+ ["feel","眠い","အိပ်ချင်တယ်","エイッチン デー",""],
+ ["feel","暑い","ပူတယ်","プー デー",""],
+ ["feel","寒い","အေးတယ်","エー デー",""],
+ ["feel","好き","ကြိုက်တယ်","チャイッ デー",""],
+ ["feel","楽しい","ပျော်တယ်","ピョー デー",""],
+ ["talk","わかりました","နားလည်ပါပြီ","ナーレー バービー",""],
+ ["talk","わかりません","နားမလည်ဘူး","ナーマレー ブー",""],
+ ["talk","もう一度言ってください","ထပ်ပြောပါဦး","タッピョー バオウン",""],
+ ["talk","ゆっくり話してください","ဖြည်းဖြည်းပြောပါ","ピェーピェー ピョーバー",""],
+ ["talk","お名前は？","နာမည် ဘယ်လိုခေါ်လဲ","ナンメー ベーロー コーレー",""],
+ ["talk","おいしい","စားလို့ကောင်းတယ်","サーロウ カウンデー",""],
+ ["talk","いくらですか？","ဘယ်လောက်လဲ","ベーラウッ レー",""],
+ ["talk","どこですか？","ဘယ်မှာလဲ","ベーマー レー",""],
+ ["talk","大丈夫、できます","ရပါတယ်","ヤー バーデー","「OK」「いいですよ」の意味でも使う"],
+ ["num","0","သုည","トウンニャ","数字：၀"],
+ ["num","1","တစ်","ティッ","数字：၁"],
+ ["num","2","နှစ်","ニッ","数字：၂"],
+ ["num","3","သုံး","トウン","数字：၃"],
+ ["num","4","လေး","レー","数字：၄"],
+ ["num","5","ငါး","ンガー","数字：၅"],
+ ["num","6","ခြောက်","チャウッ","数字：၆"],
+ ["num","7","ခုနစ်","クニッ","数字：၇"],
+ ["num","8","ရှစ်","シッ","数字：၈"],
+ ["num","9","ကိုး","コー","数字：၉"],
+ ["num","10","တစ်ဆယ်","タッセー","数字：၁၀"],
+ ["num","100","တစ်ရာ","タヤー","数字：၁၀၀"],
+ ["num","1000","တစ်ထောင်","タタウン","数字：၁၀၀၀"],
+ ["day","月曜日","တနင်္လာ","タニンラー",""],
+ ["day","火曜日","အင်္ဂါ","インガー",""],
+ ["day","水曜日","ဗုဒ္ဓဟူး","ボウッダフー",""],
+ ["day","木曜日","ကြာသပတေး","チャータバデー",""],
+ ["day","金曜日","သောကြာ","タウッチャー",""],
+ ["day","土曜日","စနေ","サネー",""],
+ ["day","日曜日","တနင်္ဂနွေ","タニンガヌェー",""],
+ ["day","今日","ဒီနေ့","ディーネ",""],
+ ["day","明日","မနက်ဖြန်","マネッピャン",""],
+ ["day","昨日","မနေ့က","マネガ",""],
+ ["food","ご飯","ထမင်း","タミン",""],
+ ["food","水","ရေ","イェー",""],
+ ["food","ミルクティー","လက်ဖက်ရည်","ラペッイェー","ミャンマーの甘いミルクティー。大人気！"],
+ ["food","モヒンガー","မုန့်ဟင်းခါး","モンヒンガー","魚スープの麺。ミャンマーの朝ごはんの定番"],
+ ["food","鶏肉","ကြက်သား","チェッター",""],
+ ["food","魚","ငါး","ンガー","数字の「5」と同じ言葉"],
+ ["food","辛い","စပ်တယ်","サッ デー",""],
+ ["food","甘い","ချိုတယ်","チョー デー",""],
+ ["family","お父さん","အဖေ","アペー",""],
+ ["family","お母さん","အမေ","アメー",""],
+ ["family","子ども","ကလေး","カレー",""],
+ ["family","友だち","သူငယ်ချင်း","タンゲーヂン",""],
+ ["family","お兄さん","အစ်ကို","アコー","年上の男性を親しく呼ぶときにも使う"],
+ ["family","お姉さん","အစ်မ","アマ","年上の女性を親しく呼ぶときにも使う"],
+ ["family","弟・妹（年下）","ညီ / ညီမ","ニー／ニーマ","男性から見た弟・妹。女性から見た妹は ညီမ"]
+];
+const CULTURE=[
+ ["名字がない","ミャンマー人には、ふつう<b>名字（家族の名前）がありません</b>。「ウィンウィンテー」のように、全部で1つの名前です。"],
+ ["呼び方","年上の男性には<b>「ウー」</b>、年上の女性には<b>「ドー」</b>、若い男性には<b>「コー」</b>、若い女性には<b>「マ」</b>を名前の前につけると、ていねいです。"],
+ ["頭はさわらない","頭は大切な場所と考えられています。子どもでも、<b>頭をなでるのは控えめに</b>。"],
+ ["仏教の国","人口の多くが仏教徒です。お坊さんはとても尊敬されています。お寺に入るときは<b>くつとくつ下をぬぎます</b>。"],
+ ["水かけ祭り（ダジャン）","4月中ごろはミャンマーのお正月。みんなで水をかけ合ってお祝いします。<b>「ハッピー ダジャン！」</b>と声をかけると喜ばれます。"],
+ ["「ご飯食べた？」","ミャンマーでは「ご飯食べた？（タミン サーピー ビーラー）」が、<b>「元気？」と同じようなあいさつ</b>です。"]
+];
+const $=s=>document.querySelector(s),main=$("#main"),back=$("#back");
+let fav=new Set(JSON.parse(localStorage.getItem("mm-fav")||"[]"));
+const saveFav=()=>localStorage.setItem("mm-fav",JSON.stringify([...fav]));
+const id=w=>w[1]+"|"+w[2];
+const esc=s=>s;
+function card(w){const f=fav.has(id(w));return`<div class="card"><div class="main"><div class="jp">${w[1]}</div><div class="my mm">${w[2]}</div><div class="kana">${w[3]}</div>${w[4]?`<div class="note">💡 ${w[4]}</div>`:""}</div><button class="fav${f?" on":""}" data-id="${id(w)}">⭐</button></div>`}
+function bindFav(){main.querySelectorAll(".fav").forEach(b=>b.onclick=()=>{const k=b.dataset.id;fav.has(k)?fav.delete(k):fav.add(k);saveFav();b.classList.toggle("on")})}
+function setTitle(t){$("#ttl").innerHTML=t}
+function sub(on){document.body.classList.toggle("sub",on)}
+function todays(){const d=new Date();const n=(d.getFullYear()*372+d.getMonth()*31+d.getDate());const pool=W.filter(w=>w[0]!=="num"&&w[0]!=="day");return pool[n%pool.length]}
+function home(){sub(false);setTitle('やさしいミャンマー語<small>日本人のための ミャンマー語入門</small>');
+ const t=todays();
+ main.innerHTML=`<div class="hero"><div style="font-size:12px;opacity:.85">☀️ 今日のひとこと</div><div class="big mm">${t[2]}</div><div class="k"><b>${t[3]}</b>　${t[1]}</div>${t[4]?`<div class="t">💡 ${t[4]}</div>`:""}</div>
+ <input class="search" id="q" placeholder="🔍 日本語でさがす（例：ありがとう）">
+ <div id="res"></div>
+ <div class="grid" id="grid">
+  <button class="cat wide q-btn" data-go="quiz"><span class="e">🎯</span><span>クイズで覚える<span class="n" style="color:#6b5a00">4択でチャレンジ</span></span></button>
+  ${CATS.map(c=>`<button class="cat" data-go="cat:${c[0]}"><span class="e">${c[1]}</span>${c[2]}<span class="n">${W.filter(w=>w[0]===c[0]).length}語</span></button>`).join("")}
+  <button class="cat" data-go="fav"><span class="e">⭐</span>お気に入り<span class="n">${fav.size}語</span></button>
+  <button class="cat" data-go="culture"><span class="e">🇲🇲</span>ミャンマー文化メモ<span class="n">知っておくと仲よくなれる</span></button>
+ </div>`;
+ main.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+ const q=$("#q"),res=$("#res"),grid=$("#grid");
+ q.oninput=()=>{const s=q.value.trim();if(!s){res.innerHTML="";grid.style.display="";return}grid.style.display="none";const h=W.filter(w=>(w[1]+w[3]+w[2]+w[4]).includes(s));res.innerHTML=h.length?h.map(card).join(""):`<div class="empty">見つかりませんでした</div>`;bindFav()};
+ window.scrollTo(0,0)}
+function go(r){history.pushState({r},"");route(r)}
+function route(r){sub(true);window.scrollTo(0,0);
+ if(r.startsWith("cat:")){const c=CATS.find(x=>x[0]===r.slice(4));listView(c[1]+" "+c[2],W.filter(w=>w[0]===c[0]))}
+ else if(r==="fav"){listView("⭐ お気に入り",W.filter(w=>fav.has(id(w))),"まだありません。単語の⭐を押すとここに集まります。")}
+ else if(r==="quiz")quiz();
+ else if(r==="culture"){setTitle("🇲🇲 ミャンマー文化メモ");main.innerHTML=CULTURE.map(c=>`<div class="culture"><b>■ ${c[0]}</b><br>${c[1]}</div>`).join("")}
+}
+function listView(title,list,emptyMsg){setTitle(title);let mode="list",i=0,show=false;
+ const draw=()=>{const tabs=`<div class="tabs"><button class="${mode==="list"?"on":""}" data-m="list">📋 一覧</button><button class="${mode==="flash"?"on":""}" data-m="flash">🃏 カード</button></div>`;
+  if(!list.length){main.innerHTML=`<div class="empty">${emptyMsg||"ありません"}</div>`;return}
+  if(mode==="list"){main.innerHTML=tabs+list.map(card).join("");bindFav()}
+  else{const w=list[i];main.innerHTML=tabs+`<div class="flash" id="fl">${show?`<div class="my mm">${w[2]}</div><div class="kana">${w[3]}</div><div style="font-size:16px;color:#888;margin-top:8px">${w[1]}</div>${w[4]?`<div class="note" style="margin-top:10px;font-size:13px;color:#8a7d55">💡 ${w[4]}</div>`:""}`:`<div class="jp">${w[1]}</div><div class="hint">ミャンマー語で何と言う？<br>タップして答えを見る</div>`}</div>
+   <div class="nav"><button id="pv">← 前へ</button><button class="pri" id="nx">次へ →</button></div><div style="text-align:center;color:#999;font-size:13px;margin-top:8px">${i+1} / ${list.length}</div>`;
+   $("#fl").onclick=()=>{show=!show;draw()};$("#pv").onclick=()=>{i=(i-1+list.length)%list.length;show=false;draw()};$("#nx").onclick=()=>{i=(i+1)%list.length;show=false;draw()}}
+  main.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;i=0;show=false;draw()})};
+ draw()}
+function quiz(){setTitle("🎯 クイズ");let n=0,ok=0;const pool=W.slice();
+ const next=()=>{if(n>=10){const msg=ok>=9?"すばらしい！🎉":ok>=6?"よくできました！👏":"もう一回やってみよう💪";
+   main.innerHTML=`<div class="qbox" style="text-align:center"><div style="font-size:60px">${ok>=9?"🏆":ok>=6?"⭐":"🌱"}</div><div class="qq">${ok} / 10 正解</div><div style="font-size:18px">${msg}</div><div class="nav"><button class="pri" id="again">もう一回</button><button id="hm">ホームへ</button></div></div>`;$("#again").onclick=quiz;$("#hm").onclick=()=>history.back();return}
+  const w=pool[Math.floor(Math.random()*pool.length)];const rev=Math.random()<.5;
+  const others=W.filter(x=>x!==w&&x[0]===w[0]).sort(()=>Math.random()-.5).slice(0,3);
+  while(others.length<3){const x=W[Math.floor(Math.random()*W.length)];if(x!==w&&!others.includes(x))others.push(x)}
+  const opts=[w,...others].sort(()=>Math.random()-.5);
+  main.innerHTML=`<div class="score"><span>第${n+1}問 / 10</span><span>正解 ${ok}</span></div><div class="qbox"><div class="qt">${rev?"この言葉の意味は？":"ミャンマー語で何と言う？"}</div><div class="qq ${rev?"mm":""}">${rev?w[2]+`<div style="font-size:16px;color:#2a9d63">${w[3]}</div>`:w[1]}</div>
+   ${opts.map((o,k)=>`<button class="opt" data-k="${k}">${rev?o[1]:`<span class="mm">${o[2]}</span><small>${o[3]}</small>`}</button>`).join("")}</div>`;
+  main.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(main.querySelector(".opt.ok"))return;const pick=opts[+b.dataset.k];main.querySelectorAll(".opt").forEach((x,k)=>{if(opts[k]===w)x.classList.add("ok")});if(pick===w)ok++;else b.classList.add("ng");n++;setTimeout(next,pick===w?700:1500)})};
+ next()}
+back.onclick=()=>history.back();
+window.onpopstate=e=>{e.state&&e.state.r?route(e.state.r):home()};
+home();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+</body>
+</html>

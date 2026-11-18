@@ -581,16 +581,18 @@ const recPut=(k,v)=>dbp.then(db=>db&&new Promise(r=>{const t=db.transaction("rec
 const recDel=k=>dbp.then(db=>db&&new Promise(r=>{const t=db.transaction("rec","readwrite");t.objectStore("rec").delete(k);t.oncomplete=r}));
 const recAll=()=>dbp.then(db=>db?new Promise(r=>{const out={};const c=db.transaction("rec").objectStore("rec").openCursor();c.onsuccess=e=>{const cur=e.target.result;if(cur){out[cur.key]=cur.value;cur.continue()}else r(out)}}):{});
 function toast2(t){const e=$("#toast2");e.textContent=t;e.style.display="block";clearTimeout(toast2.h);toast2.h=setTimeout(()=>e.style.display="none",1600)}
-let curAudio=null;
-async function speak(w){try{if(curAudio){curAudio.pause();curAudio=null}speechSynthesis&&speechSynthesis.cancel()}catch(e){}
- const k=hkey(w);const mine=await recGet(k);
- if(mine){curAudio=new Audio(URL.createObjectURL(mine));curAudio.play();return}
- if(PUB[k]){curAudio=new Audio("audio/"+PUB[k]);curAudio.play().catch(()=>{});return}
- try{const vs=speechSynthesis.getVoices();const my=vs.find(v=>/^my/i.test(v.lang));
+let curAudio=null;const MINE={};
+recAll().then(o=>{for(const k in o)MINE[k]=URL.createObjectURL(o[k])});
+let VOICES=[];const loadV=()=>{try{VOICES=speechSynthesis.getVoices()}catch(e){}};loadV();try{speechSynthesis.onvoiceschanged=loadV}catch(e){}
+function speak(w){ // 同期で再生（iPhoneはタップの瞬間でないと音が出ない）
+ try{if(curAudio){curAudio.pause();curAudio=null}if(window.speechSynthesis)speechSynthesis.cancel()}catch(e){}
+ const k=hkey(w);const src=MINE[k]||(PUB[k]?"audio/"+PUB[k]:null);
+ if(src){curAudio=new Audio(src);curAudio.play().catch(()=>toast2("音が出ませんでした。マナーモードと音量を確認してください"));return}
+ try{if(!VOICES.length)loadV();const my=VOICES.find(v=>/^my/i.test(v.lang));
   const u=new SpeechSynthesisUtterance(my?w[2]:w[3].replace(/[〜／]/g," "));
-  if(my){u.voice=my;u.lang=my.lang}else{u.lang="ja-JP";u.rate=.85;toast2("🔈 カタカナ読みの音です（録音はまだありません）")}
-  speechSynthesis.speak(u)}catch(e){toast2("この端末では音が出せません")}}
-function bindSpk(list){main.querySelectorAll(".spk").forEach(b=>{const w=list?list[+b.dataset.i]:W[+b.dataset.w];b.onclick=e=>{e.stopPropagation();speak(w)};const k=hkey(w);if(PUB[k])b.classList.add("has");else recGet(k).then(v=>{if(v)b.classList.add("has")})})}
+  if(my){u.voice=my;u.lang=my.lang}else{const ja=VOICES.find(v=>/^ja/i.test(v.lang));if(ja)u.voice=ja;u.lang="ja-JP";u.rate=.85;toast2("🔈 カタカナ読みの音です（録音はまだありません）")}
+  u.volume=1;speechSynthesis.speak(u)}catch(e){toast2("この端末では音が出せません")}}
+function bindSpk(list){main.querySelectorAll(".spk").forEach(b=>{const w=list?list[+b.dataset.i]:W[+b.dataset.w];b.onclick=e=>{e.stopPropagation();speak(w)};const k=hkey(w);if(PUB[k]||MINE[k])b.classList.add("has")})}
 // ===== 録音モード（作者用） =====
 function recMode(){setTitle("🎙 録音モード");let i=+(localStorage.getItem("mm-rec-i")||0),mr=null,chunks=[],stream=null;
  const draw=async()=>{const w=W[i];const has=await recGet(hkey(w));const all=await recAll();const n=Object.keys(all).length;
@@ -603,7 +605,7 @@ function recMode(){setTitle("🎙 録音モード");let i=+(localStorage.getItem
    <div class="nav"><button id="nu">⏭ まだ録音していない単語へ</button></div>
    <div class="nav"><button class="pri" id="ex" style="background:linear-gradient(135deg,#d9a521,#b8860b)">📤 録音を書き出す（${n}語）</button></div>
    <div style="font-size:12px;color:#999;margin-top:10px;line-height:1.6">録音はこのスマホの中だけに保存されます。<br>書き出したファイルをClaudeに送ると、アプリに入れてみんなが聞けるようになります。</div></div>`;
-  $("#rb").onclick=toggle;$("#rp").onclick=()=>speak(w);$("#rd").onclick=async()=>{await recDel(hkey(w));draw()};
+  $("#rb").onclick=toggle;$("#rp").onclick=()=>speak(w);$("#rd").onclick=async()=>{await recDel(hkey(w));delete MINE[hkey(w)];draw()};
   $("#pv").onclick=()=>{i=(i-1+W.length)%W.length;save();draw()};$("#nx").onclick=()=>{i=(i+1)%W.length;save();draw()};
   $("#nu").onclick=async()=>{const all=await recAll();for(let k=1;k<=W.length;k++){const j=(i+k)%W.length;if(!all[hkey(W[j])]){i=j;save();return draw()}}toast2("全部録音ずみです🎉")};
   $("#ex").onclick=exportRec};
@@ -614,7 +616,7 @@ function recMode(){setTitle("🎙 録音モード");let i=+(localStorage.getItem
   const type=MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported("audio/mp4")?"audio/mp4":"";
   mr=new MediaRecorder(stream,type?{mimeType:type}:undefined);chunks=[];
   mr.ondataavailable=e=>chunks.push(e.data);
-  mr.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:mr.mimeType||"audio/mp4"});await recPut(hkey(W[i]),blob);toast2("✅ 保存しました");speak(W[i]);setTimeout(()=>{i=(i+1)%W.length;save();draw()},1200)};
+  mr.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:mr.mimeType||"audio/mp4"});await recPut(hkey(W[i]),blob);MINE[hkey(W[i])]=URL.createObjectURL(blob);toast2("✅ 保存しました");speak(W[i]);setTimeout(()=>{i=(i+1)%W.length;save();draw()},1200)};
   mr.start();b.classList.add("on");b.textContent="■";$("#rs").textContent="録音中… もう一度押すと止まります"}
  async function exportRec(){const all=await recAll();const keys=Object.keys(all);if(!keys.length){toast2("まだ録音がありません");return}
   toast2("書き出し中…");const out={};for(const k of keys){out[k]=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(all[k])})}

@@ -77,17 +77,24 @@ const proj=(x,y,z)=>{const s=F/z;return{x:W/2+x*s,y:HOR+(CAMH-y)*s,s}};
 // ---------- sound
 let AC=null,sound=localStorage.getItem("run-snd")!=="0";
 document.getElementById("snd").textContent=sound?"🔊":"🔇";
-function beep(f,d=.08,type="square",v=.06,slide=0){if(!sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,AC.currentTime);if(slide)o.frequency.exponentialRampToValueAtTime(slide,AC.currentTime+d);g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
-const sfx={coin:()=>{beep(988,.06,"square",.05);setTimeout(()=>beep(1319,.09,"square",.05),55)},jump:()=>beep(300,.18,"sine",.08,700),slide:()=>beep(400,.15,"triangle",.07,150),move:()=>beep(520,.04,"sine",.04),hit:()=>{beep(200,.35,"sawtooth",.1,50)}};
+function unlock(){try{if(navigator.audioSession)navigator.audioSession.type="playback"}catch(e){}
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume();const b=AC.createBuffer(1,1,22050),src=AC.createBufferSource();src.buffer=b;src.connect(AC.destination);src.start(0)}catch(e){}
+  try{if(window.speechSynthesis&&!unlock.sp){const u=new SpeechSynthesisUtterance(" ");u.volume=0;speechSynthesis.speak(u);unlock.sp=1}}catch(e){}}
+["touchend","click","keydown"].forEach(ev=>addEventListener(ev,unlock,{passive:true}));
+let jaVoice=null;function pickVoice(){const vs=speechSynthesis.getVoices().filter(v=>/^ja/i.test(v.lang));jaVoice=vs.find(v=>/Kyoko|O-ren|Google/i.test(v.name))||vs[0]||null}
+try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
+function say(t){if(!sound)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ja-JP";if(jaVoice)u.voice=jaVoice;u.rate=1.05;u.pitch=1.35;u.volume=1;speechSynthesis.speak(u)}catch(e){}}
+function beep(f,d=.08,type="square",v=.06,slide=0){if(!sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,AC.currentTime);if(slide)o.frequency.exponentialRampToValueAtTime(slide,AC.currentTime+d);g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+const sfx={coin:()=>{beep(988,.07,"square",.09);setTimeout(()=>beep(1319,.1,"square",.09),55)},jump:()=>beep(300,.2,"sine",.18,700),slide:()=>beep(400,.18,"triangle",.16,150),move:()=>beep(520,.05,"sine",.1),hit:()=>{beep(200,.4,"sawtooth",.18,50)}};
 let bgmT=null,bgmStep=0;const BGM=[0,null,7,null,5,null,7,12,0,null,7,null,3,5,7,null];
-function bgm(on){clearInterval(bgmT);if(!on||!sound)return;bgmT=setInterval(()=>{const n=BGM[bgmStep++%16];if(n!==null)beep(220*Math.pow(2,n/12),.12,"triangle",.035);if(bgmStep%4===1)beep(110,.1,"sine",.05)},150)}
+function bgm(on){clearInterval(bgmT);if(!on||!sound)return;bgmT=setInterval(()=>{const n=BGM[bgmStep++%16];if(n!==null)beep(220*Math.pow(2,n/12),.12,"triangle",.07);if(bgmStep%4===1)beep(110,.1,"sine",.1)},150)}
 document.getElementById("snd").onclick=e=>{sound=!sound;localStorage.setItem("run-snd",sound?"1":"0");e.target.textContent=sound?"🔊":"🔇";bgm(state==="play")};
 
 // ---------- characters
 const CH={aito:{name:"愛翔",body:"#3a86ff",pack:"#ffbe0b",pack2:"#fff3c4",skin:"#ffcf99",hat:"#023e8a",leg:"#1d3557",type:"cap"},
           miya:{name:"みやちゃん",body:"#ff70a6",pack:"#9b5de5",pack2:"#e9d8fd",skin:"#ffd3a8",hat:"#ff006e",leg:"#7b2c50",type:"ribbon",hair:"#4a2c17"}};
 let who=localStorage.getItem("run-who")||"aito";
-function cheer(t){const e=document.getElementById("cheer");e.textContent=t;e.classList.add("on");clearTimeout(cheer.h);cheer.h=setTimeout(()=>e.classList.remove("on"),1400)}
+function cheer(t){say(t.replace(/[🎉👑🌟！]/g," "));const e=document.getElementById("cheer");e.textContent=t;e.classList.add("on");clearTimeout(cheer.h);cheer.h=setTimeout(()=>e.classList.remove("on"),1400)}
 const CHEERS=[[100,"がんばれ {n}！"],[250,"{n} はやい！"],[500,"すごいよ {n}！ 🎉"],[800,"{n} 天才！"],[1200,"{n} 最強！ 👑"],[2000,"{n} 伝説！！ 🌟"]];
 let cheerI=0;
 // ---------- game state
@@ -111,13 +118,13 @@ function spawn(){
   else coinLine(lanes[0],z-6,8);
   spawnZ+=Math.max(11,17-lvl*6)+Math.random()*4}
 function coinLine(l,z0,n){for(let i=0;i<n;i++)objs.push({t:"coin",lane:l,z:z0+i*1.5,y:.6})}
-function start(){reset();while(spawnZ<110)spawn();state="play";show("hud");bgm(true);last=performance.now()}
+function start(){unlock();reset();say(CH[who].name+"、よーい、どん！");while(spawnZ<110)spawn();state="play";show("hud");bgm(true);last=performance.now()}
 function show(id){for(const x of["start","over","pause"])document.getElementById(x).style.display=x===id?"flex":"none";document.getElementById("hud").style.display=(id==="hud"||id==="pause")?"flex":"none"}
 function gameOver(){state="over";sfx.hit();bgm(false);shake=.4;const m=Math.floor(dist);const nb=m>best;if(nb){best=m;localStorage.setItem("run-best-"+who,best)}
-  setTimeout(()=>{document.getElementById("fs").textContent=m+" m";document.querySelector("#over p").textContent=CH[who].name+"、"+(m>=500?"すごい！":m>=150?"よくがんばった！":"おしい！");document.getElementById("fc").textContent=`🪙 ${coins}`;document.getElementById("fb").textContent=nb?"🎉 "+CH[who].name+"のベスト記録！":`${CH[who].name}のベスト：${best} m`;setWho(who);document.getElementById("again").textContent="もう一回 ↻";show("over")},700)}
+  setTimeout(()=>{document.getElementById("fs").textContent=m+" m";const msg=CH[who].name+"、"+(m>=500?"すごい！":m>=150?"よくがんばった！":"おしい！");document.querySelector("#over p").textContent=msg;say(msg+(nb?" ベスト記録だよ！":""));document.getElementById("fc").textContent=`🪙 ${coins}`;document.getElementById("fb").textContent=nb?"🎉 "+CH[who].name+"のベスト記録！":`${CH[who].name}のベスト：${best} m`;setWho(who);document.getElementById("again").textContent="もう一回 ↻";show("over")},700)}
 document.getElementById("go").onclick=start;document.getElementById("again").onclick=start;
 const menuBtn=document.createElement("button");menuBtn.textContent="キャラをかえる";menuBtn.style.cssText="background:#ffffff33;color:#fff;box-shadow:none;font-size:16px;padding:10px 24px;margin-top:14px";menuBtn.onclick=()=>{state="menu";show("start")};document.getElementById("over").appendChild(menuBtn);
-document.querySelectorAll(".pick button").forEach(b=>b.onclick=()=>{setWho(b.dataset.c);sfx.move()});
+document.querySelectorAll(".pick button").forEach(b=>b.onclick=()=>{unlock();setWho(b.dataset.c);sfx.move();say(CH[b.dataset.c].name)});
 document.getElementById("pz").onclick=()=>{if(state==="play"){state="pause";bgm(false);show("pause")}};
 document.getElementById("resume").onclick=()=>{state="play";show("hud");bgm(true);last=performance.now()};
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&state==="play"){state="pause";bgm(false);show("pause")}});

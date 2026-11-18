@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Win 仕事さがし ガイド</title>
+<meta name="description" content="外国人のための仕事さがし。ハローワーク・福祉人材センター、求人票チェック、面接の日本語、求人メモ。日本語とミャンマー語。無料。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Win 仕事さがし ガイド">
+<meta property="og:description" content="仕事のさがし方・求人票チェック・面接の日本語・求人メモ。日本語とミャンマー語。無料。">
+<meta property="og:image" content="https://win-wwh.github.io/win/jobs/icon-512.png">
+<meta property="og:url" content="https://win-wwh.github.io/win/jobs/">
+<meta name="twitter:card" content="summary">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="仕事さがし">
+<meta name="theme-color" content="#d9771f">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+Myanmar:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#fbf6ef;color:#2b2118;font-family:"Noto Sans JP","Noto Sans Myanmar",system-ui,sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:620px;margin:0 auto;padding:14px 14px 48px}
+header{display:flex;align-items:center;gap:10px;margin:4px 0 12px}
+header h1{font-size:20px;margin:0;flex:1;line-height:1.3}
+header h1 small{display:block;font-size:12px;color:#7a6a5b;font-weight:400}
+.sub header h1{font-size:15px}.sub header h1 small{display:none}
+.back{border:0;background:#fff;border-radius:12px;width:42px;height:42px;font-size:20px;box-shadow:0 1px 3px #0002;display:none}
+.lang{display:flex;background:#f0e3d2;border-radius:12px;padding:3px}
+.lang button{border:0;background:none;padding:7px 10px;border-radius:9px;font-size:13px;font-weight:700;color:#7a5a3a}
+.lang button.on{background:#fff;color:#b35c12;box-shadow:0 1px 2px #0002}
+.mm{font-family:"Noto Sans Myanmar",sans-serif;line-height:1.9}
+.hide-jp .jp{display:none}.hide-mm .mmonly{display:none}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cat{border:0;background:#fff;border-radius:16px;padding:14px 10px;text-align:center;box-shadow:0 1px 4px #0001;font-size:15px;font-weight:700;color:#2b2118}
+.cat .e{font-size:34px;display:block;margin-bottom:4px}
+.cat .m{display:block;font-size:12px;font-weight:400;color:#7a6a5b}
+.cat.big{grid-column:1/-1;background:#d9771f;color:#fff}.cat.big .m{color:#fff}
+.item{background:#fff;border-radius:14px;margin-bottom:10px;box-shadow:0 1px 4px #0001;overflow:hidden}
+.item>button{width:100%;border:0;background:none;text-align:left;padding:14px 40px 14px 14px;font-size:16px;font-weight:700;color:#2b2118;position:relative}
+.item>button::after{content:"＋";position:absolute;right:14px;top:14px;color:#d9771f}
+.item.open>button::after{content:"－"}
+.item>button .m{display:block;font-size:13px;font-weight:400;color:#7a6a5b;margin-top:2px}
+.body{display:none;padding:0 14px 14px;font-size:15px;line-height:1.75}
+.item.open .body{display:block}
+.body ul{margin:4px 0;padding-left:20px}.body li{margin:3px 0}
+.mmb{background:#fbf3e8;border-radius:10px;padding:8px 12px;margin-top:8px;font-size:14px}
+.tel{display:flex;align-items:center;gap:10px;background:#e9f5ee;border-radius:12px;padding:10px 12px;margin:8px 0;text-decoration:none;color:#155d36}
+.tel b{font-size:18px}.tel span{font-size:12px;color:#3b6b50;display:block}
+.links a{display:inline-block;margin:6px 6px 0 0;padding:7px 11px;border-radius:9px;background:#f6e6d3;color:#9a4d0c;font-size:13px;text-decoration:none;font-weight:700}
+.chk{display:flex;gap:10px;align-items:flex-start;background:#fff;border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px #0001}
+.chk input{width:24px;height:24px;flex:none;accent-color:#2e8b57;margin-top:2px}
+.chk.bad{border-left:5px solid #c0392b}
+.chk .m{display:block;font-size:13px;color:#7a6a5b}
+.score{position:sticky;top:0;background:#fbf6ef;padding:8px 0;font-weight:700;z-index:2}
+.bar{height:10px;background:#eee2d3;border-radius:6px;overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;background:#2e8b57;width:0;transition:.3s}
+.ph{background:#fff;border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 1px 3px #0001;display:flex;gap:10px;align-items:center}
+.ph div{flex:1}.ph .jpL{font-size:16px;font-weight:700}.ph .k{font-size:12px;color:#8a7a6a}
+.ph button{border:0;background:#f6e6d3;border-radius:50%;width:44px;height:44px;font-size:20px;flex:none}
+h3{font-size:15px;margin:16px 0 8px;color:#9a4d0c}
+form.memo{background:#fff;border-radius:14px;padding:12px;box-shadow:0 1px 4px #0001;margin-bottom:12px}
+form.memo input,form.memo select,form.memo textarea{width:100%;padding:10px;border:1px solid #e0d2c0;border-radius:10px;font-size:16px;margin-bottom:8px;font-family:inherit;background:#fff}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{border:0;background:#d9771f;color:#fff;border-radius:12px;padding:12px;font-size:16px;font-weight:700;width:100%}
+.job{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 4px #0001}
+.job b{font-size:16px}.job .w{float:right;font-weight:700}
+.job .w.low{color:#c0392b}
+.job .st{display:inline-block;font-size:12px;padding:2px 8px;border-radius:8px;background:#f0e3d2;margin:4px 6px 0 0}
+.job .del{float:right;border:0;background:none;color:#a99;font-size:13px}
+.note{font-size:12px;color:#7a6a5b;margin-top:18px;line-height:1.7;background:#fff;border-radius:12px;padding:10px 12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <button class="back" id="back" aria-label="もどる">‹</button>
+  <h1>仕事さがし ガイド<small class="mm">အလုပ်ရှာ လမ်းညွှန်</small></h1>
+  <div class="lang"><button data-l="both" class="on">両方</button><button data-l="jp">日本語</button><button data-l="mm">မြန်မာ</button></div>
+</header>
+<main id="main"></main>
+<div class="note">⚠️ 一般的な情報です。最新の情報は公式サイトや窓口で確認してください。（2026年11月）
+<div class="mm">⚠️ ယေဘုယျ အချက်အလက်ပါ။ နောက်ဆုံး အချက်အလက်ကို တရားဝင် ဝက်ဘ်ဆိုက် / ရုံးမှာ စစ်ပါ။</div></div>
+</div>
+<script>
+const MINW=1177; // 2026年度 全国加重平均（目安）
+const WHERE=[
+ {jp:"ハローワーク（無料・国）",mm:"Hello Work (အခမဲ့ / အစိုးရ)",
+  b:["国（厚生労働省）の仕事紹介所。<b>無料</b>です。全国に500か所以上あります。","在留カードを持って行き、「求職登録」をします。インターネットでも求人を見られます。","通訳がいるハローワークもあります。"],
+  m:"အစိုးရ အလုပ်အကိုင် ရှာဖွေရေး ရုံး။ <b>အခမဲ့</b>။ တစ်နိုင်ငံလုံး ၅၀၀ ကျော် ရှိပါတယ်။ နေထိုင်ခွင့်ကတ် ယူသွားပြီး မှတ်ပုံတင်ပါ။ အင်တာနက်မှာလည်း ကြည့်နိုင်ပါတယ်။ စကားပြန် ရှိတဲ့ နေရာလည်း ရှိပါတယ်။",
+  l:[["ハローワーク求人検索","https://www.hellowork.mhlw.go.jp/"],["近くのハローワーク","https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/hellowork.html"]]},
+ {jp:"外国人雇用サービスセンター",mm:"နိုင်ငံခြားသား အလုပ်အကိုင် ဝန်ဆောင်မှု စင်တာ",
+  b:["外国人のためのハローワークです。東京・名古屋・大阪・福岡にあります。","東京は四谷のFRESC（外国人在留支援センター）の中にあります。"],
+  m:"နိုင်ငံခြားသားများအတွက် Hello Work။ တိုကျို၊ နာဂိုယာ၊ အိုဆာကာ၊ ဖူကူအိုကာ မှာ ရှိပါတယ်။",
+  t:[["0570-011000","東京外国人雇用サービスセンター（FRESC）","平日9〜17時"],["052-855-3770","名古屋外国人雇用サービスセンター",""],["06-7709-9465","大阪外国人雇用サービスセンター",""],["092-716-8608","福岡外国人雇用サービスセンター",""]]},
+ {jp:"福祉人材センター（介護の仕事・無料）",mm:"လူမှုဖူလုံရေး လူ့စွမ်းအား စင်တာ (သူနာပြု အလုပ် / အခမဲ့)",
+  b:["介護・福祉の仕事を<b>無料</b>で紹介してくれます。各都道府県に1か所あります。","サイト「福祉のお仕事」で、全国の介護の求人を検索できます。スマホで登録できます。","応募するときは、その地域のセンターに連絡します。"],
+  m:"သူနာပြု / လူမှုဖူလုံရေး အလုပ်ကို <b>အခမဲ့</b> ရှာပေးပါတယ်။ ခရိုင်တိုင်း ၁ ခု ရှိပါတယ်။ “Fukushi no Oshigoto” ဆိုက်မှာ တစ်နိုင်ငံလုံးက အလုပ်တွေ ရှာနိုင်ပါတယ်။",
+  l:[["福祉のお仕事","https://www.fukushi-work.jp/"]]},
+ {jp:"求人サイト・人材会社・友だちの紹介",mm:"အလုပ်ရှာ ဆိုက် / အေဂျင်စီ / သူငယ်ချင်း",
+  b:["民間の求人サイトや人材会社も使えます。","仕事をさがす人から<b>紹介料をとる</b>会社は、ふつうありません。お金を請求されたら注意！","SNSの「高い給料・すぐ働ける」は、ビザに合わない仕事や詐欺のことがあります。"],
+  m:"ပုဂ္ဂလိက ဆိုက်/ကုမ္ပဏီ သုံးနိုင်ပါတယ်။ အလုပ်ရှာသူထံက <b>ကြေး တောင်းတာ</b> ပုံမှန် မဟုတ်ပါ – သတိထားပါ။ SNS က “လစာများ၊ ချက်ချင်းလုပ်” ဆိုတာ ဗီဇာနဲ့ မကိုက်တဲ့ အလုပ် / လိမ်လည်မှု ဖြစ်နိုင်ပါတယ်။"}
+];
+const VISA=[
+ {jp:"日本人の配偶者等・永住者・定住者",mm:"အိမ်ထောင်ဖက် / အမြဲနေ / Teijusha",
+  b:["どんな仕事もできます。アルバイト・パート・正社員、どれでもOK。"],
+  m:"ဘယ်အလုပ်မဆို လုပ်နိုင်ပါတယ်။"},
+ {jp:"特定技能（介護）",mm:"Tokutei Ginou (သူနာပြု)",
+  b:["介護の仕事だけできます。会社を変えることはできますが、ビザの手続きが必要です。","新しい会社で働き始める前に、入管の許可が必要なことがあります。登録支援機関や入管に確認しましょう。","2025年4月から、条件つきで訪問介護などもできるようになりました。"],
+  m:"သူနာပြု အလုပ်ပဲ လုပ်ခွင့်ရှိပါတယ်။ ကုမ္ပဏီ ပြောင်းနိုင်ပေမယ့် ဗီဇာ လုပ်ငန်းစဉ် လိုပါတယ်။ ကုမ္ပဏီသစ်မှာ မစခင် လဝက ခွင့်ပြုချက် လိုနိုင်ပါတယ်။ ၂၀၂၅ ဧပြီ မှစ၍ အခြေအနေနဲ့ အိမ်သွားပြုစုမှုလည်း လုပ်နိုင်ပါပြီ။"},
+ {jp:"留学・家族滞在",mm:"ကျောင်းသား / မိသားစု",
+  b:["「資格外活動許可」があれば、原則<b>週28時間まで</b>アルバイトできます。","風俗営業などの仕事はできません。"],
+  m:"“ခွင့်ပြုချက်” ရှိရင် တစ်ပတ် <b>၂၈ နာရီ အထိ</b> အချိန်ပိုင်း လုပ်နိုင်ပါတယ်။"},
+ {jp:"わからないとき",mm:"မသေချာရင်",
+  b:["在留カードの裏・表を見て、入管のインフォメーションセンターに聞きましょう。"],
+  m:"နေထိုင်ခွင့်ကတ်ကို ကြည့်ပြီး လဝက ကို မေးပါ။",
+  t:[["0570-013904","外国人在留総合インフォメーションセンター","平日"]]}
+];
+const KIND=[
+ ["特別養護老人ホーム（特養）","အသက်ကြီးရွယ်သူ ဂေဟာ (Tokuyou)","介護が重い人が住む施設。夜勤あり。","ပြုစုမှု အများကြီး လိုသူများ နေထိုင်ရာ။ ညဆိုင်း ရှိ။"],
+ ["介護老人保健施設（老健）","Rouken","病院から家に帰るためのリハビリ施設。看護師も多い。","ဆေးရုံမှ အိမ်ပြန်ရန် ပြန်လည်ထူထောင်ရေး။"],
+ ["グループホーム","Group Home","認知症の人が9人くらいで生活。料理なども手伝う。","သူငယ်ပြန်ရောဂါ ရှိသူ ၉ ယောက်ခန့် အတူနေ။"],
+ ["デイサービス","Day Service","昼だけ来る施設。夜勤なし。お風呂・レクリエーション。","နေ့ခင်းပဲ လာသော နေရာ။ ညဆိုင်း မရှိ။"],
+ ["有料老人ホーム","Yuuryou Roujin Home","民間の施設。施設によってちがう。","ပုဂ္ဂလိက ဂေဟာ။"],
+ ["訪問介護","Houmon Kaigo","お客さんの家に行く。一人で行くので日本語力が大切。","ဧည့်သည် အိမ်ကို သွားပြုစု။ ဂျပန်စကား အရေးကြီး။"]
+];
+const CHECK=[
+ ["時給（月給）が最低賃金以上","လစာ ≥ အနိမ့်ဆုံးလုပ်ခ",0],
+ ["社会保険（健康保険・年金）・雇用保険に入れる","လူမှုဖူလုံရေး အာမခံ ဝင်ခွင့်",0],
+ ["働く時間・休みの日・夜勤の回数が書いてある","အချိန်၊ ပိတ်ရက်၊ ညဆိုင်း အကြိမ် ရေးထား",0],
+ ["夜勤手当・残業代がある","ညဆိုင်းကြေး / အချိန်ပိုခ ရှိ",0],
+ ["交通費が出る","ခရီးစရိတ် ရ",0],
+ ["寮・家賃・食事代の金額がわかる","အဆောင်ခ / ထမင်းခ သိရ",0],
+ ["自分のビザで働ける仕事","ကိုယ့်ဗီဇာနဲ့ လုပ်ခွင့်ရှိ",0],
+ ["働く前に書面の契約（労働条件通知書）をもらえる","စာချုပ် စာရွက် ရ",0],
+ ["お金（紹介料・保証金）を払わなくていい","ကြေး မပေးရ",1],
+ ["パスポート・在留カードを会社に預けなくていい","ပတ်စပို့/ကတ် မအပ်ရ",1]
+];
+const PH=[
+ ["電話","ဖုန်း",[
+  ["求人を見て、お電話しました。","きゅうじんを みて、おでんわ しました。","အလုပ်ခေါ်စာ မြင်လို့ ဖုန်းဆက်တာပါ။"],
+  ["介護職の募集は、まだありますか。","かいごしょくの ぼしゅうは、まだ ありますか。","သူနာပြု အလုပ်ခေါ်တာ ရှိသေးလား။"],
+  ["面接はいつですか。","めんせつは いつですか。","အင်တာဗျူး ဘယ်တော့လဲ။"],
+  ["もう一度、ゆっくり言っていただけますか。","もういちど、ゆっくり いって いただけますか。","နောက်တစ်ခါ ဖြည်းဖြည်း ပြောပေးပါ။"]]],
+ ["面接","အင်တာဗျူး",[
+  ["本日はよろしくお願いいたします。","ほんじつは よろしく おねがい いたします。","ဒီနေ့ ကျေးဇူးပြု၍ ကူညီပေးပါ။"],
+  ["ミャンマーから来ました。日本に来て3年です。","ミャンマーから きました。にほんに きて さんねんです。","မြန်မာက လာပါတယ်။ ဂျပန်ရောက်တာ ၃ နှစ်ပါ။"],
+  ["介護の仕事を2年しました。","かいごの しごとを にねん しました。","သူနာပြု အလုပ် ၂ နှစ် လုပ်ခဲ့ပါတယ်။"],
+  ["お年寄りの笑顔を見るのがうれしいです。","おとしよりの えがおを みるのが うれしいです。","သက်ကြီးတွေ ပြုံးတာ မြင်ရတာ ပျော်ပါတယ်။"],
+  ["夜勤もできます。","やきんも できます。","ညဆိုင်းလည်း လုပ်နိုင်ပါတယ်။"],
+  ["介護福祉士の資格を取りたいです。","かいごふくしし の しかくを とりたいです。","Kaigo Fukushishi လက်မှတ် ယူချင်ပါတယ်။"]]],
+ ["質問する","မေးခွန်း မေး",[
+  ["夜勤は月に何回ありますか。","やきんは つきに なんかい ありますか。","ညဆိုင်း တစ်လ ဘယ်နှစ်ကြိမ်လဲ။"],
+  ["資格を取るサポートはありますか。","しかくを とる サポートは ありますか。","လက်မှတ်ယူဖို့ ကူညီမှု ရှိလား။"],
+  ["給料の手取りはだいたいいくらですか。","きゅうりょうの てどりは だいたい いくらですか。","လက်ထဲရ လစာ ဘယ်လောက်လဲ။"],
+  ["外国人のスタッフはいますか。","がいこくじんの スタッフは いますか。","နိုင်ငံခြားသား ဝန်ထမ်း ရှိလား။"]]]
+];
+const RESUME=[
+ {jp:"履歴書（りれきしょ）の書き方",mm:"ကိုယ်ရေးရာဇဝင် ရေးနည်း",
+  b:["名前・住所・電話・学歴・職歴・資格・在留資格を書きます。","写真（たて4cm×よこ3cm）を貼ります。","日本語能力（N3など）、介護の資格（初任者研修、特定技能の試験合格）も書きましょう。","パソコンやスマホで作ってもOKな所が多いです。"],
+  m:"နာမည်၊ လိပ်စာ၊ ဖုန်း၊ ပညာရေး၊ အလုပ်အတွေ့အကြုံ၊ လက်မှတ်၊ ဗီဇာ ရေးပါ။ ဓာတ်ပုံ (၄×၃ စင်တီ) ကပ်ပါ။ ဂျပန်စာ အဆင့် (N3 စသည်)၊ သူနာပြု လက်မှတ် ရေးပါ။"},
+ {jp:"面接のマナー",mm:"အင်တာဗျူး အမူအကျင့်",
+  b:["5〜10分前に着く。おくれるときは必ず電話。","清潔な服、髪をまとめる、爪を短く。","入るとき「失礼します」、終わったら「ありがとうございました」。","在留カード・履歴書・資格の証明書を持って行く。"],
+  m:"၅–၁၀ မိနစ် ကြိုရောက်ပါ။ နောက်ကျရင် ဖုန်းဆက်ပါ။ သန့်ရှင်းတဲ့ အဝတ်၊ ဆံပင် စည်း၊ လက်သည်း တို။ ဝင်ရင် “Shitsurei shimasu”၊ ပြီးရင် “Arigatou gozaimashita”။ ကတ်၊ ရာဇဝင်၊ လက်မှတ် ယူသွားပါ။"}
+];
+const $=s=>document.querySelector(s),main=$("#main"),back=$("#back");
+let lang=localStorage.getItem("jobs-lang")||"both";
+function setLang(l){lang=l;localStorage.setItem("jobs-lang",l);document.body.classList.toggle("hide-jp",l==="mm");document.body.classList.toggle("hide-mm",l==="jp");document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===l))}
+document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+function item(it,open){
+ const tels=(it.t||[]).map(t=>`<a class="tel" href="tel:${t[0].replace(/-/g,"")}">📞 <div><b>${t[0]}</b><span>${t[1]}${t[2]?"・"+t[2]:""}</span></div></a>`).join("");
+ const links=it.l?`<div class="links">${it.l.map(x=>`<a href="${x[1]}" target="_blank" rel="noopener">🔗 ${x[0]}</a>`).join("")}</div>`:"";
+ return `<div class="item${open?" open":""}"><button><span class="jp">${it.jp}</span><span class="m mm mmonly">${it.mm}</span></button><div class="body"><ul class="jp">${it.b.map(x=>`<li>${x}</li>`).join("")}</ul><div class="mmb mm mmonly">${it.m}</div>${tels}${links}</div></div>`}
+function bind(){main.querySelectorAll(".item>button").forEach(b=>b.onclick=()=>b.parentElement.classList.toggle("open"))}
+function title(e,jp,mm){return `<h2 style="margin:4px 0 12px;font-size:19px">${e} <span class="jp">${jp}</span> <span class="mm mmonly" style="font-size:14px;font-weight:600">${mm}</span></h2>`}
+const PAGES={
+ where:()=>title("🔎","どこでさがす？","ဘယ်မှာ ရှာမလဲ")+WHERE.map((x,i)=>item(x,i===0)).join(""),
+ visa:()=>title("🪪","ビザと仕事","ဗီဇာ နဲ့ အလုပ်")+VISA.map((x,i)=>item(x,i===0)).join(""),
+ kind:()=>title("🏠","介護の職場の種類","သူနာပြု လုပ်ငန်းခွင် အမျိုးအစား")+KIND.map(k=>`<div class="item open"><button><span class="jp">${k[0]}</span><span class="m mm mmonly">${k[1]}</span></button><div class="body"><div class="jp">${k[2]}</div><div class="mm mmonly" style="font-size:14px;color:#6a5a4a">${k[3]}</div></div></div>`).join(""),
+ check:()=>{const sv=JSON.parse(localStorage.getItem("jobs-check")||"[]");
+  return title("✅","求人票チェック","အလုပ်ခေါ်စာ စစ်ဆေး")+`<div class="score" id="sc"></div>`+CHECK.map((c,i)=>`<label class="chk${c[2]?" bad":""}"><input type="checkbox" data-i="${i}" ${sv[i]?"checked":""}><span><span class="jp">${c[0]}</span><span class="m mm mmonly">${c[1]}</span></span></label>`).join("")+`<p class="jp" style="font-size:13px;color:#7a6a5b">赤い線の2つがチェックできないときは、とくに注意してください。</p><p class="mm mmonly" style="font-size:13px;color:#7a6a5b">အနီရောင် ၂ ခု မမှန်ရင် အထူး သတိထားပါ။</p><button class="btn" id="rst" style="background:#b9a58f">リセット / ပြန်စ</button>`},
+ phrase:()=>title("🗣️","面接・電話の日本語","အင်တာဗျူး / ဖုန်း ဂျပန်စကား")+`<p style="font-size:13px;color:#7a6a5b;margin-top:-6px">🔊 で音が出ます / 🔊 နှိပ်ရင် အသံထွက်</p>`+PH.map(g=>`<h3>${g[0]} <span class="mm mmonly" style="font-weight:400">${g[1]}</span></h3>`+g[2].map(p=>`<div class="ph"><div><div class="jpL">${p[0]}</div><div class="k">${p[1]}</div><div class="mm mmonly" style="font-size:14px">${p[2]}</div></div><button data-s="${p[0]}">🔊</button></div>`).join("")).join(""),
+ resume:()=>title("📝","履歴書・面接のコツ","ရာဇဝင် / အင်တာဗျူး")+RESUME.map((x,i)=>item(x,i===0)).join(""),
+ memo:()=>title("📒","わたしの求人メモ","ကျွန်ုပ်၏ အလုပ် မှတ်စု")+`<form class="memo" id="f"><input name="n" placeholder="会社・施設の名前 / နာမည်" required><div class="row2"><input name="w" type="number" inputmode="numeric" placeholder="時給（円）/ နာရီ"><select name="s"><option>気になる</option><option>応募した</option><option>面接</option><option>合格</option><option>だめ</option></select></div><textarea name="t" rows="2" placeholder="メモ：場所・夜勤・寮など / မှတ်စု"></textarea><button class="btn">＋ 保存 / သိမ်း</button></form><div id="list"></div>`
+};
+const MENU=[["where","🔎","どこでさがす？","ဘယ်မှာ ရှာမလဲ"],["visa","🪪","ビザと仕事","ဗီဇာ နဲ့ အလုပ်"],["check","✅","求人票チェック","ခေါ်စာ စစ်ဆေး"],["kind","🏠","介護の職場","လုပ်ငန်းခွင် အမျိုးအစား"],["resume","📝","履歴書・面接","ရာဇဝင် / အင်တာဗျူး"],["phrase","🗣️","面接の日本語","အင်တာဗျူး စကား"]];
+function home(){document.body.classList.remove("sub");back.style.display="none";
+ main.innerHTML=`<div class="grid"><button class="cat big" data-p="memo"><span class="e">📒</span>わたしの求人メモ<span class="m mm">ကျွန်ုပ်၏ အလုပ် မှတ်စု</span></button>${MENU.map(m=>`<button class="cat" data-p="${m[0]}"><span class="e">${m[1]}</span><span class="jp">${m[2]}</span><span class="m mm">${m[3]}</span></button>`).join("")}</div>
+ <div class="links" style="margin-top:14px"><a href="../work/">🌏 日本で働く ガイド（ビザ・給料・相談先）</a></div>`;
+ main.querySelectorAll(".cat").forEach(b=>b.onclick=()=>go(b.dataset.p));window.scrollTo(0,0)}
+function go(p){document.body.classList.add("sub");back.style.display="block";main.innerHTML=PAGES[p]();bind();history.pushState({p},"");window.scrollTo(0,0);
+ if(p==="check"){const upd=()=>{const v=[...main.querySelectorAll(".chk input")].map(x=>x.checked);localStorage.setItem("jobs-check",JSON.stringify(v));const n=v.filter(Boolean).length;$("#sc").innerHTML=`${n} / ${v.length} OK<div class="bar"><i style="width:${n/v.length*100}%"></i></div>`};main.querySelectorAll(".chk input").forEach(x=>x.onchange=upd);upd();$("#rst").onclick=()=>{main.querySelectorAll(".chk input").forEach(x=>x.checked=false);upd()}}
+ if(p==="phrase")main.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(b.dataset.s);u.lang="ja-JP";u.rate=.85;speechSynthesis.speak(u)}catch(e){}});
+ if(p==="memo")memo()}
+function memo(){const load=()=>JSON.parse(localStorage.getItem("jobs-memo")||"[]"),save=a=>localStorage.setItem("jobs-memo",JSON.stringify(a));
+ const draw=()=>{const a=load();$("#list").innerHTML=a.length?a.map((j,i)=>`<div class="job"><span class="w${j.w&&j.w<MINW?" low":""}">${j.w?j.w.toLocaleString()+"円":""}</span><b>${j.n.replace(/</g,"&lt;")}</b><br><span class="st">${j.s}</span>${j.w&&j.w<MINW?`<span class="st" style="background:#fbe0dc;color:#c0392b">⚠️ 全国平均の最低賃金より低い→県の金額を確認</span>`:""}<div style="font-size:14px;color:#6a5a4a;white-space:pre-wrap">${(j.t||"").replace(/</g,"&lt;")}</div><button class="del" data-i="${i}">削除</button><div style="clear:both"></div></div>`).join(""):`<p style="color:#8a7a6a;text-align:center">まだありません / မရှိသေးပါ</p>`;
+  $("#list").querySelectorAll(".del").forEach(b=>b.onclick=()=>{if(confirm("削除しますか？")){const a=load();a.splice(+b.dataset.i,1);save(a);draw()}})};
+ $("#f").onsubmit=e=>{e.preventDefault();const f=e.target,a=load();a.unshift({n:f.n.value.trim(),w:+f.w.value||0,s:f.s.value,t:f.t.value.trim()});save(a);f.reset();draw()};draw()}
+back.onclick=()=>history.back();window.onpopstate=()=>home();
+setLang(lang);home();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+</body>
+</html>

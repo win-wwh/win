@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ふたりの勤務表</title>
+<meta name="description" content="夫婦・ふたりのシフトを1つのカレンダーで。ふたり休みの日がすぐわかる。給料の目安も自動計算。無料。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ふたりの勤務表">
+<meta property="og:description" content="ふたりのシフトを1つのカレンダーで。ふたり休みの日がすぐわかる。">
+<meta property="og:image" content="https://win-wwh.github.io/win/shift/icon-512.png">
+<meta property="og:url" content="https://win-wwh.github.io/win/shift/">
+<meta name="twitter:card" content="summary">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="勤務表">
+<meta name="theme-color" content="#4a5bd4">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--p:#4a5bd4;--bg:#f4f5fb;--ink:#22263a;--a:#ff7a8a;--b:#4aa8ff}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Hiragino Sans","Noto Sans JP",sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:560px;margin:0 auto;padding:10px 10px 110px}
+header{display:flex;align-items:center;gap:8px;margin:4px 2px 10px}
+header h1{flex:1;font-size:18px;margin:0;font-weight:900}
+.ib{border:0;background:#fff;border-radius:12px;width:40px;height:40px;font-size:18px;box-shadow:0 1px 4px #0001}
+.month{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:18px;padding:8px 10px;box-shadow:0 2px 8px #0000000d;margin-bottom:10px}
+.month b{font-size:20px}
+.month button{border:0;background:#eef0fb;color:var(--p);border-radius:12px;width:44px;height:40px;font-size:20px;font-weight:900}
+.legend{display:flex;gap:10px;justify-content:center;font-size:12px;margin-bottom:8px;flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:4px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.cal{background:#fff;border-radius:18px;padding:6px;box-shadow:0 2px 8px #0000000d}
+.wk,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}
+.wk div{text-align:center;font-size:11px;font-weight:700;color:#888;padding:4px 0}
+.wk div:first-child{color:#e0505e}.wk div:last-child{color:#3b82f6}
+.day{border:0;background:#f8f9fd;border-radius:10px;min-height:76px;padding:3px 2px;display:flex;flex-direction:column;align-items:stretch;gap:2px;position:relative;font:inherit;color:inherit}
+.day.out{visibility:hidden}
+.day .d{font-size:12px;font-weight:700;text-align:left;padding-left:3px;line-height:1.3}
+.day.sun .d{color:#e0505e}.day.sat .d{color:#3b82f6}
+.day.today{outline:2.5px solid var(--p)}
+.day.both{background:#fff0f3}
+.day .heart{position:absolute;right:3px;top:2px;font-size:11px}
+.pill{border-radius:6px;font-size:11px;font-weight:800;line-height:1.5;text-align:center;color:#fff;white-space:nowrap;overflow:hidden;min-height:17px}
+.pill.empty{background:transparent;border:1px dashed #d5d8e8}
+.pill .who{opacity:.85;font-size:9px;margin-right:1px}
+.memo-dot{position:absolute;left:4px;bottom:3px;width:5px;height:5px;border-radius:50%;background:#f4b630}
+.card{background:#fff;border-radius:18px;padding:14px;box-shadow:0 2px 8px #0000000d;margin-top:12px}
+.card h3{margin:0 0 10px;font-size:15px}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sum .p{border-radius:14px;padding:10px;background:#f8f9fd}
+.sum .p .n{font-weight:900;font-size:14px;display:flex;align-items:center;gap:6px}
+.sum .p .row{display:flex;justify-content:space-between;font-size:12px;margin-top:3px}
+.sum .p .big{font-size:20px;font-weight:900;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.chip{font-size:11px;border-radius:8px;padding:2px 6px;color:#fff;font-weight:700}
+.both-list{font-size:13px;line-height:1.8}
+.sheet-bg{position:fixed;inset:0;background:#0006;z-index:20;display:none}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;padding:16px 16px calc(env(safe-area-inset-bottom) + 16px);z-index:21;max-width:560px;margin:0 auto;transform:translateY(105%);transition:transform .2s;max-height:88vh;overflow:auto}
+.sheet.on{transform:none}
+.sheet h2{margin:0 0 4px;font-size:18px}
+.who-h{font-weight:800;font-size:14px;margin:12px 0 6px;display:flex;align-items:center;gap:6px}
+.types{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tbtn{border:2px solid transparent;border-radius:12px;padding:8px 2px;font-weight:800;font-size:14px;color:#fff;font-family:inherit}
+.tbtn small{display:block;font-size:10px;font-weight:600;opacity:.9}
+.tbtn.sel{border-color:#22263a;box-shadow:0 0 0 2px #fff inset}
+.tbtn.clear{background:#eceef6;color:#666}
+textarea,input{font:inherit;font-size:16px;width:100%;border:1.5px solid #e1e4f0;border-radius:12px;padding:10px}
+.btn{border:0;border-radius:14px;padding:13px;font-size:16px;font-weight:800;background:var(--p);color:#fff;width:100%;margin-top:12px;font-family:inherit}
+.btn.sub{background:#eef0fb;color:var(--p)}
+.paint{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 10px);width:min(540px,calc(100% - 20px));background:#fffffff2;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:20px;box-shadow:0 8px 26px #0003;padding:8px;z-index:10}
+.paint .top{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.paint .top .lbl{font-size:11px;color:#888;font-weight:700}
+.seg{display:flex;background:#eef0fb;border-radius:12px;padding:3px;gap:3px}
+.seg button{border:0;background:none;border-radius:9px;padding:6px 10px;font-weight:800;font-size:13px;color:#666;font-family:inherit}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px #0002}
+.pt{display:flex;gap:5px;overflow-x:auto;padding-bottom:2px}
+.pt button{flex:none;border:2px solid transparent;border-radius:10px;padding:6px 10px;font-weight:800;color:#fff;font-size:13px;font-family:inherit}
+.pt button.on{border-color:#22263a}
+.hint{font-size:11px;color:#888;text-align:center;margin-top:4px}
+.set-row{display:grid;grid-template-columns:44px 1fr 70px 70px 54px;gap:6px;align-items:center;margin-bottom:6px}
+.set-row input{padding:7px;font-size:14px}
+.set-row input[type=color]{padding:0;height:36px;border-radius:8px}
+.lab{font-size:12px;color:#666;margin:10px 0 4px;font-weight:700}
+.toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#22263aee;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:40;display:none}
+.mm{font-family:"Noto Sans Myanmar",sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>👫 ふたりの勤務表</h1>
+  <button class="ib" id="shareB" title="共有">📤</button>
+  <button class="ib" id="setB" title="設定">⚙️</button>
+</header>
+<div class="month"><button id="prev">‹</button><b id="ym"></b><button id="next">›</button></div>
+<div class="legend" id="legend"></div>
+<div class="cal"><div class="wk"><div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div></div><div class="days" id="days"></div></div>
+<div class="card"><h3>📊 今月のまとめ</h3><div class="sum" id="sum"></div></div>
+<div class="card"><h3>💕 ふたり休みの日</h3><div class="both-list" id="both"></div></div>
+<div style="font-size:11px;color:#999;text-align:center;margin-top:14px;line-height:1.7">データはこのスマホの中だけに保存されます🔒<br>📤 ボタンで相手にシフトを送れます</div>
+</div>
+
+<div class="paint" id="paint">
+  <div class="top"><span class="lbl">かんたん入力</span><div class="seg" id="pwho"></div><span style="flex:1"></span><div class="seg"><button id="pmode">✏️ オフ</button></div></div>
+  <div class="pt" id="ptypes"></div>
+  <div class="hint" id="phint">✏️をオンにすると、日付をタップするだけでシフトが入ります</div>
+</div>
+
+<div class="sheet-bg" id="bg"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,"0");
+const DEF_TYPES=[
+ {k:"早",name:"早番",c:"#f59e0b",h:8,night:false},
+ {k:"日",name:"日勤",c:"#22a06b",h:8,night:false},
+ {k:"遅",name:"遅番",c:"#8b5cf6",h:8,night:false},
+ {k:"夜",name:"夜勤",c:"#334155",h:16,night:true},
+ {k:"明",name:"明け",c:"#94a3b8",h:0,night:false},
+ {k:"休",name:"休み",c:"#ef4f6a",h:0,night:false},
+ {k:"有",name:"有給",c:"#0ea5e9",h:8,night:false}
+];
+let S=JSON.parse(localStorage.getItem("shift-v1")||"null")||{
+ people:[{name:"わたし",c:"#ff7a8a",wage:1300,nightPay:5000},{name:"だんな",c:"#4aa8ff",wage:1300,nightPay:5000}],
+ types:DEF_TYPES,data:{},memo:{}
+};
+const save=()=>localStorage.setItem("shift-v1",JSON.stringify(S));
+let cur=new Date();cur.setDate(1);
+let paint={on:false,who:0,k:"早"};
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",1800)}
+const T=k=>S.types.find(t=>t.k===k);
+const key=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
+const isOff=k=>!k||k==="休"||k==="有"||k==="明";
+const isRest=k=>!k||k==="休"||k==="有";
+function render(){
+ const y=cur.getFullYear(),m=cur.getMonth();$("#ym").textContent=`${y}年 ${m+1}月`;
+ $("#legend").innerHTML=S.people.map(p=>`<span><i class="dot" style="background:${p.c}"></i>${p.name}</span>`).join("")+`<span>💕 ふたり休み</span>`;
+ const first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();const t=new Date();
+ let h="";for(let i=0;i<first;i++)h+=`<div class="day out"></div>`;
+ for(let d=1;d<=dim;d++){const k=key(y,m,d),v=S.data[k]||[],dw=(first+d-1)%7;
+  const both=v[0]&&v[1]&&isRest(v[0])&&isRest(v[1]);
+  const tod=t.getFullYear()===y&&t.getMonth()===m&&t.getDate()===d;
+  h+=`<button class="day${dw===0?" sun":dw===6?" sat":""}${tod?" today":""}${both?" both":""}" data-d="${d}"><span class="d">${d}</span>${both?'<span class="heart">💕</span>':""}
+   ${S.people.map((p,i)=>{const ty=T(v[i]);return ty?`<span class="pill" style="background:${ty.c};box-shadow:inset 3px 0 0 ${p.c}"><span class="who">${p.name[0]}</span>${ty.k}</span>`:`<span class="pill empty"></span>`}).join("")}
+   ${S.memo[k]?'<i class="memo-dot"></i>':""}</button>`}
+ $("#days").innerHTML=h;
+ $("#days").querySelectorAll(".day[data-d]").forEach(b=>b.onclick=()=>tapDay(+b.dataset.d));
+ summary(y,m,dim);renderPaint()}
+function summary(y,m,dim){
+ const out=S.people.map((p,i)=>{const cnt={};let hours=0,nights=0;
+  for(let d=1;d<=dim;d++){const k=(S.data[key(y,m,d)]||[])[i];if(!k)continue;cnt[k]=(cnt[k]||0)+1;const ty=T(k);if(ty){hours+=ty.h;if(ty.night)nights++}}
+  const pay=Math.round(hours*(+p.wage||0)+nights*(+p.nightPay||0));
+  return`<div class="p"><div class="n"><i class="dot" style="background:${p.c}"></i>${p.name}</div>
+   <div class="row"><span>働く時間</span><b>${hours}時間</b></div><div class="row"><span>夜勤</span><b>${nights}回</b></div>
+   <div class="big">¥${pay.toLocaleString()}</div><div style="font-size:10px;color:#999">給料の目安（税金などを引く前）</div>
+   <div class="chips">${S.types.filter(t=>cnt[t.k]).map(t=>`<span class="chip" style="background:${t.c}">${t.name} ${cnt[t.k]}</span>`).join("")}</div></div>`});
+ $("#sum").innerHTML=out.join("");
+ const bl=[];const W="日月火水木金土";
+ for(let d=1;d<=dim;d++){const v=S.data[key(y,m,d)]||[];if(v[0]&&v[1]&&isRest(v[0])&&isRest(v[1]))bl.push(`${m+1}/${d}（${W[new Date(y,m,d).getDay()]}）`)}
+ $("#both").innerHTML=bl.length?`💕 ${bl.join("、")}<br><span style="color:#888;font-size:12px">${bl.length}日あります。おでかけの予定を立てよう！</span>`:`<span style="color:#888">今月はまだありません（ふたりとも「休み」か「有給」の日に出ます）</span>`}
+function tapDay(d){const y=cur.getFullYear(),m=cur.getMonth(),k=key(y,m,d);
+ if(paint.on){const v=S.data[k]||[null,null];v[paint.who]=v[paint.who]===paint.k?null:paint.k;S.data[k]=v;save();render();return}
+ openDay(k,d)}
+function openDay(k,d){const y=cur.getFullYear(),m=cur.getMonth();const v=(S.data[k]||[null,null]).slice();const W="日月火水木金土";
+ const draw=()=>{$("#sheet").innerHTML=`<h2>${m+1}月${d}日（${W[new Date(y,m,d).getDay()]}）</h2>
+  ${S.people.map((p,i)=>`<div class="who-h"><i class="dot" style="background:${p.c}"></i>${p.name}</div><div class="types">${S.types.map(t=>`<button class="tbtn${v[i]===t.k?" sel":""}" style="background:${t.c}" data-i="${i}" data-k="${t.k}">${t.k}<small>${t.name}</small></button>`).join("")}<button class="tbtn clear" data-i="${i}" data-k="">なし<small>消す</small></button></div>`).join("")}
+  <div class="lab">📝 メモ（予定・用事）</div><textarea id="memo" rows="2" placeholder="例：病院、子どもの行事、買い物">${S.memo[k]||""}</textarea>
+  <button class="btn" id="ok">保存</button>`;
+  $("#sheet").querySelectorAll(".tbtn").forEach(b=>b.onclick=()=>{v[+b.dataset.i]=b.dataset.k||null;draw()});
+  $("#ok").onclick=()=>{S.data[k]=v;const mm=$("#memo").value.trim();if(mm)S.memo[k]=mm;else delete S.memo[k];if(!v[0]&&!v[1])delete S.data[k];save();close();render()}};
+ draw();open()}
+function open(){$("#bg").style.display="block";requestAnimationFrame(()=>$("#sheet").classList.add("on"))}
+function close(){$("#sheet").classList.remove("on");setTimeout(()=>$("#bg").style.display="none",200)}
+$("#bg").onclick=close;
+function renderPaint(){
+ $("#pwho").innerHTML=S.people.map((p,i)=>`<button class="${paint.who===i?"on":""}" data-w="${i}"><i class="dot" style="background:${p.c}"></i> ${p.name}</button>`).join("");
+ $("#pwho").querySelectorAll("button").forEach(b=>b.onclick=()=>{paint.who=+b.dataset.w;renderPaint()});
+ $("#ptypes").innerHTML=S.types.map(t=>`<button class="${paint.k===t.k?"on":""}" style="background:${t.c}" data-k="${t.k}">${t.name}</button>`).join("");
+ $("#ptypes").querySelectorAll("button").forEach(b=>b.onclick=()=>{paint.k=b.dataset.k;if(!paint.on){paint.on=true}renderPaint()});
+ $("#pmode").textContent=paint.on?"✏️ オン":"✏️ オフ";$("#pmode").classList.toggle("on",paint.on);
+ $("#phint").textContent=paint.on?`${S.people[paint.who].name}の「${T(paint.k).name}」を、日付をタップして入れる（もう一度タップで消す）`:"✏️をオンにすると、日付をタップするだけでシフトが入ります"}
+$("#pmode").onclick=()=>{paint.on=!paint.on;renderPaint()};
+$("#prev").onclick=()=>{cur.setMonth(cur.getMonth()-1);render()};
+$("#next").onclick=()=>{cur.setMonth(cur.getMonth()+1);render()};
+// 設定
+$("#setB").onclick=()=>{
+ const draw=()=>{$("#sheet").innerHTML=`<h2>⚙️ 設定</h2>
+  ${S.people.map((p,i)=>`<div class="who-h">${i===0?"1人目":"2人目"}</div>
+   <div style="display:grid;grid-template-columns:44px 1fr;gap:6px"><input type="color" value="${p.c}" data-p="${i}" data-f="c" style="padding:0;height:42px"><input value="${p.name}" data-p="${i}" data-f="name" placeholder="名前"></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><label style="font-size:12px;color:#666">時給（円）<input type="number" inputmode="numeric" value="${p.wage}" data-p="${i}" data-f="wage"></label><label style="font-size:12px;color:#666">夜勤手当（1回・円）<input type="number" inputmode="numeric" value="${p.nightPay}" data-p="${i}" data-f="nightPay"></label></div>`).join("")}
+  <div class="lab" style="margin-top:16px">シフトの種類（色・名前・働く時間）</div>
+  <div class="set-row" style="font-size:11px;color:#888"><span>色</span><span>名前</span><span>1文字</span><span>時間</span><span>夜勤</span></div>
+  ${S.types.map((t,j)=>`<div class="set-row"><input type="color" value="${t.c}" data-t="${j}" data-f="c"><input value="${t.name}" data-t="${j}" data-f="name"><input value="${t.k}" maxlength="1" data-t="${j}" data-f="k" disabled style="background:#f4f4f8"><input type="number" value="${t.h}" data-t="${j}" data-f="h"><input type="checkbox" ${t.night?"checked":""} data-t="${j}" data-f="night" style="width:24px;height:24px;margin:auto"></div>`).join("")}
+  <div style="font-size:11px;color:#999;line-height:1.6">「時間」は給料の計算に使います（休憩をのぞいた時間）。夜勤にチェックすると、夜勤手当が足されます。</div>
+  <button class="btn" id="sv">保存</button><button class="btn sub" id="rs">シフトの種類を最初にもどす</button>`;
+  $("#sheet").querySelectorAll("[data-p]").forEach(e=>e.onchange=()=>{const p=S.people[+e.dataset.p];p[e.dataset.f]=e.type==="number"?+e.value:e.value});
+  $("#sheet").querySelectorAll("[data-t]").forEach(e=>e.onchange=()=>{const t=S.types[+e.dataset.t];t[e.dataset.f]=e.type==="checkbox"?e.checked:e.type==="number"?+e.value:e.value});
+  $("#sv").onclick=()=>{$("#sheet").querySelectorAll("input").forEach(e=>e.onchange&&e.onchange());save();close();render();toast("保存しました ✓")};
+  $("#rs").onclick=()=>{if(confirm("シフトの種類を最初の設定にもどしますか？")){S.types=JSON.parse(JSON.stringify(DEF_TYPES));save();draw()}}};
+ draw();open()};
+// 共有（URLにシフトを入れて送る）
+function b64e(s){return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");return decodeURIComponent(escape(atob(s)))}
+$("#shareB").onclick=async()=>{const y=cur.getFullYear(),m=cur.getMonth();const pre=`${y}-${pad(m+1)}-`;
+ const d={},mm={};for(const k in S.data)if(k.startsWith(pre))d[k.slice(8)]=[0,1].map(i=>S.data[k][i]||"_").join("");for(const k in S.memo)if(k.startsWith(pre))mm[k.slice(8)]=S.memo[k];
+ const pl={v:1,ym:`${y}-${pad(m+1)}`,n:S.people.map(p=>p.name),d,mm};
+ const url=location.origin+location.pathname+"#s="+b64e(JSON.stringify(pl));
+ const text=`${m+1}月のふたりの勤務表です📅`;
+ try{if(navigator.share){await navigator.share({title:"ふたりの勤務表",text,url});return}}catch(e){if(e.name==="AbortError")return}
+ try{await navigator.clipboard.writeText(url);toast("リンクをコピーしました")}catch(e){prompt("このリンクを送ってください",url)}};
+function importHash(){const m=location.hash.match(/#s=([\w-]+)/);if(!m)return;
+ try{const pl=JSON.parse(b64d(m[1]));const [y,mo]=pl.ym.split("-");
+  if(confirm(`${+mo}月の勤務表を受け取りました。\nこのスマホに入れますか？（${+mo}月のシフトは上書きされます）`)){
+   for(const k of Object.keys(S.data))if(k.startsWith(pl.ym+"-"))delete S.data[k];
+   for(const d in pl.d){const s=pl.d[d];S.data[`${pl.ym}-${d}`]=[s[0]&&s[0]!=="_"?s[0]:null,s[1]&&s[1]!=="_"?s[1]:null]}
+   for(const d in (pl.mm||{}))S.memo[`${pl.ym}-${d}`]=pl.mm[d];
+   if(pl.n&&pl.n.length===2&&S.people[0].name==="わたし"&&S.people[1].name==="だんな"){S.people[0].name=pl.n[0];S.people[1].name=pl.n[1]}
+   save();cur=new Date(+y,+mo-1,1);toast("受け取りました ✓")}
+ }catch(e){toast("リンクが読めませんでした")}
+ history.replaceState(null,"",location.pathname)}
+importHash();render();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Win やさしいミャンマー語</title>
-<meta name="description" content="日本人のためのミャンマー語。あいさつ・職場のひとこと・数字・食べ物を、カタカナ読みつきで。介護施設や職場で、ミャンマー人の仲間と話してみよう。無料。">
+<meta name="description" content="日本人のためのミャンマー語。1000語以上のあいさつ・職場のひとこと・数字・食べ物を、カタカナ読みつきで。介護施設や職場で、ミャンマー人の仲間と話してみよう。無料。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Win やさしいミャンマー語">
 <meta property="og:description" content="あいさつ・職場のひとこと・数字を、カタカナ読みつきで。ミャンマー人の仲間と話してみよう。">
@@ -86,6 +86,10 @@ header h1 small{display:block;font-size:12px;font-weight:400;color:#6b6b5e}
 <main id="main"></main>
 <div class="note2">📝 読み方はカタカナで近い音を書いています。本当の発音は、ミャンマーの友だちに聞いてみてください。きっと喜ばれます😊<br>作った人：Win（ミャンマー出身・日本在住）</div>
 </div>
+<script src="words1.js"></script>
+<script src="words2.js"></script>
+<script src="words3.js"></script>
+<script src="words4.js"></script>
 <script>
 // [category, japanese, burmese, katakana, note]
 const CATS=[
@@ -100,14 +104,19 @@ const CATS=[
  ["body","🫀","体・病気"],
  ["verb","🏃","動きのことば"],
  ["place","📍","場所"],
- ["color","🎨","色・天気"],
+ ["color","🌈","色・自然・天気"],
  ["shop","🛍️","買い物"],
  ["animal","🐘","動物"],
  ["ride","🚌","乗り物"],
  ["fest","🙏","お祝い・文化"],
  ["adj","✨","ようすのことば"],
  ["home","🏠","家の中のもの"],
- ["phone","📞","電話・連絡"]
+ ["phone","📞","電話・連絡"],
+ ["fruit","🍌","くだもの"],
+ ["job","💼","仕事・職業"],
+ ["item","👕","服・持ち物"],
+ ["school","📚","学校・勉強"],
+ ["hobby","⚽","趣味・スポーツ"]
 ];
 const W=[
  ["hello","こんにちは","မင်္ဂလာပါ","ミンガラーバー","朝・昼・夜いつでも使える、いちばん大事なあいさつ"],
@@ -434,6 +443,7 @@ const W=[
  ["phone","今どこ？","အခု ဘယ်မှာလဲ","アク ベーマー レー",""],
  ["phone","もうすぐ着きます","မကြာခင် ရောက်မယ်","マチャーギン ヤウッ メー",""]
 ];
+(window.W_ADD||[]).forEach(w=>{if(!W.some(x=>x[1]===w[1]&&x[2]===w[2]))W.push(w)});
 const CULTURE=[
  ["名字がない","ミャンマー人には、ふつう<b>名字（家族の名前）がありません</b>。「ウィンウィンテー」のように、全部で1つの名前です。"],
  ["呼び方","年上の男性には<b>「ウー」</b>、年上の女性には<b>「ドー」</b>、若い男性には<b>「コー」</b>、若い女性には<b>「マ」</b>を名前の前につけると、ていねいです。"],

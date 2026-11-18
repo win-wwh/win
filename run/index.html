@@ -84,7 +84,7 @@ function unlock(){try{if(navigator.audioSession)navigator.audioSession.type="pla
 ["touchend","click","keydown"].forEach(ev=>addEventListener(ev,unlock,{passive:true}));
 let jaVoice=null;function pickVoice(){const vs=speechSynthesis.getVoices().filter(v=>/^ja/i.test(v.lang));jaVoice=vs.find(v=>/Kyoko|O-ren|Google/i.test(v.name))||vs[0]||null}
 try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
-function say(t){if(!sound)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ja-JP";if(jaVoice)u.voice=jaVoice;u.rate=1.05;u.pitch=1.35;u.volume=1;speechSynthesis.speak(u)}catch(e){}}
+function say(t){if(!sound)return;t=t.replace(/愛翔/g,"かいと");try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ja-JP";if(jaVoice)u.voice=jaVoice;u.rate=1.05;u.pitch=1.35;u.volume=1;speechSynthesis.speak(u)}catch(e){}}
 function beep(f,d=.08,type="square",v=.06,slide=0){if(!sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=="running")AC.resume();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,AC.currentTime);if(slide)o.frequency.exponentialRampToValueAtTime(slide,AC.currentTime+d);g.gain.setValueAtTime(v,AC.currentTime);g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.connect(g).connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
 const sfx={coin:()=>{beep(988,.07,"square",.09);setTimeout(()=>beep(1319,.1,"square",.09),55)},jump:()=>beep(300,.2,"sine",.18,700),slide:()=>beep(400,.18,"triangle",.16,150),move:()=>beep(520,.05,"sine",.1),hit:()=>{beep(200,.4,"sawtooth",.18,50)}};
 let bgmT=null,bgmStep=0;const BGM=[0,null,7,null,5,null,7,12,0,null,7,null,3,5,7,null];

@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ウィンとヒデの勤務表</title>
+<title>わたしの勤務表</title>
 <meta name="description" content="夫婦・ふたりのシフトを1つのカレンダーで。ふたり休みの日がすぐわかる。給料の目安も自動計算。無料。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="ふたりの勤務表">
+<meta property="og:title" content="勤務表 - ひとりでも、ふたりでも">
 <meta property="og:description" content="ふたりのシフトを1つのカレンダーで。ふたり休みの日がすぐわかる。">
 <meta property="og:image" content="https://win-wwh.github.io/win/shift/icon-512.png">
 <meta property="og:url" content="https://win-wwh.github.io/win/shift/">
@@ -91,7 +91,7 @@ textarea,input{font:inherit;font-size:16px;width:100%;border:1.5px solid #e1e4f0
 <body>
 <div class="wrap">
 <header>
-  <h1>👫 ウィンとヒデの勤務表</h1>
+  <h1 id="ttl">📅 勤務表</h1>
   <button class="ib" id="shareB" title="共有">📤</button>
   <button class="ib" id="setB" title="設定">⚙️</button>
 </header>
@@ -99,8 +99,8 @@ textarea,input{font:inherit;font-size:16px;width:100%;border:1.5px solid #e1e4f0
 <div class="legend" id="legend"></div>
 <div class="cal"><div class="wk"><div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div></div><div class="days" id="days"></div></div>
 <div class="card"><h3>📊 今月のまとめ</h3><div class="sum" id="sum"></div></div>
-<div class="card"><h3>💕 ふたり休みの日</h3><div class="both-list" id="both"></div></div>
-<div style="font-size:11px;color:#999;text-align:center;margin-top:14px;line-height:1.7">データはこのスマホの中だけに保存されます🔒<br>📤 ボタンで相手にシフトを送れます</div>
+<div class="card" id="bothCard"><h3>💕 ふたり休みの日</h3><div class="both-list" id="both"></div></div>
+<div style="font-size:11px;color:#999;text-align:center;margin-top:14px;line-height:1.7">🔒 入れたシフトは<b>このスマホの中だけ</b>に保存されます。<br>同じリンクを使っている<b>ほかの人には見えません</b>。<br>📤 ボタンで、パートナーにだけシフトを送れます</div>
 </div>
 
 <div class="paint" id="paint">
@@ -125,11 +125,11 @@ const DEF_TYPES=[
  {k:"休",name:"休み",c:"#ef4f6a",h:0,night:false},
  {k:"有",name:"有給",c:"#0ea5e9",h:8,night:false}
 ];
-let S=JSON.parse(localStorage.getItem("shift-v1")||"null")||{
- people:[{name:"ウィン",c:"#ff7a8a",wage:1300,nightPay:5000},{name:"ヒデ",c:"#4aa8ff",wage:1300,nightPay:5000}],
- types:DEF_TYPES,data:{},memo:{}
-};
-if(S.people[0].name==="わたし")S.people[0].name="ウィン";if(S.people[1].name==="だんな")S.people[1].name="ヒデ";
+let S=JSON.parse(localStorage.getItem("shift-v1")||"null");
+const FIRST=!S;
+if(S&&S.people&&S.people[0]&&S.people[0].name==="わたし"&&S.people[1]&&S.people[1].name==="だんな"){S.people[0].name="ウィン";S.people[1].name="ヒデ"}
+if(!S)S={people:[{name:"",c:"#ff7a8a",wage:1300,nightPay:5000},{name:"",c:"#4aa8ff",wage:1300,nightPay:5000}],types:DEF_TYPES,data:{},memo:{}};
+S.people=S.people.filter((p,i)=>i===0||p.name!=="");if(!S.people.length)S.people=[{name:"",c:"#ff7a8a",wage:1300,nightPay:5000}];
 const save=()=>localStorage.setItem("shift-v1",JSON.stringify(S));
 let cur=new Date();cur.setDate(1);
 let paint={on:false,who:0,k:"早"};
@@ -139,12 +139,13 @@ const key=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
 const isOff=k=>!k||k==="休"||k==="有"||k==="明";
 const isRest=k=>!k||k==="休"||k==="有";
 function render(){
+ $('#ttl').textContent=(S.people.length>1?'👫 ':'📅 ')+S.people.map(p=>p.name||'わたし').join('と')+'の勤務表';
  const y=cur.getFullYear(),m=cur.getMonth();$("#ym").textContent=`${y}年 ${m+1}月`;
- $("#legend").innerHTML=S.people.map(p=>`<span><i class="dot" style="background:${p.c}"></i>${p.name}</span>`).join("")+`<span>💕 ふたり休み</span>`;
+ $("#legend").innerHTML=S.people.map(p=>`<span><i class="dot" style="background:${p.c}"></i>${p.name}</span>`).join("")+(S.people.length>1?`<span>💕 ふたり休み</span>`:"");
  const first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();const t=new Date();
  let h="";for(let i=0;i<first;i++)h+=`<div class="day out"></div>`;
  for(let d=1;d<=dim;d++){const k=key(y,m,d),v=S.data[k]||[],dw=(first+d-1)%7;
-  const both=v[0]&&v[1]&&isRest(v[0])&&isRest(v[1]);
+  const both=S.people.length>1&&v[0]&&v[1]&&isRest(v[0])&&isRest(v[1]);
   const tod=t.getFullYear()===y&&t.getMonth()===m&&t.getDate()===d;
   h+=`<button class="day${dw===0?" sun":dw===6?" sat":""}${tod?" today":""}${both?" both":""}" data-d="${d}"><span class="d">${d}</span>${both?'<span class="heart">💕</span>':""}
    ${S.people.map((p,i)=>{const ty=T(v[i]);return ty?`<span class="pill" style="background:${ty.c};box-shadow:inset 3px 0 0 ${p.c}"><span class="who">${p.name[0]}</span>${ty.k}</span>`:`<span class="pill empty"></span>`}).join("")}
@@ -160,14 +161,14 @@ function summary(y,m,dim){
    <div class="row"><span>働く時間</span><b>${hours}時間</b></div><div class="row"><span>夜勤</span><b>${nights}回</b></div>
    <div class="big">¥${pay.toLocaleString()}</div><div style="font-size:10px;color:#999">給料の目安（税金などを引く前）</div>
    <div class="chips">${S.types.filter(t=>cnt[t.k]).map(t=>`<span class="chip" style="background:${t.c}">${t.name} ${cnt[t.k]}</span>`).join("")}</div></div>`});
- $("#sum").innerHTML=out.join("");
+ $("#sum").innerHTML=out.join("");$("#sum").style.gridTemplateColumns=S.people.length>1?"1fr 1fr":"1fr";$("#bothCard").style.display=S.people.length>1?"":"none";
  const bl=[];const W="日月火水木金土";
  for(let d=1;d<=dim;d++){const v=S.data[key(y,m,d)]||[];if(v[0]&&v[1]&&isRest(v[0])&&isRest(v[1]))bl.push(`${m+1}/${d}（${W[new Date(y,m,d).getDay()]}）`)}
  $("#both").innerHTML=bl.length?`💕 ${bl.join("、")}<br><span style="color:#888;font-size:12px">${bl.length}日あります。おでかけの予定を立てよう！</span>`:`<span style="color:#888">今月はまだありません（ふたりとも「休み」か「有給」の日に出ます）</span>`}
 function tapDay(d){const y=cur.getFullYear(),m=cur.getMonth(),k=key(y,m,d);
  if(paint.on){const v=S.data[k]||[null,null];v[paint.who]=v[paint.who]===paint.k?null:paint.k;S.data[k]=v;save();render();return}
  openDay(k,d)}
-function openDay(k,d){const y=cur.getFullYear(),m=cur.getMonth();const v=(S.data[k]||[null,null]).slice();const W="日月火水木金土";
+function openDay(k,d){const y=cur.getFullYear(),m=cur.getMonth();const v=(S.data[k]||[null,null]).slice();while(v.length<2)v.push(null);const W="日月火水木金土";
  const draw=()=>{$("#sheet").innerHTML=`<h2>${m+1}月${d}日（${W[new Date(y,m,d).getDay()]}）</h2>
   ${S.people.map((p,i)=>`<div class="who-h"><i class="dot" style="background:${p.c}"></i>${p.name}</div><div class="types">${S.types.map(t=>`<button class="tbtn${v[i]===t.k?" sel":""}" style="background:${t.c}" data-i="${i}" data-k="${t.k}">${t.k}<small>${t.name}</small></button>`).join("")}<button class="tbtn clear" data-i="${i}" data-k="">なし<small>消す</small></button></div>`).join("")}
   <div class="lab">📝 メモ（予定・用事）</div><textarea id="memo" rows="2" placeholder="例：病院、子どもの行事、買い物">${S.memo[k]||""}</textarea>
@@ -191,9 +192,10 @@ $("#next").onclick=()=>{cur.setMonth(cur.getMonth()+1);render()};
 // 設定
 $("#setB").onclick=()=>{
  const draw=()=>{$("#sheet").innerHTML=`<h2>⚙️ 設定</h2>
-  ${S.people.map((p,i)=>`<div class="who-h">${i===0?"1人目":"2人目"}</div>
+  ${S.people.map((p,i)=>`<div class="who-h">${i===0?"あなた":"パートナー"}</div>
    <div style="display:grid;grid-template-columns:44px 1fr;gap:6px"><input type="color" value="${p.c}" data-p="${i}" data-f="c" style="padding:0;height:42px"><input value="${p.name}" data-p="${i}" data-f="name" placeholder="名前"></div>
    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><label style="font-size:12px;color:#666">時給（円）<input type="number" inputmode="numeric" value="${p.wage}" data-p="${i}" data-f="wage"></label><label style="font-size:12px;color:#666">夜勤手当（1回・円）<input type="number" inputmode="numeric" value="${p.nightPay}" data-p="${i}" data-f="nightPay"></label></div>`).join("")}
+  ${S.people.length<2?`<button class="btn sub" id="addP">＋ パートナーを追加する（ふたりで使う）</button>`:`<button class="btn sub" id="rmP">2人目を消す（ひとりで使う）</button>`}
   <div class="lab" style="margin-top:16px">シフトの種類（色・名前・働く時間）</div>
   <div class="set-row" style="font-size:11px;color:#888"><span>色</span><span>名前</span><span>1文字</span><span>時間</span><span>夜勤</span></div>
   ${S.types.map((t,j)=>`<div class="set-row"><input type="color" value="${t.c}" data-t="${j}" data-f="c"><input value="${t.name}" data-t="${j}" data-f="name"><input value="${t.k}" maxlength="1" data-t="${j}" data-f="k" disabled style="background:#f4f4f8"><input type="number" value="${t.h}" data-t="${j}" data-f="h"><input type="checkbox" ${t.night?"checked":""} data-t="${j}" data-f="night" style="width:24px;height:24px;margin:auto"></div>`).join("")}
@@ -202,6 +204,7 @@ $("#setB").onclick=()=>{
   $("#sheet").querySelectorAll("[data-p]").forEach(e=>e.onchange=()=>{const p=S.people[+e.dataset.p];p[e.dataset.f]=e.type==="number"?+e.value:e.value});
   $("#sheet").querySelectorAll("[data-t]").forEach(e=>e.onchange=()=>{const t=S.types[+e.dataset.t];t[e.dataset.f]=e.type==="checkbox"?e.checked:e.type==="number"?+e.value:e.value});
   $("#sv").onclick=()=>{$("#sheet").querySelectorAll("input").forEach(e=>e.onchange&&e.onchange());save();close();render();toast("保存しました ✓")};
+  const ap=$("#addP"),rp=$("#rmP");if(ap)ap.onclick=()=>{const n=prompt("パートナーの名前");if(n){S.people.push({name:n,c:"#4aa8ff",wage:1300,nightPay:5000});save();draw();render()}};if(rp)rp.onclick=()=>{if(confirm("2人目を消しますか？（2人目のシフトも見えなくなります）")){S.people=S.people.slice(0,1);save();draw();render()}};
   $("#rs").onclick=()=>{if(confirm("シフトの種類を最初の設定にもどしますか？")){S.types=JSON.parse(JSON.stringify(DEF_TYPES));save();draw()}}};
  draw();open()};
 // 共有（URLにシフトを入れて送る）
@@ -211,8 +214,8 @@ $("#shareB").onclick=async()=>{const y=cur.getFullYear(),m=cur.getMonth();const 
  const d={},mm={};for(const k in S.data)if(k.startsWith(pre))d[k.slice(8)]=[0,1].map(i=>S.data[k][i]||"_").join("");for(const k in S.memo)if(k.startsWith(pre))mm[k.slice(8)]=S.memo[k];
  const pl={v:1,ym:`${y}-${pad(m+1)}`,n:S.people.map(p=>p.name),d,mm};
  const url=location.origin+location.pathname+"#s="+b64e(JSON.stringify(pl));
- const text=`${m+1}月のふたりの勤務表です📅`;
- try{if(navigator.share){await navigator.share({title:"ふたりの勤務表",text,url});return}}catch(e){if(e.name==="AbortError")return}
+ const text=`${m+1}月の勤務表です📅（${S.people.map(p=>p.name).join("・")}）`;
+ try{if(navigator.share){await navigator.share({title:"勤務表",text,url});return}}catch(e){if(e.name==="AbortError")return}
  try{await navigator.clipboard.writeText(url);toast("リンクをコピーしました")}catch(e){prompt("このリンクを送ってください",url)}};
 function importHash(){const m=location.hash.match(/#s=([\w-]+)/);if(!m)return;
  try{const pl=JSON.parse(b64d(m[1]));const [y,mo]=pl.ym.split("-");
@@ -220,11 +223,23 @@ function importHash(){const m=location.hash.match(/#s=([\w-]+)/);if(!m)return;
    for(const k of Object.keys(S.data))if(k.startsWith(pl.ym+"-"))delete S.data[k];
    for(const d in pl.d){const s=pl.d[d];S.data[`${pl.ym}-${d}`]=[s[0]&&s[0]!=="_"?s[0]:null,s[1]&&s[1]!=="_"?s[1]:null]}
    for(const d in (pl.mm||{}))S.memo[`${pl.ym}-${d}`]=pl.mm[d];
-   if(pl.n&&pl.n.length===2&&S.people[0].name==="ウィン"&&S.people[1].name==="ヒデ"){S.people[0].name=pl.n[0];S.people[1].name=pl.n[1]}
+   if(pl.n&&!S.people[0].name){S.people=pl.n.map((n,i)=>({name:n,c:["#ff7a8a","#4aa8ff"][i],wage:1300,nightPay:5000}))}
    save();cur=new Date(+y,+mo-1,1);toast("受け取りました ✓")}
  }catch(e){toast("リンクが読めませんでした")}
  history.replaceState(null,"",location.pathname)}
-importHash();render();
+
+function welcome(){
+ $("#sheet").innerHTML=`<div style="text-align:center;font-size:44px">📅</div><h2 style="text-align:center">勤務表へようこそ！</h2>
+  <p style="text-align:center;color:#666;font-size:13px;line-height:1.7;margin:6px 0 10px">シフトを入れると、カレンダーと給料の目安が見られます。<br>🔒 入れた内容は<b>このスマホの中だけ</b>。ほかの人には見えません。</p>
+  <div class="lab">あなたの名前</div><input id="n1" placeholder="例：さくら" maxlength="10">
+  <div class="lab">パートナーの名前（ふたりで使う場合。ひとりなら空のまま）</div><input id="n2" placeholder="例：たろう（なくてもOK）" maxlength="10">
+  <button class="btn" id="go">はじめる</button>`;
+ $("#bg").onclick=null;
+ $("#go").onclick=()=>{const a=$("#n1").value.trim(),b=$("#n2").value.trim();if(!a){$("#n1").focus();return}
+  S.people=[{name:a,c:"#ff7a8a",wage:1300,nightPay:5000}];if(b)S.people.push({name:b,c:"#4aa8ff",wage:1300,nightPay:5000});
+  save();$("#bg").onclick=close;close();render();toast("⚙️ 設定で時給も入れられます")};
+ open();setTimeout(()=>$("#n1").focus(),300)}
+importHash();render();if(!S.people[0].name)welcome();
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
 </body>

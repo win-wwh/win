@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ゆっくり トト ｜ Toto Takes It Slow</title>
+<meta name="description" content="日本語・ミャンマー語・英語の絵本。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ゆっくり トト｜Toto Takes It Slow">
+<meta property="og:description" content="日本語・ミャンマー語・英語の絵本。">
+<meta property="og:image" content="https://win-wwh.github.io/win/story/icon-512.png">
+<meta property="og:url" content="https://win-wwh.github.io/win/story/">
+<meta name="twitter:card" content="summary">
+
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -203,5 +211,6 @@ document.getElementById("page").addEventListener("touchstart",e=>{sx=e.touches[0
 document.getElementById("page").addEventListener("touchend",e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)<50)return;if(dx<0&&idx<PAGES.length-1)idx++;else if(dx>0&&idx>0)idx--;else return;render();turned()});
 render();refreshSoundChips();
 </script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
 </body>
 </html>

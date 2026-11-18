@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Win タッチであそぼ</title>
+<meta name="description" content="1〜3歳向け。どうぶつ・のりもの・かず・ぴあの。6か国語。Free toddler app in 6 languages.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="タッチであそぼ｜Touch & Play">
+<meta property="og:description" content="1〜3歳向け。どうぶつ・のりもの・かず・ぴあの。6か国語。Free toddler app in 6 languages.">
+<meta property="og:image" content="https://win-wwh.github.io/win/baby/icon-512.png">
+<meta property="og:url" content="https://win-wwh.github.io/win/baby/">
+<meta name="twitter:card" content="summary">
+
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -25,6 +33,7 @@ h1{text-align:center;font-size:30px;margin:6px 0 2px}
 .tile span{font-size:14px;margin-top:4px;color:#5a4636;white-space:nowrap}
 .tile:active,.card:active,.home:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 rgba(90,70,54,.18)}
 .lang{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap}
+.lang button{min-width:96px}
 .lang button{border-radius:999px;background:#fff;padding:9px 16px;font-size:14px;box-shadow:0 3px 0 rgba(90,70,54,.12)}
 .lang button.on{background:#5a4636;color:#fff}
 .note{text-align:center;font-size:12px;color:#b9a48b;margin-top:14px}
@@ -120,11 +129,45 @@ const SETS={
  sleep:{icon:"🌙",jp:"おやすみ"},
  play:{icon:"🫧",jp:"ぽんぽん"}
 };
+
+const TR={
+ animal:[["小狗","Perro","Con chó"],["小猫","Gato","Con mèo"],["奶牛","Vaca","Con bò"],["小猪","Cerdo","Con heo"],["小鸡","Pollito","Gà con"],["青蛙","Rana","Con ếch"],["大象","Elefante","Con voi"],["狮子","León","Sư tử"],["绵羊","Oveja","Con cừu"],["马","Caballo","Con ngựa"],["鸭子","Pato","Con vịt"],["猴子","Mono","Con khỉ"]],
+ car:[["汽车","Coche","Xe hơi"],["火车","Tren","Tàu hỏa"],["消防车","Camión de bomberos","Xe cứu hỏa"],["救护车","Ambulancia","Xe cứu thương"],["飞机","Avión","Máy bay"],["船","Barco","Con tàu"],["公交车","Autobús","Xe buýt"],["警车","Coche de policía","Xe cảnh sát"],["自行车","Bicicleta","Xe đạp"],["直升机","Helicóptero","Trực thăng"],["拖拉机","Tractor","Máy kéo"],["火箭","Cohete","Tên lửa"]],
+ fruit:[["苹果","Manzana","Quả táo"],["香蕉","Plátano","Quả chuối"],["草莓","Fresa","Dâu tây"],["葡萄","Uvas","Quả nho"],["橘子","Naranja","Quả cam"],["西瓜","Sandía","Dưa hấu"],["桃子","Melocotón","Quả đào"],["甜瓜","Melón","Dưa lưới"],["面包","Pan","Bánh mì"],["饭团","Bola de arroz","Cơm nắm"],["牛奶","Leche","Sữa"],["蛋糕","Pastel","Bánh kem"]],
+ color:[["红色","Rojo","Màu đỏ"],["蓝色","Azul","Màu xanh dương"],["黄色","Amarillo","Màu vàng"],["绿色","Verde","Màu xanh lá"],["粉色","Rosa","Màu hồng"],["橙色","Naranja","Màu cam"],["紫色","Morado","Màu tím"],["棕色","Marrón","Màu nâu"],["黑色","Negro","Màu đen"],["白色","Blanco","Màu trắng"],["灰色","Gris","Màu xám"],["浅蓝色","Celeste","Màu xanh nhạt"]],
+ num:[["一","Uno","Một"],["二","Dos","Hai"],["三","Tres","Ba"],["四","Cuatro","Bốn"],["五","Cinco","Năm"],["六","Seis","Sáu"],["七","Siete","Bảy"],["八","Ocho","Tám"],["九","Nueve","Chín"],["十","Diez","Mười"]],
+ shape:[["圆形","Círculo","Hình tròn"],["三角形","Triángulo","Hình tam giác"],["正方形","Cuadrado","Hình vuông"],["星星","Estrella","Ngôi sao"],["爱心","Corazón","Trái tim"],["菱形","Rombo","Hình thoi"],["月亮","Luna","Mặt trăng"],["绿色正方形","Cuadrado verde","Hình vuông xanh"]],
+ body:[["眼睛","Ojos","Mắt"],["鼻子","Nariz","Mũi"],["嘴巴","Boca","Miệng"],["耳朵","Orejas","Tai"],["手","Manos","Tay"],["脚","Pies","Chân"],["牙齿","Dientes","Răng"],["脸","Cara","Khuôn mặt"]]
+};
+for(const m in TR)SETS[m].items.forEach((it,i)=>it.push(...TR[m][i]));
+const LANGS=[["ja","にほんご"],["en","English"],["mm","မြန်မာ"],["zh","中文"],["es","Español"],["vi","Tiếng Việt"]];
+const VOICE={ja:"ja-JP",en:"en-US",mm:"ja-JP",zh:"zh-CN",es:"es-ES",vi:"vi-VN"};
+const ML={
+ ja:{animal:"どうぶつ",car:"のりもの",fruit:"たべもの",boo:"ばあ！",quiz:"どれかな",color:"いろ",num:"かず",shape:"かたち",body:"からだ",piano:"ぴあの",draw:"おえかき",play:"ぽんぽん",sleep:"おやすみ"},
+ en:{animal:"Animals",car:"Vehicles",fruit:"Food",boo:"Peekaboo",quiz:"Quiz",color:"Colors",num:"Numbers",shape:"Shapes",body:"Body",piano:"Piano",draw:"Draw",play:"Bubbles",sleep:"Sleep"},
+ mm:{animal:"တိရစ္ဆာန်",car:"ယာဉ်များ",fruit:"အစားအစာ",boo:"ကွက်ကြည့်",quiz:"ပဟေဠိ",color:"အရောင်",num:"ဂဏန်း",shape:"ပုံသဏ္ဌာန်",body:"ခန္ဓာကိုယ်",piano:"စန္ဒယား",draw:"ပုံဆွဲ",play:"ပူဖောင်း",sleep:"အိပ်ချိန်"},
+ zh:{animal:"动物",car:"交通工具",fruit:"食物",boo:"躲猫猫",quiz:"找一找",color:"颜色",num:"数字",shape:"形状",body:"身体",piano:"钢琴",draw:"画画",play:"泡泡",sleep:"晚安"},
+ es:{animal:"Animales",car:"Vehículos",fruit:"Comida",boo:"Cucú",quiz:"¿Dónde está?",color:"Colores",num:"Números",shape:"Formas",body:"Cuerpo",piano:"Piano",draw:"Dibujar",play:"Burbujas",sleep:"Dormir"},
+ vi:{animal:"Động vật",car:"Xe cộ",fruit:"Đồ ăn",boo:"Ú òa",quiz:"Đố vui",color:"Màu sắc",num:"Con số",shape:"Hình dạng",body:"Cơ thể",piano:"Đàn piano",draw:"Vẽ",play:"Bong bóng",sleep:"Ngủ ngon"}};
+const TX={
+ ja:{title:"タッチであそぼ",sub:"すきなのを えらんでね",pick:"どれかな？",again:"もういちど さわると また きこえるよ",q:n=>`${n}は どれかな？`,good:"せいかい！すごいね！",boo:"ばあ！",hide:"いないいない…",tap:"さわってね",any:"どこでも さわってみてね",night:"おやすみなさい",auto:"5ふんで しぜんに とまります",note:"おとが でないときは マナーモードを かいじょしてね"},
+ en:{title:"Touch & Play",sub:"Pick one!",pick:"Which one?",again:"Tap again to hear it again",q:n=>`Where is the ${n.toLowerCase()}?`,good:"Great job!",boo:"Peekaboo!",hide:"Where is it?",tap:"Tap me",any:"Touch anywhere",night:"Good night",auto:"Stops by itself after 5 minutes",note:"No sound? Turn off silent mode."},
+ mm:{title:"ထိပြီး ကစားမယ်",sub:"တစ်ခု ရွေးပါ",pick:"ဘယ်ဟာလဲ",again:"ထပ်ထိရင် ထပ်ကြားရမယ်",q:n=>`${n} ဘယ်မှာလဲ`,good:"တော်တယ်!",boo:"တွေ့ပြီ!",hide:"ဘယ်မှာလဲ…",tap:"ထိကြည့်ပါ",any:"ဘယ်နေရာမဆို ထိကြည့်ပါ",night:"ကောင်းသောညပါ",auto:"၅ မိနစ်ကြာရင် အလိုအလျောက် ရပ်မယ်",note:"အသံမထွက်ရင် silent mode ကို ပိတ်ပါ"},
+ zh:{title:"点点乐",sub:"选一个吧",pick:"哪一个？",again:"再点一下还能听",q:n=>`${n}在哪里？`,good:"答对了！真棒！",boo:"在这里！",hide:"不见了…",tap:"点一下",any:"随便点点看",night:"晚安",auto:"5分钟后自动停止",note:"没有声音？请关闭静音模式"},
+ es:{title:"Toca y juega",sub:"¡Elige uno!",pick:"¿Cuál?",again:"Toca otra vez para oírlo",q:n=>`¿Dónde está: ${n}?`,good:"¡Muy bien!",boo:"¡Cucú!",hide:"¿Dónde está?",tap:"Tócame",any:"Toca donde quieras",night:"Buenas noches",auto:"Se para solo en 5 minutos",note:"¿Sin sonido? Quita el modo silencio"},
+ vi:{title:"Chạm và chơi",sub:"Chọn một nhé",pick:"Cái nào?",again:"Chạm lại để nghe lại",q:n=>`${n} ở đâu?`,good:"Giỏi quá!",boo:"Ú òa!",hide:"Đâu rồi…",tap:"Chạm vào nhé",any:"Chạm vào bất cứ đâu",night:"Chúc ngủ ngon",auto:"Tự dừng sau 5 phút",note:"Không có tiếng? Hãy tắt chế độ im lặng"}};
+const T=k=>TX[lang][k];
+function nameOf(it){return {ja:it[1],en:it[4],mm:it[3],zh:it[6],es:it[7],vi:it[8]}[lang]}
+function soundOf(it){return lang==="ja"?it[2]:lang==="en"?it[5]:""}
+function subOf(it){return lang==="ja"?it[3]:lang==="mm"?it[1]:""}
+function say(t){speak(t,VOICE[lang])}
 const ORDER=["animal","car","fruit","boo","quiz","color","num","shape","body","piano","draw","play","sleep"];
 const BG={animal:"#ffe2c6",car:"#d6ecff",fruit:"#ffd9de",color:"#f1e4ff",num:"#dff6e4",shape:"#fff0b8",body:"#ffe4ef",piano:"#e2e8ff",play:"#d9f5f5",boo:"#ffe8cc",quiz:"#e6f4ff",draw:"#fff",sleep:"#1e2445",home:"#fff6dc"};
 const TILE={animal:"#ffcf9f",car:"#a9d5ff",fruit:"#ffb3be",color:"#dcc4ff",num:"#b9ebc5",shape:"#ffe27a",body:"#ffc2d9",piano:"#c3cdff",play:"#a8e6e6",boo:"#ffd29a",quiz:"#b5dcff",draw:"#ffd6a5",sleep:"#9aa5d6"};
 let mode="home",lang="ja",sel=null;
-try{lang=localStorage.getItem("baby-lang")||"ja"}catch(e){}
+{const n=(navigator.language||"en").toLowerCase();lang=n.startsWith("ja")?"ja":n.startsWith("my")?"mm":n.startsWith("zh")?"zh":n.startsWith("es")?"es":n.startsWith("vi")?"vi":"en"}
+try{lang=localStorage.getItem("baby-lang")||lang}catch(e){}
+document.documentElement.lang=lang==="mm"?"my":lang;
 
 let ac=null;
 function audio(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume()}catch(e){}return ac}
@@ -154,23 +197,23 @@ function bigFace(it){
   if(mode==="color")return `<span style="display:inline-block;width:110px;height:110px;border-radius:50%;background:${it[0]};${white(it[0])}"></span>`;
   return it[0];
 }
-function topBar(){return `<div class="top"><button class="home" data-home="1" aria-label="ホーム">🏠</button><b>${SETS[mode].icon} ${SETS[mode].jp}</b></div>`}
+function topBar(){return `<div class="top"><button class="home" data-home="1" aria-label="ホーム">🏠</button><b>${SETS[mode].icon} ${ML[lang][mode]}</b></div>`}
 function render(){
   document.body.style.background=BG[mode];
   if(mode==="home"){
-    app.innerHTML=`<h1>タッチであそぼ</h1><p class="sub">すきなのを えらんでね</p>
-    <div class="menu">${ORDER.map(k=>`<button class="tile" data-mode="${k}" style="background:${TILE[k]}">${SETS[k].icon}<span>${SETS[k].jp}</span></button>`).join("")}</div>
-    <div class="lang">${[["ja","にほんご"],["en","English"],["mm","မြန်မာ"]].map(([k,v])=>`<button class="${k===lang?"on":""}" data-lang="${k}">${v}</button>`).join("")}</div>
-    <p class="note">おとが でないときは マナーモードを かいじょしてね</p>`;
+    app.innerHTML=`<h1>${T("title")}</h1><p class="sub">${T("sub")}</p>
+    <div class="menu">${ORDER.map(k=>`<button class="tile" data-mode="${k}" style="background:${TILE[k]}">${SETS[k].icon}<span>${ML[lang][k]}</span></button>`).join("")}</div>
+    <div class="lang">${LANGS.map(([k,v])=>`<button class="${k===lang?"on":""}" data-lang="${k}">${v}</button>`).join("")}</div>
+    <p class="note">${T("note")}</p>`;
     return;
   }
   if(mode==="boo"){
-    app.innerHTML=topBar()+`<button class="peek" id="peek">🙈<small>さわってね</small></button>`;
+    app.innerHTML=topBar()+`<button class="peek" id="peek">🙈<small>${T("tap")}</small></button>`;
     let open=false;
     document.getElementById("peek").onclick=()=>{
       const p=document.getElementById("peek");open=!open;
-      if(open){const pool=SETS.animal.items;const it=pool[Math.random()*pool.length|0];p.innerHTML=`${it[0]}<small>ばあ！</small>`;p.classList.remove("wiggle");void p.offsetWidth;p.classList.add("wiggle");chime();speak(lang==="en"?"Peekaboo!":"ばあ！",lang==="en"?"en-US":"ja-JP")}
-      else{p.innerHTML=`🙈<small>いないいない…</small>`;click();speak(lang==="en"?"Where is it?":"いないいない","ja-JP".replace("ja-JP",lang==="en"?"en-US":"ja-JP"))}
+      if(open){const pool=SETS.animal.items;const it=pool[Math.random()*pool.length|0];p.innerHTML=`${it[0]}<small>${T("boo")}</small>`;p.classList.remove("wiggle");void p.offsetWidth;p.classList.add("wiggle");chime();say(T("boo"))}
+      else{p.innerHTML=`🙈<small>${T("hide")}</small>`;click();say(T("hide"))}
     };
     return;
   }
@@ -178,12 +221,12 @@ function render(){
     const pool=[...SETS.animal.items,...SETS.fruit.items,...SETS.car.items];
     const pick=[];while(pick.length<3){const x=pool[Math.random()*pool.length|0];if(!pick.includes(x))pick.push(x)}
     const ans=pick[Math.random()*3|0];
-    const q=lang==="en"?`Where is the ${ans[4].toLowerCase()}?`:`${ans[1]}は どれかな？`;
-    app.innerHTML=topBar()+`<div class="big" style="min-height:90px"><div class="name" style="font-size:28px">${q}</div><div class="mm">${ans[3]}</div></div><div class="qq">${pick.map((x,i)=>`<button class="card" data-q="${pool.indexOf(x)}">${x[0]}</button>`).join("")}</div>`;
-    setTimeout(()=>speak(q,lang==="en"?"en-US":"ja-JP"),300);
+    const q=T("q")(nameOf(ans));
+    app.innerHTML=topBar()+`<div class="big" style="min-height:90px"><div class="name" style="font-size:28px">${q}</div><div class="mm">${subOf(ans)}</div></div><div class="qq">${pick.map((x,i)=>`<button class="card" data-q="${pool.indexOf(x)}">${x[0]}</button>`).join("")}</div>`;
+    setTimeout(()=>say(q),300);
     app.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{
       const x=pool[+b.dataset.q];
-      if(x===ans){b.style.background="#c8f7c5";chime();speak(lang==="en"?"Great job!":"せいかい！すごいね！",lang==="en"?"en-US":"ja-JP");confetti();setTimeout(render,1600)}
+      if(x===ans){b.style.background="#c8f7c5";chime();say(T("good"));confetti();setTimeout(render,1600)}
       else{b.classList.remove("wiggle");void b.offsetWidth;b.classList.add("wiggle");if(audio())tone(220,ac.currentTime,.25,.1,"sine")}
     });
     return;
@@ -203,7 +246,7 @@ function render(){
   }
   if(mode==="sleep"){
     let stars="";for(let i=0;i<28;i++)stars+=`<span class="star" style="left:${Math.random()*95}%;top:${Math.random()*90}%;font-size:${10+Math.random()*16}px;animation-delay:${Math.random()*2.5}s">✦</span>`;
-    app.innerHTML=topBar().replace('<b>','<b style="color:#e8e6ff">')+`<div class="night">${stars}<div style="font-size:90px;position:relative">🌙</div><div style="font-size:24px;position:relative;margin-top:8px">おやすみなさい</div><button class="playbtn" id="lull" style="position:relative">${lullOn?"⏸":"▶︎"}</button><div style="font-size:12px;opacity:.6;position:relative;margin-top:12px">5ふんで しぜんに とまります</div></div>`;
+    app.innerHTML=topBar().replace('<b>','<b style="color:#e8e6ff">')+`<div class="night">${stars}<div style="font-size:90px;position:relative">🌙</div><div style="font-size:24px;position:relative;margin-top:8px">${T("night")}</div><button class="playbtn" id="lull" style="position:relative">${lullOn?"⏸":"▶︎"}</button><div style="font-size:12px;opacity:.6;position:relative;margin-top:12px">${T("auto")}</div></div>`;
     document.getElementById("lull").onclick=()=>{lullOn?stopLull():startLull();document.getElementById("lull").textContent=lullOn?"⏸":"▶︎"};
     return;
   }
@@ -215,14 +258,14 @@ function render(){
     return;
   }
   if(mode==="play"){
-    app.innerHTML=topBar()+`<div id="play"><div class="hint">どこでも さわってみてね<br>👆</div></div>`;bindPlay();return;
+    app.innerHTML=topBar()+`<div id="play"><div class="hint">${T("any")}<br>👆</div></div>`;bindPlay();return;
   }
   const items=SETS[mode].items;const it=sel!=null?items[sel]:null;
-  const nm=it?(lang==="en"?it[4]:it[1]):"どれかな？";
-  const sd=it?(lang==="en"?it[5]:it[2]):"";
+  const nm=it?nameOf(it):T("pick");
+  const sd=it?soundOf(it):"";
   app.innerHTML=topBar()+`<button class="big" id="bigbtn" style="width:100%"><div class="emo" id="emo">${bigFace(it)}</div>
-   <div class="name">${nm}</div><div class="snd">${sd||""}</div><div class="mm">${it?it[3]:""}</div>
-   ${it?'<div class="again">もういちど さわると また きこえるよ</div>':''}</button>
+   <div class="name">${nm}</div><div class="snd">${sd||""}</div><div class="mm">${it?subOf(it):""}</div>
+   ${it?`<div class="again">${T("again")}</div>`:''}</button>
    <div class="grid">${items.map((x,i)=>`<button class="card ${i===sel?"sel":""}" data-i="${i}" aria-label="${x[1]}">${face(x)}</button>`).join("")}</div>`;
 }
 function tap(i){
@@ -230,8 +273,7 @@ function tap(i){
   const it=SETS[mode].items[i];
   const e=document.getElementById("emo");e.classList.remove("boing");void e.offsetWidth;e.classList.add("boing");
   setTimeout(()=>{
-    if(lang==="en")speak(it[4]+(it[5]?"! "+it[5]:""),"en-US");
-    else speak(it[1]+(it[2]?"、"+it[2]:""),"ja-JP");
+    const sn=soundOf(it);say(nameOf(it)+(sn?(lang==="ja"?"、":"! ")+sn:""));
   },250);
 }
 const POPC=["#ff8fa3","#ffd166","#06d6a0","#4cc9f0","#b388eb","#ff9f1c"];
@@ -260,5 +302,6 @@ document.addEventListener("gesturestart",e=>e.preventDefault());
 document.addEventListener("dblclick",e=>e.preventDefault());
 render();
 </script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
 </body>
 </html>

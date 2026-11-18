@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ミンガラーバー！ 1000語でミャンマー語</title>
+<title>ミンガラーバー！ミャンマー語 1000語</title>
 <meta name="description" content="日本人のためのミャンマー語。1000語以上のあいさつ・職場のひとこと・数字・食べ物を、カタカナ読みつきで。介護施設や職場で、ミャンマー人の仲間と話してみよう。無料。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="ミンガラーバー！ 1000語でミャンマー語">
+<meta property="og:title" content="ミンガラーバー！ミャンマー語 1000語">
 <meta property="og:description" content="あいさつ・職場のひとこと・数字を、カタカナ読みつきで。ミャンマー人の仲間と話してみよう。">
 <meta property="og:image" content="https://win-wwh.github.io/win/mm/icon-512.png">
 <meta property="og:url" content="https://win-wwh.github.io/win/mm/">
@@ -16,7 +16,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ミンガラーバー">
+<meta name="apple-mobile-web-app-title" content="ミャンマー語">
 <meta name="theme-color" content="#1b7a4a">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Noto+Sans+Myanmar:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -81,7 +81,7 @@ header h1 small{display:block;font-size:12px;font-weight:400;color:#6b6b5e}
 <header>
   <button class="back" id="back" aria-label="もどる">‹</button>
   <div class="flag" aria-hidden="true"></div>
-  <h1 id="ttl">ミンガラーバー！<small>1000語で、ミャンマーの友だちと話そう 🇲🇲</small></h1>
+  <h1 id="ttl">ミンガラーバー！ミャンマー語<small><span class="mm">မင်္ဂလာပါ</span>　1000語で、ミャンマーの友だちと話そう</small></h1>
 </header>
 <main id="main"></main>
 <div class="note2">📝 読み方はカタカナで近い音を書いています。本当の発音は、ミャンマーの友だちに聞いてみてください。きっと喜ばれます😊<br>作った人：Win（ミャンマー出身・日本在住）</div>
@@ -462,7 +462,7 @@ function bindFav(){main.querySelectorAll(".fav").forEach(b=>b.onclick=()=>{const
 function setTitle(t){$("#ttl").innerHTML=t}
 function sub(on){document.body.classList.toggle("sub",on)}
 function todays(){const d=new Date();const n=(d.getFullYear()*372+d.getMonth()*31+d.getDate());const pool=W.filter(w=>w[0]!=="num"&&w[0]!=="day");return pool[n%pool.length]}
-function home(){sub(false);setTitle('ミンガラーバー！<small>1000語で、ミャンマーの友だちと話そう 🇲🇲</small>');
+function home(){sub(false);setTitle('ミンガラーバー！ミャンマー語<small><span class="mm">မင်္ဂလာပါ</span>　1000語で、ミャンマーの友だちと話そう</small>');
  const t=todays();
  main.innerHTML=`<div class="hero"><div style="font-size:12px;opacity:.85">☀️ 今日のひとこと</div><div class="big mm">${t[2]}</div><div class="k"><b>${t[3]}</b>　${t[1]}</div>${t[4]?`<div class="t">💡 ${t[4]}</div>`:""}</div>
  <input class="search" id="q" placeholder="🔍 日本語でさがす（例：ありがとう）">

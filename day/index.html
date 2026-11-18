@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>きょうの予定</title>
+<meta name="description" content="1日のスケジュールを時間ごとに。くりかえし予定、やることリスト、今なにをする時間かがすぐわかる。無料。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="きょうの予定 - 1日のスケジュール">
+<meta property="og:description" content="1日のスケジュールを時間ごとに。くりかえし予定とやることリストも。">
+<meta property="og:image" content="https://win-wwh.github.io/win/day/icon-512.png">
+<meta property="og:url" content="https://win-wwh.github.io/win/day/">
+<meta name="twitter:card" content="summary">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="きょうの予定">
+<meta name="theme-color" content="#0f9d8a">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--p:#0f9d8a;--bg:#f3f7f6;--ink:#1d2b29}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Hiragino Sans","Noto Sans JP",sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:560px;margin:0 auto;padding:10px 12px 110px}
+header{display:flex;align-items:center;gap:8px;margin:4px 2px 8px}
+header h1{flex:1;margin:0;font-size:19px;font-weight:900}
+.ib{border:0;background:#fff;border-radius:12px;height:38px;padding:0 12px;font-size:14px;font-weight:800;color:var(--p);box-shadow:0 1px 4px #0001}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;background:#fff;border-radius:18px;padding:8px;box-shadow:0 2px 8px #0000000d}
+.wd{border:0;background:none;border-radius:12px;padding:6px 0;font:inherit;color:inherit;display:flex;flex-direction:column;align-items:center;gap:2px}
+.wd small{font-size:11px;color:#8a9a97;font-weight:700}
+.wd b{font-size:17px}
+.wd.sun small,.wd.sun b{color:#e0505e}.wd.sat small,.wd.sat b{color:#3b82f6}
+.wd.on{background:var(--p)}.wd.on small,.wd.on b{color:#fff}
+.wd .dt{width:5px;height:5px;border-radius:50%;background:transparent}
+.wd .dt.has{background:var(--p)}.wd.on .dt.has{background:#fff}
+.wd.today b{text-decoration:underline;text-underline-offset:3px}
+.navrow{display:flex;justify-content:space-between;align-items:center;margin:8px 4px}
+.navrow button{border:0;background:none;font-size:14px;font-weight:800;color:var(--p);padding:6px}
+.navrow b{font-size:15px}
+.now{background:linear-gradient(135deg,#0f9d8a,#14b8a6);color:#fff;border-radius:20px;padding:14px 16px;margin:6px 0 12px;box-shadow:0 8px 20px #0f9d8a40}
+.now .l{font-size:12px;opacity:.9;font-weight:700}
+.now .t{font-size:22px;font-weight:900;margin:2px 0}
+.now .s{font-size:13px;opacity:.95}
+.now .bar{height:6px;background:#ffffff40;border-radius:4px;margin-top:8px;overflow:hidden}.now .bar i{display:block;height:100%;background:#fff}
+.tl{position:relative;background:#fff;border-radius:20px;box-shadow:0 2px 8px #0000000d;padding:6px 10px 10px 54px;min-height:200px}
+.hr{position:absolute;left:0;right:0;border-top:1px solid #eef3f2}
+.hr span{position:absolute;left:10px;top:-8px;font-size:11px;color:#9aa8a6;font-weight:700;background:#fff;padding-right:4px}
+.ev{position:absolute;left:58px;right:10px;border-radius:12px;padding:5px 9px;color:#fff;overflow:hidden;border:0;text-align:left;font:inherit;box-shadow:0 2px 6px #0000001a}
+.ev b{font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev small{font-size:11px;opacity:.92}
+.ev.done{opacity:.45}.ev.done b{text-decoration:line-through}
+.ev .ck{position:absolute;right:6px;top:5px;width:24px;height:24px;border-radius:50%;background:#ffffff40;display:flex;align-items:center;justify-content:center;font-size:13px}
+.nowline{position:absolute;left:46px;right:6px;border-top:2px solid #e0505e;z-index:3}
+.nowline::before{content:"";position:absolute;left:-5px;top:-6px;width:10px;height:10px;border-radius:50%;background:#e0505e}
+.empty{color:#9aa8a6;text-align:center;padding:30px 0;font-size:14px}
+.card{background:#fff;border-radius:20px;padding:14px;box-shadow:0 2px 8px #0000000d;margin-top:12px}
+.card h3{margin:0 0 8px;font-size:15px}
+.todo{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid #f0f4f3}
+.todo:last-child{border:0}
+.todo input[type=checkbox]{width:22px;height:22px;accent-color:var(--p);flex:none}
+.todo span{flex:1;font-size:15px}.todo.done span{text-decoration:line-through;color:#9aa8a6}
+.todo button{border:0;background:none;color:#c0c8c7;font-size:16px}
+.addrow{display:flex;gap:6px;margin-top:8px}
+.addrow input{flex:1}
+input,select,textarea{font:inherit;font-size:16px;border:1.5px solid #dfe8e6;border-radius:12px;padding:10px;width:100%;background:#fff;color:inherit}
+.fab{position:fixed;right:max(16px,calc(50% - 264px));bottom:calc(env(safe-area-inset-bottom) + 18px);width:62px;height:62px;border-radius:50%;border:0;background:var(--p);color:#fff;font-size:32px;box-shadow:0 8px 20px #0f9d8a66;z-index:9}
+.sheet-bg{position:fixed;inset:0;background:#0006;z-index:20;display:none}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;padding:16px 16px calc(env(safe-area-inset-bottom) + 16px);z-index:21;max-width:560px;margin:0 auto;transform:translateY(105%);transition:transform .2s;max-height:90vh;overflow:auto}
+.sheet.on{transform:none}
+.sheet h2{margin:0 0 10px;font-size:18px}
+.lab{font-size:12px;color:#6b7c79;font-weight:700;margin:10px 0 4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tpl{display:flex;gap:6px;flex-wrap:wrap}
+.tpl button{border:0;border-radius:20px;background:#eef6f4;padding:7px 11px;font-size:13px;font-weight:700;font-family:inherit;color:var(--ink)}
+.cols{display:flex;gap:8px;flex-wrap:wrap}
+.cols button{width:34px;height:34px;border-radius:50%;border:3px solid transparent}
+.cols button.on{border-color:#1d2b29}
+.reps{display:flex;gap:6px;flex-wrap:wrap}
+.reps button{border:1.5px solid #dfe8e6;background:#fff;border-radius:12px;padding:8px 12px;font-weight:700;font-family:inherit;font-size:14px;color:var(--ink)}
+.reps button.on{background:var(--p);color:#fff;border-color:var(--p)}
+.btn{border:0;border-radius:14px;padding:13px;font-size:16px;font-weight:800;background:var(--p);color:#fff;width:100%;margin-top:14px;font-family:inherit}
+.btn.del{background:#fde8ea;color:#c0303e;margin-top:8px}
+.toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#1d2b29ee;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:40;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>🗓️ きょうの予定</h1><button class="ib" id="todayB">今日</button></header>
+<div class="navrow"><button id="pw">‹ 前の週</button><b id="ym"></b><button id="nw">次の週 ›</button></div>
+<div class="week" id="week"></div>
+<div id="now"></div>
+<div class="tl" id="tl"></div>
+<div class="card"><h3>✅ やることリスト</h3><div id="todos"></div><div class="addrow"><input id="tdIn" placeholder="例：牛乳を買う、電話する"><button class="ib" id="tdAdd" style="height:auto">追加</button></div></div>
+<div style="font-size:11px;color:#9aa8a6;text-align:center;margin-top:14px;line-height:1.7">🔒 予定はこのスマホの中だけに保存されます。ほかの人には見えません。</div>
+</div>
+<button class="fab" id="fab" aria-label="予定を追加">＋</button>
+<div class="sheet-bg" id="bg"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);const pad=n=>String(n).padStart(2,"0");
+const WD="日月火水木金土";
+const COLS=["#0f9d8a","#3b82f6","#8b5cf6","#ec4899","#f59e0b","#ef4444","#64748b","#22a06b"];
+const TPL=[["⏰ 起きる","06:30","06:45",6],["🍳 朝ごはん","07:00","07:30",4],["🏥 仕事","09:00","18:00",0],["👶 お迎え","17:30","18:00",3],["🛒 買い物","18:00","18:30",1],["🍲 夕ごはん","19:00","20:00",4],["🛁 お風呂","20:30","21:00",1],["📚 勉強","21:00","22:00",2],["😴 寝る","23:00","23:30",6],["🏃 運動","07:30","08:00",7],["💊 薬","08:00","08:10",5]];
+let D=JSON.parse(localStorage.getItem("day-v1")||"null")||{ev:[],todo:{},done:{}};
+const save=()=>localStorage.setItem("day-v1",JSON.stringify(D));
+const ds=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+let sel=new Date();sel.setHours(0,0,0,0);
+const tm=s=>{const[h,m]=s.split(":").map(Number);return h*60+m};
+const fmt=m=>`${pad(Math.floor(m/60)%24)}:${pad(m%60)}`;
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",1600)}
+function occurs(e,d){const key=ds(d);if((e.skip||[]).includes(key))return false;
+ if(e.rep==="none")return e.date===key;if(key<e.date)return false;const w=d.getDay();
+ if(e.rep==="daily")return true;if(e.rep==="weekday")return w>0&&w<6;if(e.rep==="weekly")return new Date(e.date+"T00:00").getDay()===w;return false}
+const eventsOn=d=>D.ev.filter(e=>occurs(e,d)).sort((a,b)=>tm(a.s)-tm(b.s));
+function render(){
+ const key=ds(sel),today=new Date();today.setHours(0,0,0,0);
+ $("#ym").textContent=`${sel.getFullYear()}年${sel.getMonth()+1}月`;
+ const st=new Date(sel);st.setDate(sel.getDate()-sel.getDay());
+ let wh="";for(let i=0;i<7;i++){const d=new Date(st);d.setDate(st.getDate()+i);const has=eventsOn(d).length||(D.todo[ds(d)]||[]).length;
+  wh+=`<button class="wd${i===0?" sun":i===6?" sat":""}${ds(d)===key?" on":""}${ds(d)===ds(today)?" today":""}" data-d="${ds(d)}"><small>${WD[i]}</small><b>${d.getDate()}</b><i class="dt${has?" has":""}"></i></button>`}
+ $("#week").innerHTML=wh;$("#week").querySelectorAll(".wd").forEach(b=>b.onclick=()=>{sel=new Date(b.dataset.d+"T00:00");render()});
+ const evs=eventsOn(sel);const isToday=key===ds(today);
+ // now card
+ const nm=new Date();const nowM=nm.getHours()*60+nm.getMinutes();
+ if(isToday){const curE=evs.find(e=>tm(e.s)<=nowM&&nowM<tm(e.e));const nxt=evs.find(e=>tm(e.s)>nowM);
+  let h=`<div class="now"><div class="l">いま ${fmt(nowM)}</div>`;
+  if(curE){const p=(nowM-tm(curE.s))/(tm(curE.e)-tm(curE.s))*100;h+=`<div class="t">${curE.t}</div><div class="s">${curE.s}〜${curE.e}　あと${tm(curE.e)-nowM}分</div><div class="bar"><i style="width:${p}%"></i></div>`}
+  else h+=`<div class="t">${nxt?"つぎ："+nxt.t:"今日の予定はおわり 🎉"}</div>`;
+  if(nxt&&curE)h+=`<div class="s" style="margin-top:6px">つぎ：${nxt.s} ${nxt.t}</div>`;else if(nxt)h+=`<div class="s">${nxt.s}から（あと${tm(nxt.s)-nowM}分）</div>`;
+  $("#now").innerHTML=h+"</div>"}else $("#now").innerHTML=`<div style="height:10px"></div>`;
+ // timeline
+ const PX=1.1;let h0=6*60,h1=24*60;evs.forEach(e=>{h0=Math.min(h0,Math.floor(tm(e.s)/60)*60);h1=Math.max(h1,Math.ceil(tm(e.e)/60)*60)});if(isToday)h0=Math.min(h0,Math.floor(nowM/60)*60);
+ let th="";for(let m=h0;m<=h1;m+=60)th+=`<div class="hr" style="top:${(m-h0)*PX+8}px"><span>${pad(m/60%24)}:00</span></div>`;
+ // lay out overlapping events in columns
+ let cl=[],cEnd=-1;const flush=()=>{const lanes=[];cl.forEach(e=>{let i=0;while(lanes[i]!==undefined&&lanes[i]>tm(e.s))i++;lanes[i]=tm(e.e);e._l=i});cl.forEach(e=>e._n=Math.max(1,lanes.length));cl=[]};
+ evs.forEach(e=>{if(tm(e.s)>=cEnd)flush();cl.push(e);cEnd=Math.max(cEnd,tm(e.e))});flush();
+ evs.forEach(e=>{const top=(tm(e.s)-h0)*PX+8,hgt=Math.max(30,(tm(e.e)-tm(e.s))*PX-2);const dn=(D.done[key]||[]).includes(e.id);
+  th+=`<button class="ev${dn?" done":""}" data-id="${e.id}" style="top:${top}px;height:${hgt}px;background:${e.c};left:calc(58px + (100% - 68px)*${e._l}/${e._n});right:auto;width:calc((100% - 68px)/${e._n} - 3px)"><b>${e.t}</b><small>${e.s}〜${e.e}${e.rep!=="none"?" 🔁":""}</small><span class="ck" data-ck="${e.id}">${dn?"✓":""}</span></button>`});
+ if(isToday&&nowM>=h0&&nowM<=h1)th+=`<div class="nowline" style="top:${(nowM-h0)*PX+8}px"></div>`;
+ if(!evs.length)th+=`<div class="empty" style="position:relative;padding-top:${Math.min(400,(h1-h0)*PX/3)}px">予定はありません<br>右下の ＋ で追加しよう</div>`;
+ $("#tl").innerHTML=th;$("#tl").style.height=((h1-h0)*PX+24)+"px";
+ $("#tl").querySelectorAll(".ev").forEach(b=>b.onclick=ev=>{if(ev.target.dataset.ck){toggleDone(ev.target.dataset.ck);return}edit(D.ev.find(x=>x.id===b.dataset.id))});
+ if(isToday&&!render.scrolled){render.scrolled=1;setTimeout(()=>{const nl2=$(".nowline");if(nl2)window.scrollTo({top:nl2.getBoundingClientRect().top+scrollY-260,behavior:"smooth"})},300)}
+ // todos
+ const td=D.todo[key]||[];
+ $("#todos").innerHTML=td.length?td.map((x,i)=>`<div class="todo${x.d?" done":""}"><input type="checkbox" ${x.d?"checked":""} data-i="${i}"><span>${x.t.replace(/</g,"&lt;")}</span><button data-x="${i}">✕</button></div>`).join(""):`<div style="color:#9aa8a6;font-size:13px">時間が決まっていない「やること」を書いておこう</div>`;
+ $("#todos").querySelectorAll("input").forEach(c=>c.onchange=()=>{td[+c.dataset.i].d=c.checked;D.todo[key]=td;save();render()});
+ $("#todos").querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{td.splice(+b.dataset.x,1);D.todo[key]=td;save();render()})}
+function toggleDone(id){const k=ds(sel);const a=D.done[k]||[];const i=a.indexOf(id);if(i<0){a.push(id);toast("おつかれさま！ ✓")}else a.splice(i,1);D.done[k]=a;save();render()}
+$("#tdAdd").onclick=()=>{const v=$("#tdIn").value.trim();if(!v)return;const k=ds(sel);(D.todo[k]=D.todo[k]||[]).push({t:v,d:false});$("#tdIn").value="";save();render()};
+$("#tdIn").onkeydown=e=>{if(e.key==="Enter")$("#tdAdd").click()};
+function edit(e){const isNew=!e;e=e?JSON.parse(JSON.stringify(e)):{id:Date.now().toString(36),t:"",s:"09:00",e:"10:00",c:COLS[0],rep:"none",date:ds(sel),memo:""};
+ if(isNew){const nm=new Date();if(ds(sel)===ds(nm)){const m=Math.ceil((nm.getHours()*60+nm.getMinutes())/30)*30;e.s=fmt(Math.min(m,23*60));e.e=fmt(Math.min(m+60,23*60+59))}}
+ const draw=()=>{$("#sheet").innerHTML=`<h2>${isNew?"＋ 予定を追加":"✏️ 予定を変更"}</h2>
+  ${isNew?`<div class="lab">よく使う予定（タップで入力）</div><div class="tpl">${TPL.map((x,i)=>`<button data-tp="${i}">${x[0]}</button>`).join("")}</div>`:""}
+  <div class="lab">なにをする？</div><input id="ft" value="${e.t.replace(/"/g,"&quot;")}" placeholder="例：🏥 仕事、👶 保育園">
+  <div class="row2"><div><div class="lab">はじまり</div><input type="time" id="fs" value="${e.s}"></div><div><div class="lab">おわり</div><input type="time" id="fe" value="${e.e}"></div></div>
+  <div class="lab">くりかえし</div><div class="reps">${[["none","1回だけ"],["daily","毎日"],["weekday","平日（月〜金）"],["weekly","毎週"+WD[new Date(e.date+"T00:00").getDay()]+"曜日"]].map(r=>`<button data-r="${r[0]}" class="${e.rep===r[0]?"on":""}">${r[1]}</button>`).join("")}</div>
+  <div class="lab">色</div><div class="cols">${COLS.map(c=>`<button data-c="${c}" style="background:${c}" class="${e.c===c?"on":""}"></button>`).join("")}</div>
+  <div class="lab">メモ</div><textarea id="fm" rows="2" placeholder="持ち物・場所など">${e.memo||""}</textarea>
+  <button class="btn" id="ok">保存</button>
+  ${isNew?"":`<button class="btn del" id="del">${e.rep==="none"?"この予定を消す":"この日だけ消す"}</button>${e.rep!=="none"?`<button class="btn del" id="delAll">くりかえしを全部消す</button>`:""}`}`;
+  const sync=()=>{e.t=$("#ft").value;e.s=$("#fs").value;e.e=$("#fe").value;e.memo=$("#fm").value};
+  $("#sheet").querySelectorAll("[data-tp]").forEach(b=>b.onclick=()=>{const x=TPL[+b.dataset.tp];sync();e.t=x[0];e.s=x[1];e.e=x[2];e.c=COLS[x[3]];draw()});
+  $("#sheet").querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{sync();e.rep=b.dataset.r;draw()});
+  $("#sheet").querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{sync();e.c=b.dataset.c;draw()});
+  $("#ok").onclick=()=>{sync();if(!e.t.trim()){$("#ft").focus();return}if(tm(e.e)<=tm(e.s))e.e=fmt(Math.min(tm(e.s)+30,23*60+59));
+   const i=D.ev.findIndex(x=>x.id===e.id);if(i<0)D.ev.push(e);else D.ev[i]=e;save();close();render();toast("保存しました ✓")};
+  const dl=$("#del");if(dl)dl.onclick=()=>{const i=D.ev.findIndex(x=>x.id===e.id);if(e.rep==="none")D.ev.splice(i,1);else{(D.ev[i].skip=D.ev[i].skip||[]).push(ds(sel))}save();close();render()};
+  const da=$("#delAll");if(da)da.onclick=()=>{if(confirm("くりかえしの予定を全部消しますか？")){D.ev=D.ev.filter(x=>x.id!==e.id);save();close();render()}}};
+ draw();open();if(isNew)setTimeout(()=>{},0)}
+function open(){$("#bg").style.display="block";requestAnimationFrame(()=>$("#sheet").classList.add("on"))}
+function close(){$("#sheet").classList.remove("on");setTimeout(()=>$("#bg").style.display="none",200)}
+$("#bg").onclick=close;$("#fab").onclick=()=>edit(null);
+$("#todayB").onclick=()=>{sel=new Date();sel.setHours(0,0,0,0);render.scrolled=0;render()};
+$("#pw").onclick=()=>{sel.setDate(sel.getDate()-7);render()};$("#nw").onclick=()=>{sel.setDate(sel.getDate()+7);render()};
+setInterval(()=>{if(!$("#sheet").classList.contains("on"))render()},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)render()});
+render();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>ふたりの勤務表</title>
+<title>ウィンとヒデの勤務表</title>
 <meta name="description" content="夫婦・ふたりのシフトを1つのカレンダーで。ふたり休みの日がすぐわかる。給料の目安も自動計算。無料。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ふたりの勤務表">
@@ -91,7 +91,7 @@ textarea,input{font:inherit;font-size:16px;width:100%;border:1.5px solid #e1e4f0
 <body>
 <div class="wrap">
 <header>
-  <h1>👫 ふたりの勤務表</h1>
+  <h1>👫 ウィンとヒデの勤務表</h1>
   <button class="ib" id="shareB" title="共有">📤</button>
   <button class="ib" id="setB" title="設定">⚙️</button>
 </header>
@@ -126,9 +126,10 @@ const DEF_TYPES=[
  {k:"有",name:"有給",c:"#0ea5e9",h:8,night:false}
 ];
 let S=JSON.parse(localStorage.getItem("shift-v1")||"null")||{
- people:[{name:"わたし",c:"#ff7a8a",wage:1300,nightPay:5000},{name:"だんな",c:"#4aa8ff",wage:1300,nightPay:5000}],
+ people:[{name:"ウィン",c:"#ff7a8a",wage:1300,nightPay:5000},{name:"ヒデ",c:"#4aa8ff",wage:1300,nightPay:5000}],
  types:DEF_TYPES,data:{},memo:{}
 };
+if(S.people[0].name==="わたし")S.people[0].name="ウィン";if(S.people[1].name==="だんな")S.people[1].name="ヒデ";
 const save=()=>localStorage.setItem("shift-v1",JSON.stringify(S));
 let cur=new Date();cur.setDate(1);
 let paint={on:false,who:0,k:"早"};
@@ -219,7 +220,7 @@ function importHash(){const m=location.hash.match(/#s=([\w-]+)/);if(!m)return;
    for(const k of Object.keys(S.data))if(k.startsWith(pl.ym+"-"))delete S.data[k];
    for(const d in pl.d){const s=pl.d[d];S.data[`${pl.ym}-${d}`]=[s[0]&&s[0]!=="_"?s[0]:null,s[1]&&s[1]!=="_"?s[1]:null]}
    for(const d in (pl.mm||{}))S.memo[`${pl.ym}-${d}`]=pl.mm[d];
-   if(pl.n&&pl.n.length===2&&S.people[0].name==="わたし"&&S.people[1].name==="だんな"){S.people[0].name=pl.n[0];S.people[1].name=pl.n[1]}
+   if(pl.n&&pl.n.length===2&&S.people[0].name==="ウィン"&&S.people[1].name==="ヒデ"){S.people[0].name=pl.n[0];S.people[1].name=pl.n[1]}
    save();cur=new Date(+y,+mo-1,1);toast("受け取りました ✓")}
  }catch(e){toast("リンクが読めませんでした")}
  history.replaceState(null,"",location.pathname)}

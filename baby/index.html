@@ -14,39 +14,45 @@
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700&family=Noto+Sans+Myanmar:wght@600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-html,body{margin:0;height:100%;overscroll-behavior:none}
-body{background:#fff6dc;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;color:#5a4636;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);touch-action:manipulation}
-.wrap{max-width:560px;margin:0 auto;padding:10px 12px 18px;min-height:100%;display:flex;flex-direction:column}
-.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.tab{border:0;border-radius:18px;background:#fff;font-size:30px;padding:8px 0 4px;box-shadow:0 3px 0 #f0dcb0;font-family:inherit;color:inherit}
-.tab small{display:block;font-size:11px;margin-top:2px}
-.tab.on{background:#ffcf5a;box-shadow:0 3px 0 #e3a92a}
-.big{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:170px;padding:6px 0}
-.big .emo{font-size:86px;line-height:1;transition:transform .15s}
-.big .emo.boing{animation:boing .5s}
-.big .name{font-size:30px;margin-top:6px;min-height:40px}
-.big .mm{font-family:"Noto Sans Myanmar","Myanmar Text",sans-serif;font-size:20px;color:#8a7360;min-height:30px}
-.big .en{font-size:18px;color:#8a7360;min-height:24px}
-@keyframes boing{0%{transform:scale(1)}30%{transform:scale(1.35) rotate(-8deg)}60%{transform:scale(.9) rotate(6deg)}100%{transform:scale(1)}}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.card{border:0;border-radius:22px;background:#fff;aspect-ratio:1;font-size:46px;box-shadow:0 4px 0 #f0dcb0;display:flex;align-items:center;justify-content:center;padding:0}
-.card:active{transform:translateY(3px);box-shadow:0 1px 0 #f0dcb0}
-.dot{width:70%;height:70%;border-radius:50%}
-.lang{display:flex;justify-content:center;gap:6px;margin-top:12px}
-.lang button{border:0;border-radius:999px;background:#fff;padding:6px 14px;font-family:inherit;font-size:13px;color:inherit;box-shadow:0 2px 0 #f0dcb0}
+html,body{margin:0;min-height:100%;overscroll-behavior:none}
+body{background:#fff6dc;font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif;color:#5a4636;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);touch-action:manipulation;transition:background .3s}
+.wrap{max-width:560px;margin:0 auto;padding:14px 14px 22px}
+button{font-family:inherit;color:inherit;border:0;cursor:pointer}
+h1{text-align:center;font-size:30px;margin:6px 0 2px}
+.sub{text-align:center;color:#a08a72;font-size:14px;margin:0 0 16px}
+.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{border-radius:26px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:54px;box-shadow:0 6px 0 rgba(90,70,54,.18);transition:transform .1s}
+.tile span{font-size:15px;margin-top:4px;color:#5a4636}
+.tile:active,.card:active,.home:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 rgba(90,70,54,.18)}
+.lang{display:flex;justify-content:center;gap:8px;margin-top:20px;flex-wrap:wrap}
+.lang button{border-radius:999px;background:#fff;padding:9px 16px;font-size:14px;box-shadow:0 3px 0 rgba(90,70,54,.12)}
 .lang button.on{background:#5a4636;color:#fff}
-#play{position:relative;flex:1;min-height:420px;border-radius:24px;background:#fff;overflow:hidden;box-shadow:0 4px 0 #f0dcb0;touch-action:none;margin-top:10px}
-#play .hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#c9b391;pointer-events:none;text-align:center;line-height:1.6}
+.note{text-align:center;font-size:12px;color:#b9a48b;margin-top:14px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.home{width:64px;height:64px;border-radius:22px;background:#fff;font-size:32px;box-shadow:0 5px 0 rgba(90,70,54,.18);flex:none}
+.top b{font-size:24px}
+.big{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:230px;border-radius:30px;background:rgba(255,255,255,.75);margin:6px 0 14px;padding:14px;text-align:center}
+.emo{font-size:110px;line-height:1.05}
+.emo.boing{animation:boing .55s}
+@keyframes boing{0%{transform:scale(1)}30%{transform:scale(1.3) rotate(-8deg)}60%{transform:scale(.92) rotate(6deg)}100%{transform:scale(1)}}
+.name{font-size:36px;margin-top:6px;min-height:46px}
+.snd{font-size:20px;color:#a08a72;min-height:28px}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Text",sans-serif;font-size:20px;color:#8a7360;min-height:32px}
+.again{font-size:12px;color:#c4af95;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{border-radius:24px;background:#fff;aspect-ratio:1;font-size:48px;box-shadow:0 5px 0 rgba(90,70,54,.15);display:flex;align-items:center;justify-content:center;padding:0;transition:transform .1s}
+.card.sel{outline:4px solid #ffb703;outline-offset:2px}
+.dot{width:68%;height:68%;border-radius:50%}
+#play{position:relative;height:calc(100vh - 140px);min-height:420px;border-radius:30px;background:#fff;overflow:hidden;box-shadow:0 5px 0 rgba(90,70,54,.15);touch-action:none}
+#play .hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;color:#c9b391;pointer-events:none;text-align:center;line-height:1.7}
 .pop{position:absolute;border-radius:50%;pointer-events:none;animation:pop 1.1s ease-out forwards;display:flex;align-items:center;justify-content:center}
 @keyframes pop{0%{transform:translate(-50%,-50%) scale(.2);opacity:1}70%{opacity:.95}100%{transform:translate(-50%,-50%) scale(1.6);opacity:0}}
+#piano{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;height:calc(100vh - 140px);min-height:380px;touch-action:none}
+.key{border-radius:18px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:16px;color:#fff;font-size:18px;box-shadow:0 6px 0 rgba(0,0,0,.15);transition:transform .08s}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="tabs" id="tabs"></div>
-  <div id="stage"></div>
-  <div class="lang" id="lang"></div>
-</div>
+<div class="wrap" id="app"></div>
 <script>
 const SETS={
  animal:{icon:"🐶",jp:"どうぶつ",items:[
@@ -77,37 +83,79 @@ const SETS={
   ["#a855f7","むらさき","","ခရမ်းရောင်","Purple",""],["#92400e","ちゃいろ","","အညို","Brown",""],
   ["#111827","くろ","","အနက်","Black",""],["#ffffff","しろ","","အဖြူ","White",""],
   ["#9ca3af","はいいろ","","မီးခိုးရောင်","Gray",""],["#06b6d4","みずいろ","","အပြာနု","Light blue",""]]},
+ num:{icon:"🔢",jp:"かず",items:[
+  ["1","いち","","တစ် ၁","One",""],["2","に","","နှစ် ၂","Two",""],["3","さん","","သုံး ၃","Three",""],
+  ["4","よん","","လေး ၄","Four",""],["5","ご","","ငါး ၅","Five",""],["6","ろく","","ခြောက် ၆","Six",""],
+  ["7","なな","","ခုနစ် ၇","Seven",""],["8","はち","","ရှစ် ၈","Eight",""],["9","きゅう","","ကိုး ၉","Nine",""],
+  ["10","じゅう","","တစ်ဆယ် ၁၀","Ten",""]]},
+ shape:{icon:"🔺",jp:"かたち",items:[
+  ["🔴","まる","","စက်ဝိုင်း","Circle",""],["🔺","さんかく","","တြိဂံ","Triangle",""],
+  ["🟦","しかく","","စတုရန်း","Square",""],["⭐","ほし","","ကြယ်","Star",""],
+  ["❤️","はーと","","နှလုံးပုံ","Heart",""],["🔷","ひしがた","","စိန်ပုံ","Diamond",""],
+  ["🌙","みかづき","","လခြမ်း","Moon",""],["🟩","みどりのしかく","","အစိမ်းရောင် စတုရန်း","Green square",""]]},
+ body:{icon:"👀",jp:"からだ",items:[
+  ["👀","め","きょろきょろ","မျက်စိ","Eyes","Look"],["👃","はな","くんくん","နှာခေါင်း","Nose","Sniff sniff"],
+  ["👄","くち","あーん","ပါးစပ်","Mouth","Ahh"],["👂","みみ","きこえるかな","နား","Ears","Listen"],
+  ["✋","て","ぱちぱち","လက်","Hands","Clap clap"],["🦶","あし","とんとん","ခြေထောက်","Feet","Stomp stomp"],
+  ["🦷","は","はみがき しゅこしゅこ","သွား","Teeth","Brush brush"],["😊","かお","にこにこ","မျက်နှာ","Face","Smile"]]},
+ piano:{icon:"🎹",jp:"ぴあの"},
  play:{icon:"🫧",jp:"ぽんぽん"}
 };
-const ORDER=["animal","car","fruit","color","play"];
-let mode="animal",lang="ja",sel=null;
+const ORDER=["animal","car","fruit","color","num","shape","body","piano","play"];
+const BG={animal:"#ffe2c6",car:"#d6ecff",fruit:"#ffd9de",color:"#f1e4ff",num:"#dff6e4",shape:"#fff0b8",body:"#ffe4ef",piano:"#e2e8ff",play:"#d9f5f5",home:"#fff6dc"};
+const TILE={animal:"#ffcf9f",car:"#a9d5ff",fruit:"#ffb3be",color:"#dcc4ff",num:"#b9ebc5",shape:"#ffe27a",body:"#ffc2d9",piano:"#c3cdff",play:"#a8e6e6"};
+let mode="home",lang="ja",sel=null;
 try{lang=localStorage.getItem("baby-lang")||"ja"}catch(e){}
 
 let ac=null;
 function audio(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume()}catch(e){}return ac}
 function tone(f,t,d,v,type="sine"){const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+d+.05)}
 function chime(){if(!audio())return;const t=ac.currentTime;[0,4,7].forEach((s,i)=>tone(523.25*Math.pow(2,s/12),t+i*.07,.5,.12,"triangle"))}
+function click(){if(!audio())return;tone(880,ac.currentTime,.15,.08,"sine")}
 const PENTA=[0,2,4,7,9,12,14,16];
 function note(i){if(!audio())return;tone(392*Math.pow(2,PENTA[i%PENTA.length]/12),ac.currentTime,.7,.15,"triangle")}
 function speak(text,l){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=l;u.rate=l==="ja-JP"?.8:.85;u.pitch=1.3;const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith(l.slice(0,2)));if(v)u.voice=v;speechSynthesis.speak(u)}catch(e){}}
 
-function renderTabs(){
-  document.getElementById("tabs").innerHTML=ORDER.map(k=>`<button class="tab ${k===mode?"on":""}" data-mode="${k}">${SETS[k].icon}<small>${SETS[k].jp}</small></button>`).join("");
-  document.getElementById("lang").innerHTML=[["ja","にほんご"],["en","English"],["mm","မြန်မာ"]].map(([k,v])=>`<button class="${k===lang?"on":""}" data-lang="${k}">${v}</button>`).join("");
+const app=document.getElementById("app");
+function white(c){return c==="#ffffff"?"box-shadow:inset 0 0 0 3px #e5d6bd;":""}
+function face(it){
+  if(mode==="num")return `<span style="font-size:42px;font-weight:700">${it[0]}</span>`;
+  if(mode==="color")return `<span class="dot" style="background:${it[0]};${white(it[0])}"></span>`;
+  return it[0];
 }
-function face(it){return mode==="color"?`<span class="dot" style="background:${it[0]};${it[0]==="#ffffff"?"box-shadow:inset 0 0 0 2px #e5d6bd":""}"></span>`:it[0]}
+function bigFace(it){
+  if(!it)return "👇";
+  if(mode==="num")return `<div style="font-size:96px;font-weight:700">${it[0]}</div><div style="font-size:26px;line-height:1.3;max-width:300px;margin:4px auto 0">${"🍎".repeat(+it[0])}</div>`;
+  if(mode==="color")return `<span style="display:inline-block;width:110px;height:110px;border-radius:50%;background:${it[0]};${white(it[0])}"></span>`;
+  return it[0];
+}
+function topBar(){return `<div class="top"><button class="home" data-home="1" aria-label="ホーム">🏠</button><b>${SETS[mode].icon} ${SETS[mode].jp}</b></div>`}
 function render(){
-  renderTabs();
-  const st=document.getElementById("stage");
+  document.body.style.background=BG[mode];
+  if(mode==="home"){
+    app.innerHTML=`<h1>タッチであそぼ</h1><p class="sub">すきなのを えらんでね</p>
+    <div class="menu">${ORDER.map(k=>`<button class="tile" data-mode="${k}" style="background:${TILE[k]}">${SETS[k].icon}<span>${SETS[k].jp}</span></button>`).join("")}</div>
+    <div class="lang">${[["ja","にほんご"],["en","English"],["mm","မြန်မာ"]].map(([k,v])=>`<button class="${k===lang?"on":""}" data-lang="${k}">${v}</button>`).join("")}</div>
+    <p class="note">おとが でないときは マナーモードを かいじょしてね</p>`;
+    return;
+  }
+  if(mode==="piano"){
+    const K=[["ど","#ef4444"],["れ","#fb923c"],["み","#facc15"],["ふぁ","#22c55e"],["そ","#06b6d4"],["ら","#3b82f6"],["し","#a855f7"],["ど","#f472b6"]];
+    app.innerHTML=topBar()+`<div id="piano">${K.map((k,i)=>`<div class="key" data-k="${i}" style="background:${k[1]}">${k[0]}</div>`).join("")}</div>`;
+    const SC=[0,2,4,5,7,9,11,12];
+    document.getElementById("piano").addEventListener("pointerdown",e=>{const k=e.target.closest(".key");if(!k)return;e.preventDefault();if(!audio())return;const i=+k.dataset.k;tone(261.63*Math.pow(2,SC[i]/12),ac.currentTime,.9,.18,"triangle");tone(261.63*Math.pow(2,SC[i]/12+1),ac.currentTime,.5,.04,"sine");k.style.transform="translateY(5px)";setTimeout(()=>k.style.transform="",150)});
+    return;
+  }
   if(mode==="play"){
-    st.innerHTML=`<div id="play"><div class="hint">さわってみてね<br>👆</div></div>`;bindPlay();return;
+    app.innerHTML=topBar()+`<div id="play"><div class="hint">どこでも さわってみてね<br>👆</div></div>`;bindPlay();return;
   }
   const items=SETS[mode].items;const it=sel!=null?items[sel]:null;
-  st.innerHTML=`<div class="big"><div class="emo" id="emo">${it?(mode==="color"?`<span style="display:inline-block;width:90px;height:90px;border-radius:50%;background:${it[0]};${it[0]==="#ffffff"?"box-shadow:inset 0 0 0 3px #e5d6bd":""}"></span>`:it[0]):"👇"}</div>
-   <div class="name">${it?(lang==="en"?it[4]:it[1]):"どれかな？"}</div>
-   <div class="en">${it&&it[2]&&lang!=="en"?it[2]:(it&&lang==="en"&&it[5]?it[5]:"")}</div>
-   <div class="mm">${it?it[3]:""}</div></div>
-   <div class="grid">${items.map((x,i)=>`<button class="card" data-i="${i}" aria-label="${x[1]}">${face(x)}</button>`).join("")}</div>`;
+  const nm=it?(lang==="en"?it[4]:it[1]):"どれかな？";
+  const sd=it?(lang==="en"?it[5]:it[2]):"";
+  app.innerHTML=topBar()+`<button class="big" id="bigbtn" style="width:100%"><div class="emo" id="emo">${bigFace(it)}</div>
+   <div class="name">${nm}</div><div class="snd">${sd||""}</div><div class="mm">${it?it[3]:""}</div>
+   ${it?'<div class="again">もういちど さわると また きこえるよ</div>':''}</button>
+   <div class="grid">${items.map((x,i)=>`<button class="card ${i===sel?"sel":""}" data-i="${i}" aria-label="${x[1]}">${face(x)}</button>`).join("")}</div>`;
 }
 function tap(i){
   sel=i;render();chime();
@@ -126,7 +174,7 @@ function bindPlay(){
   pl.addEventListener("pointerdown",e=>{
     e.preventDefault();const r=pl.getBoundingClientRect();
     const hint=pl.querySelector(".hint");if(hint)hint.remove();
-    const d=document.createElement("div");d.className="pop";const s=70+Math.random()*60;
+    const d=document.createElement("div");d.className="pop";const s=80+Math.random()*60;
     d.style.cssText=`left:${e.clientX-r.left}px;top:${e.clientY-r.top}px;width:${s}px;height:${s}px;background:${POPC[pi%POPC.length]};font-size:${s*.5}px`;
     d.textContent=POPE[Math.random()*POPE.length|0];
     pl.appendChild(d);setTimeout(()=>d.remove(),1150);note(pi);pi++;
@@ -134,9 +182,11 @@ function bindPlay(){
 }
 document.addEventListener("click",e=>{
   const b=e.target.closest("button");if(!b)return;
-  if(b.dataset.mode){mode=b.dataset.mode;sel=null;audio();render()}
-  else if(b.dataset.lang){lang=b.dataset.lang;try{localStorage.setItem("baby-lang",lang)}catch(e){}render();if(sel!=null)tap(sel)}
+  if(b.dataset.home){mode="home";sel=null;click();render();window.scrollTo(0,0)}
+  else if(b.dataset.mode){mode=b.dataset.mode;sel=null;click();render();window.scrollTo(0,0)}
+  else if(b.dataset.lang){lang=b.dataset.lang;try{localStorage.setItem("baby-lang",lang)}catch(e){}click();render()}
   else if(b.dataset.i!=null)tap(+b.dataset.i);
+  else if(b.id==="bigbtn"&&sel!=null)tap(sel);
 });
 document.addEventListener("gesturestart",e=>e.preventDefault());
 document.addEventListener("dblclick",e=>e.preventDefault());

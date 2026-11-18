@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>Win ジャングルラン</title>
+<title>愛翔とみやちゃんのジャングルラン</title>
 <meta name="description" content="走って、よけて、コインを集めよう！スワイプで遊ぶランニングゲーム。無料。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Win ジャングルラン">
@@ -34,6 +34,8 @@ canvas{display:block;width:100vw;height:100vh;height:100dvh}
 .ov .sm{font-size:13px;opacity:.85}
 .mm{font-family:"Noto Sans Myanmar",sans-serif}
 .big{font-size:52px;font-weight:900;color:#ffd166;margin:6px 0}
+.pick{display:flex;gap:12px;margin:10px 0 4px}.pick button{background:#ffffff22;color:#fff;box-shadow:none;border:3px solid transparent;border-radius:20px;padding:10px 14px;font-size:17px;margin:0;width:130px}.pick button canvas{display:block;margin:0 auto 4px;width:90px;height:100px}.pick button.on{border-color:#ffd166;background:#ffd16633}
+.cheer{position:fixed;left:0;right:0;top:22%;text-align:center;font-size:34px;font-weight:900;color:#fff;text-shadow:0 3px 0 #e85d04,0 6px 14px #0009;pointer-events:none;opacity:0;transition:opacity .3s,transform .3s;transform:scale(.7)}.cheer.on{opacity:1;transform:scale(1)}
 .snd{position:fixed;bottom:calc(env(safe-area-inset-bottom) + 14px);right:14px;border:0;background:#0006;color:#fff;border-radius:50%;width:46px;height:46px;font-size:20px}
 </style>
 </head>
@@ -41,8 +43,10 @@ canvas{display:block;width:100vw;height:100vh;height:100dvh}
 <canvas id="cv"></canvas>
 <div class="hud" id="hud" style="display:none"><span class="c" id="sc">0 m</span><span class="c" id="co">🪙 0</span><button id="pz">⏸</button></div>
 <div class="ov" id="start">
+  <p style="font-size:18px;font-weight:800;margin:0;color:#fff">愛翔とみやちゃんの</p>
   <h1>ジャングルラン</h1>
-  <p class="mm">Jungle Run</p>
+  <p class="sm">だれで走る？</p>
+  <div class="pick"><button data-c="aito"><canvas width="180" height="200"></canvas>愛翔</button><button data-c="miya"><canvas width="180" height="200"></canvas>みやちゃん</button></div>
   <div class="how">
     👈 👉 スワイプ：よこへ / ဘေးကို<br>
     👆 上スワイプ：ジャンプ / ခုန်<br>
@@ -60,6 +64,7 @@ canvas{display:block;width:100vw;height:100vh;height:100dvh}
   <button id="again">もう一回 ↻</button>
 </div>
 <div class="ov" id="pause" style="display:none"><p style="font-size:26px;font-weight:800">⏸ 一時停止</p><button id="resume">つづける ▶</button></div>
+<div class="cheer" id="cheer"></div>
 <button class="snd" id="snd">🔊</button>
 <script>
 const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
@@ -78,10 +83,18 @@ let bgmT=null,bgmStep=0;const BGM=[0,null,7,null,5,null,7,12,0,null,7,null,3,5,7
 function bgm(on){clearInterval(bgmT);if(!on||!sound)return;bgmT=setInterval(()=>{const n=BGM[bgmStep++%16];if(n!==null)beep(220*Math.pow(2,n/12),.12,"triangle",.035);if(bgmStep%4===1)beep(110,.1,"sine",.05)},150)}
 document.getElementById("snd").onclick=e=>{sound=!sound;localStorage.setItem("run-snd",sound?"1":"0");e.target.textContent=sound?"🔊":"🔇";bgm(state==="play")};
 
+// ---------- characters
+const CH={aito:{name:"愛翔",body:"#3a86ff",pack:"#ffbe0b",pack2:"#fff3c4",skin:"#ffcf99",hat:"#023e8a",leg:"#1d3557",type:"cap"},
+          miya:{name:"みやちゃん",body:"#ff70a6",pack:"#9b5de5",pack2:"#e9d8fd",skin:"#ffd3a8",hat:"#ff006e",leg:"#7b2c50",type:"ribbon",hair:"#4a2c17"}};
+let who=localStorage.getItem("run-who")||"aito";
+function cheer(t){const e=document.getElementById("cheer");e.textContent=t;e.classList.add("on");clearTimeout(cheer.h);cheer.h=setTimeout(()=>e.classList.remove("on"),1400)}
+const CHEERS=[[100,"がんばれ {n}！"],[250,"{n} はやい！"],[500,"すごいよ {n}！ 🎉"],[800,"{n} 天才！"],[1200,"{n} 最強！ 👑"],[2000,"{n} 伝説！！ 🌟"]];
+let cheerI=0;
 // ---------- game state
-let state="menu",P,objs,deco,dist,coins,speed,spawnZ,t,shake,best=+localStorage.getItem("run-best")||0;
-document.getElementById("best0").textContent=best?`ベスト / best：${best} m`:"";
-function reset(){P={lane:0,x:0,y:0,vy:0,slide:0,run:0};objs=[];deco=[];dist=0;coins=0;speed=13;spawnZ=30;t=0;shake=0;
+let state="menu",P,objs,deco,dist,coins,speed,spawnZ,t,shake,best=0;
+function setWho(c){who=c;localStorage.setItem("run-who",c);best=+localStorage.getItem("run-best-"+c)||0;document.querySelectorAll(".pick button").forEach(b=>b.classList.toggle("on",b.dataset.c===c));
+  document.getElementById("best0").textContent=best?`${CH[c].name}のベスト：${best} m`:"";document.getElementById("go").textContent=CH[c].name+"で スタート ▶"}
+function reset(){cheerI=0;P={lane:0,x:0,y:0,vy:0,slide:0,run:0};objs=[];deco=[];dist=0;coins=0;speed=11;spawnZ=45;t=0;shake=0;
   for(let z=6;z<90;z+=4){deco.push(mkDeco(z,-1));deco.push(mkDeco(z+2,1))}}
 function mkDeco(z,side){const k=Math.random();return{z,side,x:side*(LANE*1.5+1.2+Math.random()*2.2),k:k<.6?"tree":k<.85?"bush":"rock",h:2.5+Math.random()*2.5,c:Math.random()}}
 function spawn(){
@@ -100,9 +113,11 @@ function spawn(){
 function coinLine(l,z0,n){for(let i=0;i<n;i++)objs.push({t:"coin",lane:l,z:z0+i*1.5,y:.6})}
 function start(){reset();while(spawnZ<110)spawn();state="play";show("hud");bgm(true);last=performance.now()}
 function show(id){for(const x of["start","over","pause"])document.getElementById(x).style.display=x===id?"flex":"none";document.getElementById("hud").style.display=(id==="hud"||id==="pause")?"flex":"none"}
-function gameOver(){state="over";sfx.hit();bgm(false);shake=.4;const m=Math.floor(dist);const nb=m>best;if(nb){best=m;localStorage.setItem("run-best",best)}
-  setTimeout(()=>{document.getElementById("fs").textContent=m+" m";document.getElementById("fc").textContent=`🪙 ${coins}`;document.getElementById("fb").textContent=nb?"🎉 ベスト記録！ New best!":`ベスト：${best} m`;show("over")},700)}
+function gameOver(){state="over";sfx.hit();bgm(false);shake=.4;const m=Math.floor(dist);const nb=m>best;if(nb){best=m;localStorage.setItem("run-best-"+who,best)}
+  setTimeout(()=>{document.getElementById("fs").textContent=m+" m";document.querySelector("#over p").textContent=CH[who].name+"、"+(m>=500?"すごい！":m>=150?"よくがんばった！":"おしい！");document.getElementById("fc").textContent=`🪙 ${coins}`;document.getElementById("fb").textContent=nb?"🎉 "+CH[who].name+"のベスト記録！":`${CH[who].name}のベスト：${best} m`;setWho(who);document.getElementById("again").textContent="もう一回 ↻";show("over")},700)}
 document.getElementById("go").onclick=start;document.getElementById("again").onclick=start;
+const menuBtn=document.createElement("button");menuBtn.textContent="キャラをかえる";menuBtn.style.cssText="background:#ffffff33;color:#fff;box-shadow:none;font-size:16px;padding:10px 24px;margin-top:14px";menuBtn.onclick=()=>{state="menu";show("start")};document.getElementById("over").appendChild(menuBtn);
+document.querySelectorAll(".pick button").forEach(b=>b.onclick=()=>{setWho(b.dataset.c);sfx.move()});
 document.getElementById("pz").onclick=()=>{if(state==="play"){state="pause";bgm(false);show("pause")}};
 document.getElementById("resume").onclick=()=>{state="play";show("hud");bgm(true);last=performance.now()};
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&state==="play"){state="pause";bgm(false);show("pause")}});
@@ -121,7 +136,7 @@ addEventListener("keydown",e=>{const m={ArrowLeft:"L",ArrowRight:"R",ArrowUp:"U"
 // ---------- update
 let last=performance.now();
 function update(dt){
-  t+=dt;speed=Math.min(28,13+dist/140);const dz=speed*dt;dist+=dz;
+  t+=dt;speed=Math.min(26,11+dist/160);const dz=speed*dt;dist+=dz;
   P.x+=(P.lane*LANE-P.x)*Math.min(1,dt*14);
   P.vy-=32*dt;P.y=Math.max(0,P.y+P.vy*dt);if(P.y===0)P.vy=Math.max(P.vy,0);
   if(P.slide>0)P.slide-=dt;P.run+=dt*speed*.9;
@@ -134,6 +149,7 @@ function update(dt){
     else if(o.t==="bar"&&!(P.slide>0)){gameOver();return}
     else if(o.t==="wall"){gameOver();return}}
   objs=objs.filter(o=>o.z>1&&!(o.dead&&!(o.pop>0)));objs.forEach(o=>{if(o.pop)o.pop-=dt});
+  if(cheerI<CHEERS.length&&dist>=CHEERS[cheerI][0]){cheer(CHEERS[cheerI][1].replace("{n}",CH[who].name));sfx.coin();cheerI++}
   document.getElementById("sc").textContent=Math.floor(dist)+" m";document.getElementById("co").textContent="🪙 "+coins}
 
 // ---------- draw
@@ -180,24 +196,25 @@ function drawObj(o){const x=o.lane*LANE,p=proj(x,0,o.z),s=p.s;
     ctx.strokeStyle="#5c5c55";ctx.lineWidth=Math.max(1,s*.03);ctx.beginPath();ctx.moveTo(a.x,(a.y+b.y)/2);ctx.lineTo(b.x,(a.y+b.y)/2+.1*s);ctx.moveTo((a.x+b.x)/2,b.y);ctx.lineTo((a.x+b.x)/2-.1*s,(a.y+b.y)/2);ctx.stroke();
     ctx.fillStyle="#52b788";ctx.beginPath();ctx.ellipse((a.x+b.x)/2,b.y+.05*s,(b.x-a.x)*.45,.15*s,0,0,7);ctx.fill()}}
 function rr(x,y,w,h,r){r=Math.max(0,Math.min(r,w/2,h/2));ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
-function drawPlayer(){shadow(P.x,PZ,.45*(1-Math.min(.5,P.y/6)));
-  const sl=P.slide>0,base=proj(P.x,P.y,PZ),s=base.s;const bob=sl?0:Math.abs(Math.sin(P.run*1.1))*.12*s;
-  const bh=(sl?.55:1.05)*s,bw=.78*s,cy=base.y-bh/2-bob-(sl?.0:.2*s);
-  // legs
-  if(!sl){const sw=Math.sin(P.run*1.1);ctx.fillStyle="#5a3200";for(const k of[-1,1]){ctx.beginPath();ctx.ellipse(base.x+k*.2*s,base.y-.12*s-(k*sw>0?k*sw*.18*s:0),.13*s,.17*s,0,0,7);ctx.fill()}}
-  // backpack body (seen from behind)
-  ctx.fillStyle="#ff9f1c";ctx.beginPath();ctx.ellipse(base.x,cy,bw/2,bh/2,0,0,7);ctx.fill();
-  ctx.fillStyle="#2ec4b6";rr(base.x-bw*.28,cy-bh*.1,bw*.56,bh*.5,.08*s);ctx.fill();ctx.fillStyle="#cbf3f0";rr(base.x-bw*.18,cy+bh*.02,bw*.36,bh*.14,.04*s);ctx.fill();
-  // arms
-  if(!sl){const sw=Math.sin(P.run*1.1);ctx.fillStyle="#ffbf69";for(const k of[-1,1]){ctx.beginPath();ctx.ellipse(base.x+k*bw*.52,cy+k*sw*.12*s,.1*s,.18*s,0,0,7);ctx.fill()}}
-  // head + ears + hat
-  const hy=cy-bh/2-(sl?.18:.3)*s;ctx.fillStyle="#ffbf69";for(const k of[-1,1]){ctx.beginPath();ctx.arc(base.x+k*.3*s,hy-.18*s,.14*s,0,7);ctx.fill()}
-  ctx.beginPath();ctx.arc(base.x,hy,.36*s,0,7);ctx.fill();
-  ctx.fillStyle="#e85d04";ctx.beginPath();ctx.ellipse(base.x,hy-.12*s,.4*s,.2*s,0,Math.PI,0);ctx.fill();ctx.fillRect(base.x-.46*s,hy-.14*s,.92*s,.06*s);
-  if(sl){ctx.strokeStyle="#ffffff88";ctx.lineWidth=2;for(let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(base.x-bw*.6-i*8,base.y-6-i*6);ctx.lineTo(base.x-bw*.6-i*8-20,base.y-6-i*6);ctx.stroke()}}}
+function drawPlayer(){shadow(P.x,PZ,.45*(1-Math.min(.5,P.y/6)));const base=proj(P.x,P.y,PZ);drawChar(ctx,CH[who],base.x,base.y,base.s,P.slide>0,P.run,state!=="menu")}
+function drawChar(c,C,bx,by,s,sl,run,label){
+  const bob=sl?0:Math.abs(Math.sin(run*1.1))*.12*s;const bh=(sl?.55:1.05)*s,bw=.78*s,cy=by-bh/2-bob-(sl?0:.2*s);const sw=Math.sin(run*1.1);
+  const R=(x,y,w,h,r)=>{r=Math.max(0,Math.min(r,w/2,h/2));c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()};
+  if(!sl){c.fillStyle=C.leg;for(const k of[-1,1]){c.beginPath();c.ellipse(bx+k*.2*s,by-.12*s-(k*sw>0?k*sw*.18*s:0),.13*s,.17*s,0,0,7);c.fill()}}
+  const hy=cy-bh/2-(sl?.18:.3)*s;
+  if(C.type==="ribbon"){c.fillStyle=C.hair;for(const k of[-1,1]){c.beginPath();c.ellipse(bx+k*.42*s,hy+.12*s+(sl?0:sw*k*.05*s),.13*s,.26*s,k*.3,0,7);c.fill()}}
+  c.fillStyle=C.body;c.beginPath();c.ellipse(bx,cy,bw/2,bh/2,0,0,7);c.fill();
+  c.fillStyle=C.pack;R(bx-bw*.28,cy-bh*.1,bw*.56,bh*.5,.08*s);c.fill();c.fillStyle=C.pack2;R(bx-bw*.18,cy+bh*.02,bw*.36,bh*.14,.04*s);c.fill();
+  if(!sl){c.fillStyle=C.skin;for(const k of[-1,1]){c.beginPath();c.ellipse(bx+k*bw*.52,cy+k*sw*.12*s,.1*s,.18*s,0,0,7);c.fill()}}
+  if(C.type==="ribbon"){c.fillStyle=C.hair;c.beginPath();c.arc(bx,hy,.37*s,0,7);c.fill();
+    c.fillStyle=C.hat;for(const k of[-1,1]){c.beginPath();c.moveTo(bx,hy-.3*s);c.lineTo(bx+k*.32*s,hy-.48*s);c.lineTo(bx+k*.3*s,hy-.14*s);c.closePath();c.fill()}c.beginPath();c.arc(bx,hy-.3*s,.08*s,0,7);c.fill()}
+  else{c.fillStyle=C.skin;for(const k of[-1,1]){c.beginPath();c.arc(bx+k*.34*s,hy+.02*s,.09*s,0,7);c.fill()}c.fillStyle="#3d2614";c.beginPath();c.arc(bx,hy,.36*s,0,7);c.fill();
+    c.fillStyle=C.hat;c.beginPath();c.ellipse(bx,hy-.1*s,.39*s,.24*s,0,Math.PI,0);c.fill();c.fillRect(bx-.39*s,hy-.12*s,.78*s,.07*s);c.fillStyle="#fff";c.beginPath();c.arc(bx,hy-.3*s,.05*s,0,7);c.fill()}
+  if(sl){c.strokeStyle="#ffffff88";c.lineWidth=2;for(let i=0;i<3;i++){c.beginPath();c.moveTo(bx-bw*.6-i*8,by-6-i*6);c.lineTo(bx-bw*.6-i*8-20,by-6-i*6);c.stroke()}}
+  if(label){const fs=Math.max(11,.3*s);c.font=`bold ${fs}px system-ui,sans-serif`;c.textAlign="center";const tw=c.measureText(C.name).width+12,ty=hy-.62*s;c.fillStyle="#0007";R(bx-tw/2,ty-fs*.85,tw,fs*1.3,fs*.4);c.fill();c.fillStyle="#fff";c.fillText(C.name,bx,ty+fs*.15)}}
 function draw(){ctx.save();if(shake>0){ctx.translate((Math.random()-.5)*14*shake,(Math.random()-.5)*14*shake)}
   sky();ground();
-  const all=[...deco.map(d=>({z:d.z,f:()=>drawDeco(d)})),...objs.filter(o=>o.z<100).map(o=>({z:o.z,f:()=>drawObj(o)})),{z:PZ-.01,f:drawPlayer}];
+  const all=[...deco.map(d=>({z:d.z,f:()=>drawDeco(d)})),...objs.filter(o=>o.z<100).map(o=>({z:o.z,f:()=>drawObj(o)})),...(state==='menu'?[]:[{z:PZ-.01,f:drawPlayer}])];
   all.sort((a,b)=>b.z-a.z);for(const a of all)if(a.z>.9)a.f();
   ctx.restore()}
 function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
@@ -205,7 +222,9 @@ function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
   if(state==="menu"){t+=dt;if(!P)reset();dist+=dt*6;P.run+=dt*6;for(const d of deco){d.z-=dt*6;if(d.z<1)Object.assign(d,mkDeco(d.z+88,d.side))}}
   if(shake>0)shake-=dt;
   draw();requestAnimationFrame(loop)}
-reset();requestAnimationFrame(loop);
+reset();setWho(who);
+document.querySelectorAll(".pick button").forEach(b=>{const k=b.dataset.c,cc=b.querySelector("canvas").getContext("2d");let r=0;(function anim(){cc.clearRect(0,0,180,200);cc.fillStyle="#0003";cc.beginPath();cc.ellipse(90,185,40,10,0,0,7);cc.fill();drawChar(cc,CH[k],90,185,100,false,r,false);r+=.12;if(document.getElementById("start").style.display!=="none")requestAnimationFrame(anim);else setTimeout(anim,300)})()});
+requestAnimationFrame(loop);
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
 </body>

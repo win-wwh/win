@@ -91,6 +91,50 @@ header h1 small{display:block;font-size:11px;font-weight:400;color:#6b6b5e}
 .culture b{color:var(--g)}
 .note2{font-size:12px;color:#8a7d55;margin-top:18px;line-height:1.7;background:#fff;border-radius:12px;padding:10px 12px}
 .empty{text-align:center;color:#999;padding:30px 0}
+
+/* ===== design v2 ===== */
+:root{--g:#16704a;--g2:#0f5a3a;--gold:#d9a521;--cream:#fbf6ea;--ink:#1f2a24}
+body{background:var(--cream) radial-gradient(circle at 20% 0%,#fff6dc 0,transparent 40%),radial-gradient(circle at 100% 30%,#e9f4ec 0,transparent 35%);background-attachment:fixed;color:var(--ink)}
+.wrap{padding-bottom:110px}
+header{position:sticky;top:0;z-index:5;background:#fbf6eacc;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);margin:0 -14px 12px;padding:8px 14px;border-bottom:1px solid #00000008}
+header::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;background:linear-gradient(90deg,var(--y) 0 33.3%,#2a9d63 33.3% 66.6%,var(--r) 66.6%);opacity:.85}
+header h1{font-weight:900;letter-spacing:.2px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(140deg,#0f5a3a 0%,#16704a 55%,#1f8a5c 100%);border-radius:24px;padding:18px 20px 16px;box-shadow:0 10px 24px #0f5a3a40}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 20%,#ffd76a55 0,transparent 45%)}
+.hero .pagoda{position:absolute;right:-6px;bottom:-4px;width:120px;opacity:.22}
+.hero>*{position:relative}
+.hero .big{font-size:34px;text-shadow:0 2px 8px #0003}
+.today-tag{display:inline-block;background:#ffffff26;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700}
+.search{border-radius:16px;border:1.5px solid #e6dcc3;box-shadow:0 2px 6px #0000000a;padding:13px 16px}
+.grid{gap:12px}
+.cat{border-radius:20px;padding:16px 10px 14px;box-shadow:0 2px 8px #00000010;position:relative;overflow:hidden;transition:transform .12s}
+.cat:active{transform:scale(.97)}
+.cat .e{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;background:var(--cbg,#f3efe2);font-size:28px}
+.cat.wide .e{width:56px;height:56px;margin:0;flex:none}
+.cat .n{margin-top:2px}
+.wide{border-radius:22px}
+.q-btn{background:linear-gradient(135deg,#ffd76a,#f4b630)!important;color:#4a3500}
+.card{border-radius:20px;padding:16px 16px 14px;box-shadow:0 2px 10px #0000000d;border-left:5px solid var(--gold)}
+.card .my{font-size:28px;color:#14402b}
+.card .kana{display:inline-block;background:#e8f5ee;color:var(--g);border-radius:20px;padding:2px 12px;font-size:15px}
+.fav{font-size:24px;filter:grayscale(1)}.fav.on{filter:none}
+.tabs{background:#ede6d2;padding:4px;border-radius:16px;gap:4px}
+.tabs button{border-radius:12px;background:transparent}
+.tabs button.on{background:#fff;color:var(--g);box-shadow:0 1px 4px #0002}
+.flash{border-radius:28px;min-height:340px;background:linear-gradient(180deg,#fff,#fffaf0);border:1px solid #f0e6cc}
+.nav button{border-radius:16px}
+.nav .pri{background:linear-gradient(135deg,#1f8a5c,#0f5a3a)}
+.qbox{border-radius:24px}
+.opt{border-radius:16px}
+.abc{border-radius:18px;transition:transform .1s}
+.abc:active{transform:scale(.95)}
+.big1{border-radius:28px;background:linear-gradient(180deg,#fff,#fffaf0);border:1px solid #f0e6cc}
+.big1 .L{text-shadow:0 4px 12px #16704a22}
+.note2{border-radius:16px}
+.bnav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 10px);width:min(440px,calc(100% - 24px));background:#ffffffee;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:24px;box-shadow:0 8px 28px #0000002a;display:flex;padding:6px;z-index:9}
+.bnav button{flex:1;border:0;background:none;border-radius:18px;padding:6px 2px;font-size:11px;font-weight:700;color:#7b7461;display:flex;flex-direction:column;align-items:center;gap:1px}
+.bnav button .i{font-size:20px;line-height:1.2}
+.bnav button.on{background:#e8f5ee;color:var(--g)}
 </style>
 </head>
 <body>
@@ -102,6 +146,7 @@ header h1 small{display:block;font-size:11px;font-weight:400;color:#6b6b5e}
   <button class="entg" id="entg">EN ON</button>
 </header>
 <main id="main"></main>
+<nav class="bnav" id="bnav"><button data-b="home"><span class="i">🏠</span>ホーム</button><button data-b="abc"><span class="i mm" style="font-size:16px">ကခဂ</span>文字</button><button data-b="quiz"><span class="i">🎯</span>クイズ</button><button data-b="fav"><span class="i">⭐</span>お気に入り</button></nav>
 <div class="note2">📝 読み方はカタカナで近い音を書いています。本当の発音は、ミャンマーの友だちに聞いてみてください。きっと喜ばれます😊<br>作った人：Win（ミャンマー出身・日本在住）</div>
 </div>
 <script src="words1.js"></script>
@@ -518,6 +563,7 @@ const VOW=[
  ["ကန်","カン","kan","န်＝「ン」で終わる"]
 ];
 const DIG=[["၀","0","トウンニャ"],["၁","1","ティッ"],["၂","2","ニッ"],["၃","3","トウン"],["၄","4","レー"],["၅","5","ンガー"],["၆","6","チャウッ"],["၇","7","クニッ"],["၈","8","シッ"],["၉","9","コー"]];
+const PAST=['#fde8d7','#dff1e6','#fff1c9','#e3ecfb','#f6e1f0','#e1f3f3','#fbe3e3','#ece7fb'];
 const CULTURE=[
  ["名字がない","ミャンマー人には、ふつう<b>名字（家族の名前）がありません</b>。「ウィンウィンテー」のように、全部で1つの名前です。"],
  ["呼び方","年上の男性には<b>「ウー」</b>、年上の女性には<b>「ドー」</b>、若い男性には<b>「コー」</b>、若い女性には<b>「マ」</b>を名前の前につけると、ていねいです。"],
@@ -537,15 +583,15 @@ function bindFav(){main.querySelectorAll(".fav").forEach(b=>b.onclick=()=>{const
 function setTitle(t){$("#ttl").innerHTML=t}
 function sub(on){document.body.classList.toggle("sub",on)}
 function todays(){const d=new Date();const n=(d.getFullYear()*372+d.getMonth()*31+d.getDate());const pool=W.filter(w=>w[0]!=="num"&&w[0]!=="day");return pool[n%pool.length]}
-function home(){sub(false);setTitle('ミンガラーバー！ミャンマー語<small><span class="mm">မင်္ဂလာပါ</span>　1000語で、ミャンマーの友だちと話そう</small>');
+function home(){bsel('home');sub(false);setTitle('ミンガラーバー！ミャンマー語<small><span class="mm">မင်္ဂလာပါ</span>　1000語で、ミャンマーの友だちと話そう</small>');
  const t=todays();
- main.innerHTML=`<div class="hero"><div style="font-size:12px;opacity:.85">☀️ 今日のひとこと</div><div class="big mm">${t[2]}</div><div class="k"><b>${t[3]}</b>　${t[1]}</div><div class="k" style="font-size:13px;opacity:.85">🇬🇧 ${en(t)}</div>${t[4]?`<div class="t">💡 ${t[4]}</div>`:""}</div>
+ main.innerHTML=`<div class="hero"><svg class="pagoda" viewBox="0 0 100 120" aria-hidden="true"><path fill="#ffd76a" d="M50 2l3 14h-6zM44 18h12l3 10H41zM38 30h24l4 12H34zM30 44h40l6 14H24zM20 60h60l8 18H12zM8 80h84v8H8zM14 90h72v28H14z"/></svg><span class="today-tag">☀️ 今日のひとこと</span><div class="big mm">${t[2]}</div><div class="k"><b>${t[3]}</b>　${t[1]}</div><div class="k" style="font-size:13px;opacity:.85">🇬🇧 ${en(t)}</div>${t[4]?`<div class="t">💡 ${t[4]}</div>`:""}</div>
  <input class="search" id="q" placeholder="🔍 さがす（例：ありがとう / thank you）">
  <div id="res"></div>
  <div class="grid" id="grid">
-  <button class="cat wide" data-go="abc" style="background:#1b4d33;color:#fff"><span class="e mm" style="font-size:30px;line-height:1.3">ကခဂ</span><span>ミャンマー文字<span class="n" style="color:#cfe8da">33の子音・母音・数字を覚えよう</span></span></button>
+  <button class="cat wide" data-go="abc" style="background:#1b4d33;color:#fff"><span class="e mm" style="font-size:20px;line-height:1.2;background:#ffffff1f;color:#ffd76a;width:64px;height:56px;border-radius:16px;letter-spacing:-1px">ကခဂ</span><span>ミャンマー文字<span class="n" style="color:#cfe8da">33の子音・母音・数字を覚えよう</span></span></button>
   <button class="cat wide q-btn" data-go="quiz"><span class="e">🎯</span><span>クイズで覚える<span class="n" style="color:#6b5a00">4択でチャレンジ</span></span></button>
-  ${CATS.map(c=>`<button class="cat" data-go="cat:${c[0]}"><span class="e">${c[1]}</span>${c[2]}<span class="n">${W.filter(w=>w[0]===c[0]).length}語</span></button>`).join("")}
+  ${CATS.map((c,i)=>`<button class="cat" data-go="cat:${c[0]}" style="--cbg:${PAST[i%PAST.length]}"><span class="e">${c[1]}</span>${c[2]}<span class="n">${W.filter(w=>w[0]===c[0]).length}語</span></button>`).join("")}
   <button class="cat" data-go="fav"><span class="e">⭐</span>お気に入り<span class="n">${fav.size}語</span></button>
   <button class="cat" data-go="culture"><span class="e">🇲🇲</span>ミャンマー文化メモ<span class="n">知っておくと仲よくなれる</span></button>
  </div>`;
@@ -554,7 +600,7 @@ function home(){sub(false);setTitle('ミンガラーバー！ミャンマー語<
  q.oninput=()=>{const s=q.value.trim();if(!s){res.innerHTML="";grid.style.display="";return}grid.style.display="none";const lo=s.toLowerCase();const h=W.filter(w=>(w[1]+w[3]+w[2]+w[4]).includes(s)||en(w).toLowerCase().includes(lo));res.innerHTML=h.length?h.map(card).join(""):`<div class="empty">見つかりませんでした</div>`;bindFav()};
  window.scrollTo(0,0)}
 function go(r){history.pushState({r},"");route(r)}
-function route(r){sub(true);window.scrollTo(0,0);
+function route(r){bsel(['abc','abcquiz'].includes(r)?'abc':r==='quiz'?'quiz':r==='fav'?'fav':'');sub(true);window.scrollTo(0,0);
  if(r.startsWith("cat:")){const c=CATS.find(x=>x[0]===r.slice(4));listView(c[1]+" "+c[2],W.filter(w=>w[0]===c[0]))}
  else if(r==="fav"){listView("⭐ お気に入り",W.filter(w=>fav.has(id(w))),"まだありません。単語の⭐を押すとここに集まります。")}
  else if(r==="quiz")quiz();
@@ -606,6 +652,9 @@ function quiz(){setTitle("🎯 クイズ");let n=0,ok=0;const pool=W.slice();
    ${opts.map((o,k)=>`<button class="opt" data-k="${k}">${rev?o[1]+`<span class="en" style="display:block">${en(o)}</span>`:`<span class="mm">${o[2]}</span><small>${o[3]}</small>`}</button>`).join("")}</div>`;
   main.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(main.querySelector(".opt.ok"))return;const pick=opts[+b.dataset.k];main.querySelectorAll(".opt").forEach((x,k)=>{if(opts[k]===w)x.classList.add("ok")});if(pick===w)ok++;else b.classList.add("ng");n++;setTimeout(next,pick===w?700:1500)})};
  next()}
+
+function bsel(k){document.querySelectorAll("#bnav button").forEach(b=>b.classList.toggle("on",b.dataset.b===k))}
+document.querySelectorAll("#bnav button").forEach(b=>b.onclick=()=>{const k=b.dataset.b;if(k==="home"){history.pushState(null,"");home()}else go(k)});
 back.onclick=()=>history.back();
 window.onpopstate=e=>{e.state&&e.state.r?route(e.state.r):home()};
 const setEn=v=>{localStorage.setItem('mm-en',v?'1':'0');document.body.classList.toggle('hide-en',!v);$('#entg').textContent=v?'EN ON':'EN OFF';$('#entg').style.opacity=v?1:.5};

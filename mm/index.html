@@ -135,13 +135,6 @@ header h1{font-weight:900;letter-spacing:.2px}
 .bnav button{flex:1;border:0;background:none;border-radius:18px;padding:6px 2px;font-size:11px;font-weight:700;color:#7b7461;display:flex;flex-direction:column;align-items:center;gap:1px}
 .bnav button .i{font-size:20px;line-height:1.2}
 .bnav button.on{background:#e8f5ee;color:var(--g)}
-.spk{border:0;background:#e8f5ee;color:var(--g);border-radius:50%;width:40px;height:40px;font-size:18px;flex:none;margin-top:2px}
-.spk.has{background:var(--g);color:#fff}
-.rec-wrap{background:#fff;border-radius:24px;padding:18px;box-shadow:0 2px 10px #0001;text-align:center}
-.rec-btn{width:96px;height:96px;border-radius:50%;border:0;background:#d62b2b;color:#fff;font-size:36px;box-shadow:0 6px 16px #d62b2b55;margin:10px auto;display:block}
-.rec-btn.on{animation:pulse 1s infinite}
-@keyframes pulse{50%{transform:scale(1.08);box-shadow:0 6px 26px #d62b2b88}}
-.toast2{position:fixed;left:50%;top:80px;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 16px;border-radius:12px;font-size:13px;z-index:20;display:none}
 </style>
 </head>
 <body>
@@ -154,7 +147,6 @@ header h1{font-weight:900;letter-spacing:.2px}
 </header>
 <main id="main"></main>
 <nav class="bnav" id="bnav"><button data-b="home"><span class="i">🏠</span>ホーム</button><button data-b="abc"><span class="i mm" style="font-size:16px">ကခဂ</span>文字</button><button data-b="quiz"><span class="i">🎯</span>クイズ</button><button data-b="fav"><span class="i">⭐</span>お気に入り</button></nav>
-<div class="toast2" id="toast2"></div>
 <div class="note2">📝 読み方はカタカナで近い音を書いています。本当の発音は、ミャンマーの友だちに聞いてみてください。きっと喜ばれます😊<br>作った人：Win（ミャンマー出身・日本在住）</div>
 </div>
 <script src="words1.js"></script>
@@ -571,57 +563,6 @@ const VOW=[
  ["ကန်","カン","kan","န်＝「ン」で終わる"]
 ];
 const DIG=[["၀","0","トウンニャ"],["၁","1","ティッ"],["၂","2","ニッ"],["၃","3","トウン"],["၄","4","レー"],["၅","5","ンガー"],["၆","6","チャウッ"],["၇","7","クニッ"],["၈","8","シッ"],["၉","9","コー"]];
-
-// ===== 音声 =====
-const hkey=w=>{let h=5381;const t=w[1]+"|"+w[2];for(let i=0;i<t.length;i++)h=((h*33)^t.charCodeAt(i))>>>0;return h.toString(16)};
-let PUB={};fetch("audio/index.json").then(r=>r.json()).then(j=>{PUB=j||{}}).catch(()=>{});
-let DB=null;const dbp=new Promise(res=>{try{const r=indexedDB.open("mm-rec",1);r.onupgradeneeded=()=>r.result.createObjectStore("rec");r.onsuccess=()=>{DB=r.result;res(DB)};r.onerror=()=>res(null)}catch(e){res(null)}});
-const recGet=k=>dbp.then(db=>db?new Promise(r=>{const q=db.transaction("rec").objectStore("rec").get(k);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null)}):null);
-const recPut=(k,v)=>dbp.then(db=>db&&new Promise(r=>{const t=db.transaction("rec","readwrite");t.objectStore("rec").put(v,k);t.oncomplete=r}));
-const recDel=k=>dbp.then(db=>db&&new Promise(r=>{const t=db.transaction("rec","readwrite");t.objectStore("rec").delete(k);t.oncomplete=r}));
-const recAll=()=>dbp.then(db=>db?new Promise(r=>{const out={};const c=db.transaction("rec").objectStore("rec").openCursor();c.onsuccess=e=>{const cur=e.target.result;if(cur){out[cur.key]=cur.value;cur.continue()}else r(out)}}):{});
-function toast2(t){const e=$("#toast2");e.textContent=t;e.style.display="block";clearTimeout(toast2.h);toast2.h=setTimeout(()=>e.style.display="none",1600)}
-let curAudio=null;
-async function speak(w){try{if(curAudio){curAudio.pause();curAudio=null}speechSynthesis&&speechSynthesis.cancel()}catch(e){}
- const k=hkey(w);const mine=await recGet(k);
- if(mine){curAudio=new Audio(URL.createObjectURL(mine));curAudio.play();return}
- if(PUB[k]){curAudio=new Audio("audio/"+PUB[k]);curAudio.play().catch(()=>{});return}
- try{const vs=speechSynthesis.getVoices();const my=vs.find(v=>/^my/i.test(v.lang));
-  const u=new SpeechSynthesisUtterance(my?w[2]:w[3].replace(/[〜／]/g," "));
-  if(my){u.voice=my;u.lang=my.lang}else{u.lang="ja-JP";u.rate=.85;toast2("🔈 カタカナ読みの音です（録音はまだありません）")}
-  speechSynthesis.speak(u)}catch(e){toast2("この端末では音が出せません")}}
-function bindSpk(list){main.querySelectorAll(".spk").forEach(b=>{const w=list?list[+b.dataset.i]:W[+b.dataset.w];b.onclick=e=>{e.stopPropagation();speak(w)};const k=hkey(w);if(PUB[k])b.classList.add("has");else recGet(k).then(v=>{if(v)b.classList.add("has")})})}
-// ===== 録音モード（作者用） =====
-function recMode(){setTitle("🎙 録音モード");let i=+(localStorage.getItem("mm-rec-i")||0),mr=null,chunks=[],stream=null;
- const draw=async()=>{const w=W[i];const has=await recGet(hkey(w));const all=await recAll();const n=Object.keys(all).length;
-  main.innerHTML=`<div class="rec-wrap"><div style="font-size:12px;color:#888">${i+1} / ${W.length}　｜　録音ずみ ${n}語</div>
-   <div style="font-size:14px;color:#6b6b5e;margin-top:8px">${w[1]} <span class="en">${en(w)}</span></div>
-   <div class="mm" style="font-size:40px;line-height:1.6;color:#14402b">${w[2]}</div><div class="kana" style="color:var(--g);font-weight:700">${w[3]}</div>
-   <button class="rec-btn" id="rb">🎙</button><div id="rs" style="font-size:13px;color:#888">ボタンを押して話す → もう一度押して止める</div>
-   <div class="nav"><button id="rp" ${has?"":"disabled style=opacity:.4"}>▶ 聞く</button><button id="rd" ${has?"":"disabled style=opacity:.4"}>🗑 消す</button></div>
-   <div class="nav"><button id="pv">← 前</button><button class="pri" id="nx">次 →</button></div>
-   <div class="nav"><button id="nu">⏭ まだ録音していない単語へ</button></div>
-   <div class="nav"><button class="pri" id="ex" style="background:linear-gradient(135deg,#d9a521,#b8860b)">📤 録音を書き出す（${n}語）</button></div>
-   <div style="font-size:12px;color:#999;margin-top:10px;line-height:1.6">録音はこのスマホの中だけに保存されます。<br>書き出したファイルをClaudeに送ると、アプリに入れてみんなが聞けるようになります。</div></div>`;
-  $("#rb").onclick=toggle;$("#rp").onclick=()=>speak(w);$("#rd").onclick=async()=>{await recDel(hkey(w));draw()};
-  $("#pv").onclick=()=>{i=(i-1+W.length)%W.length;save();draw()};$("#nx").onclick=()=>{i=(i+1)%W.length;save();draw()};
-  $("#nu").onclick=async()=>{const all=await recAll();for(let k=1;k<=W.length;k++){const j=(i+k)%W.length;if(!all[hkey(W[j])]){i=j;save();return draw()}}toast2("全部録音ずみです🎉")};
-  $("#ex").onclick=exportRec};
- const save=()=>localStorage.setItem("mm-rec-i",i);
- async function toggle(){const b=$("#rb");
-  if(mr&&mr.state==="recording"){mr.stop();return}
-  try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){toast2("マイクを許可してください");return}
-  const type=MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported("audio/mp4")?"audio/mp4":"";
-  mr=new MediaRecorder(stream,type?{mimeType:type}:undefined);chunks=[];
-  mr.ondataavailable=e=>chunks.push(e.data);
-  mr.onstop=async()=>{stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:mr.mimeType||"audio/mp4"});await recPut(hkey(W[i]),blob);toast2("✅ 保存しました");speak(W[i]);setTimeout(()=>{i=(i+1)%W.length;save();draw()},1200)};
-  mr.start();b.classList.add("on");b.textContent="■";$("#rs").textContent="録音中… もう一度押すと止まります"}
- async function exportRec(){const all=await recAll();const keys=Object.keys(all);if(!keys.length){toast2("まだ録音がありません");return}
-  toast2("書き出し中…");const out={};for(const k of keys){out[k]=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(all[k])})}
-  const file=new File([JSON.stringify(out)],"myanmar-voice-"+keys.length+".json",{type:"application/json"});
-  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"ミャンマー語の録音"});return}}catch(e){if(e.name==="AbortError")return}
-  const a=document.createElement("a");a.href=URL.createObjectURL(file);a.download=file.name;a.click()}
- draw()}
 const PAST=['#fde8d7','#dff1e6','#fff1c9','#e3ecfb','#f6e1f0','#e1f3f3','#fbe3e3','#ece7fb'];
 const CULTURE=[
  ["名字がない","ミャンマー人には、ふつう<b>名字（家族の名前）がありません</b>。「ウィンウィンテー」のように、全部で1つの名前です。"],
@@ -637,8 +578,8 @@ const saveFav=()=>localStorage.setItem("mm-fav",JSON.stringify([...fav]));
 const id=w=>w[1]+"|"+w[2];
 const en=w=>(window.EN&&EN[w[1]])||"";
 const esc=s=>s;
-function card(w){const f=fav.has(id(w));return`<div class="card"><button class="spk" data-w="${W.indexOf(w)}">🔊</button><div class="main"><div class="jp">${w[1]} <span class="en">${en(w)}</span></div><div class="my mm">${w[2]}</div><div class="kana">${w[3]}</div>${w[4]?`<div class="note">💡 ${w[4]}</div>`:""}</div><button class="fav${f?" on":""}" data-id="${id(w)}">⭐</button></div>`}
-function bindFav(){bindSpk();main.querySelectorAll(".fav").forEach(b=>b.onclick=()=>{const k=b.dataset.id;fav.has(k)?fav.delete(k):fav.add(k);saveFav();b.classList.toggle("on")})}
+function card(w){const f=fav.has(id(w));return`<div class="card"><div class="main"><div class="jp">${w[1]} <span class="en">${en(w)}</span></div><div class="my mm">${w[2]}</div><div class="kana">${w[3]}</div>${w[4]?`<div class="note">💡 ${w[4]}</div>`:""}</div><button class="fav${f?" on":""}" data-id="${id(w)}">⭐</button></div>`}
+function bindFav(){main.querySelectorAll(".fav").forEach(b=>b.onclick=()=>{const k=b.dataset.id;fav.has(k)?fav.delete(k):fav.add(k);saveFav();b.classList.toggle("on")})}
 function setTitle(t){$("#ttl").innerHTML=t}
 function sub(on){document.body.classList.toggle("sub",on)}
 function todays(){const d=new Date();const n=(d.getFullYear()*372+d.getMonth()*31+d.getDate());const pool=W.filter(w=>w[0]!=="num"&&w[0]!=="day");return pool[n%pool.length]}
@@ -652,7 +593,6 @@ function home(){bsel('home');sub(false);setTitle('ミンガラーバー！ミャ
   <button class="cat wide q-btn" data-go="quiz"><span class="e">🎯</span><span>クイズで覚える<span class="n" style="color:#6b5a00">4択でチャレンジ</span></span></button>
   ${CATS.map((c,i)=>`<button class="cat" data-go="cat:${c[0]}" style="--cbg:${PAST[i%PAST.length]}"><span class="e">${c[1]}</span>${c[2]}<span class="n">${W.filter(w=>w[0]===c[0]).length}語</span></button>`).join("")}
   <button class="cat" data-go="fav"><span class="e">⭐</span>お気に入り<span class="n">${fav.size}語</span></button>
-  <button class="cat" data-go="rec" style="--cbg:#fde2e2"><span class="e">🎙</span>録音モード<span class="n">作者用：発音を録音</span></button>
   <button class="cat" data-go="culture"><span class="e">🇲🇲</span>ミャンマー文化メモ<span class="n">知っておくと仲よくなれる</span></button>
  </div>`;
  main.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
@@ -664,7 +604,6 @@ function route(r){bsel(['abc','abcquiz'].includes(r)?'abc':r==='quiz'?'quiz':r==
  if(r.startsWith("cat:")){const c=CATS.find(x=>x[0]===r.slice(4));listView(c[1]+" "+c[2],W.filter(w=>w[0]===c[0]))}
  else if(r==="fav"){listView("⭐ お気に入り",W.filter(w=>fav.has(id(w))),"まだありません。単語の⭐を押すとここに集まります。")}
  else if(r==="quiz")quiz();
- else if(r==="rec")recMode();
  else if(r==="abc")abcView();
  else if(r==="abcquiz")abcQuiz();
  else if(r==="culture"){setTitle("🇲🇲 ミャンマー文化メモ");main.innerHTML=CULTURE.map(c=>`<div class="culture"><b>■ ${c[0]}</b><br>${c[1]}</div>`).join("")}
@@ -674,8 +613,8 @@ function listView(title,list,emptyMsg){setTitle(title);let mode="list",i=0,show=
   if(!list.length){main.innerHTML=`<div class="empty">${emptyMsg||"ありません"}</div>`;return}
   if(mode==="list"){main.innerHTML=tabs+list.map(card).join("");bindFav()}
   else{const w=list[i];main.innerHTML=tabs+`<div class="flash" id="fl">${show?`<div class="my mm">${w[2]}</div><div class="kana">${w[3]}</div><div style="font-size:16px;color:#888;margin-top:8px">${w[1]}</div><div class="en" style="font-size:14px">${en(w)}</div>${w[4]?`<div class="note" style="margin-top:10px;font-size:13px;color:#8a7d55">💡 ${w[4]}</div>`:""}`:`<div class="jp">${w[1]}</div><div class="en" style="font-size:16px;margin-top:4px">${en(w)}</div><div class="hint">ミャンマー語で何と言う？<br>タップして答えを見る</div>`}</div>
-   <div class="nav"><button id="fs">🔊 発音を聞く</button></div><div class="nav"><button id="pv">← 前へ</button><button class="pri" id="nx">次へ →</button></div><div style="text-align:center;color:#999;font-size:13px;margin-top:8px">${i+1} / ${list.length}</div>`;
-   $("#fl").onclick=()=>{show=!show;draw()};$("#fs").onclick=()=>speak(w);$("#pv").onclick=()=>{i=(i-1+list.length)%list.length;show=false;draw()};$("#nx").onclick=()=>{i=(i+1)%list.length;show=false;draw()}}
+   <div class="nav"><button id="pv">← 前へ</button><button class="pri" id="nx">次へ →</button></div><div style="text-align:center;color:#999;font-size:13px;margin-top:8px">${i+1} / ${list.length}</div>`;
+   $("#fl").onclick=()=>{show=!show;draw()};$("#pv").onclick=()=>{i=(i-1+list.length)%list.length;show=false;draw()};$("#nx").onclick=()=>{i=(i+1)%list.length;show=false;draw()}}
   main.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;i=0;show=false;draw()})};
  draw()}
 

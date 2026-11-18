@@ -1,0 +1,1 @@
+{"name": "Win フォト加工", "short_name": "フォト加工", "start_url": ".", "display": "standalone", "background_color": "#16161c", "theme_color": "#16161c", "icons": [{"src": "icon-180.png", "sizes": "180x180", "type": "image/png"}, {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}]}

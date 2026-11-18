@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Win フォト加工</title>
+<meta name="description" content="写真にフィルター・文字・スタンプ・フレーム。写真はスマホの中だけで加工され、どこにも送られません。無料。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Win フォト加工">
+<meta property="og:description" content="フィルター・文字・スタンプ・フレーム。写真はどこにも送られません。無料。">
+<meta property="og:image" content="https://win-wwh.github.io/win/photo/icon-512.png">
+<meta property="og:url" content="https://win-wwh.github.io/win/photo/">
+<meta name="twitter:card" content="summary">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="フォト加工">
+<meta name="theme-color" content="#16161c">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;900&family=Noto+Sans+Myanmar:wght@400;700&family=Kosugi+Maru&family=Yusei+Magic&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{margin:0;height:100%;background:#16161c;color:#eee;font-family:"Noto Sans JP","Noto Sans Myanmar",system-ui,sans-serif;overflow:hidden}
+body{display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.top{display:flex;align-items:center;gap:8px;padding:8px 12px}
+.top h1{font-size:16px;margin:0;flex:1}
+.tb{border:0;border-radius:20px;padding:8px 14px;font-size:14px;font-weight:700;background:#2a2a33;color:#eee}
+.tb.pri{background:#ff6b8b;color:#fff}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;padding:6px;position:relative}
+canvas#cv{max-width:100%;max-height:100%;touch-action:none;border-radius:4px;box-shadow:0 4px 20px #0008}
+.empty{text-align:center}
+.empty .big{display:inline-block;margin-top:14px;border:0;border-radius:18px;padding:18px 28px;font-size:18px;font-weight:700;background:#ff6b8b;color:#fff}
+.empty p{color:#999;font-size:13px;line-height:1.8}
+.panel{background:#1f1f27;border-radius:18px 18px 0 0;padding:10px 0 6px}
+.tabs{display:flex;justify-content:space-around;padding:0 6px}
+.tabs button{border:0;background:none;color:#888;font-size:12px;padding:6px 4px;flex:1;font-weight:700}
+.tabs button span{display:block;font-size:22px}
+.tabs button.on{color:#ff6b8b}
+.tool{height:118px;overflow-x:auto;overflow-y:hidden;padding:8px 12px;display:none;-webkit-overflow-scrolling:touch}
+.tool.on{display:block}
+.row{display:flex;gap:10px;align-items:center}
+.flt{flex:none;text-align:center;font-size:11px;color:#bbb;border:0;background:none;padding:0}
+.flt canvas{width:64px;height:64px;border-radius:10px;display:block;margin-bottom:4px;border:2px solid transparent;object-fit:cover}
+.flt.on canvas{border-color:#ff6b8b}.flt.on{color:#fff}
+.sl{display:flex;align-items:center;gap:8px;margin:2px 0;font-size:12px;color:#bbb}
+.sl label{width:84px;flex:none;white-space:nowrap;font-size:11px}
+.sl input{flex:1;accent-color:#ff6b8b}
+.sl b{width:34px;text-align:right;font-weight:400}
+.stk{flex:none;font-size:34px;border:0;background:#2a2a33;border-radius:12px;width:54px;height:54px}
+.txtrow{display:flex;gap:6px;margin-bottom:8px}
+.txtrow input{flex:1;padding:9px 10px;border-radius:10px;border:0;font-size:16px;background:#2a2a33;color:#fff;-webkit-user-select:text;user-select:text}
+.sw{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid #444}
+.sw.on{border-color:#fff}
+.fbtn{flex:none;border:0;border-radius:10px;padding:8px 12px;background:#2a2a33;color:#ddd;font-size:13px}
+.fbtn.on{background:#ff6b8b;color:#fff}
+.sel{position:absolute;left:50%;transform:translateX(-50%);bottom:8px;display:none;gap:6px;background:#000a;border-radius:20px;padding:6px 8px;align-items:center}
+.sel.on{display:flex}
+.sel button{border:0;background:#2a2a33;color:#fff;border-radius:14px;padding:6px 10px;font-size:13px}
+.sel input{width:110px;accent-color:#ff6b8b}
+.toast{position:fixed;left:50%;top:30%;transform:translateX(-50%);background:#000d;padding:12px 20px;border-radius:14px;font-size:15px;display:none;z-index:9;text-align:center}
+.mm{font-family:"Noto Sans Myanmar",sans-serif}
+#saveimg{position:fixed;inset:0;background:#000e;z-index:8;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center}
+#saveimg img{max-width:100%;max-height:70vh;border-radius:6px;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+#saveimg p{font-size:14px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>📸 フォト加工 <span class="mm" style="font-size:11px;color:#999;font-weight:400">ဓာတ်ပုံ ပြင်</span></h1>
+  <button class="tb" id="newb" style="display:none">🖼️ 写真</button>
+  <button class="tb pri" id="saveb" style="display:none">保存</button>
+</div>
+<div class="stage" id="stage">
+  <div class="empty" id="empty">
+    <div style="font-size:64px">📷</div>
+    <button class="big" id="pick">写真をえらぶ<br><span class="mm" style="font-size:13px;font-weight:400">ဓာတ်ပုံ ရွေးပါ</span></button>
+    <p>写真はスマホの中だけで加工されます。<br>どこにも送られません 🔒<br><span class="mm">ဓာတ်ပုံကို ဖုန်းထဲမှာပဲ ပြင်ပါတယ်။ ဘယ်ကိုမှ မပို့ပါ။</span></p>
+  </div>
+  <canvas id="cv" style="display:none"></canvas>
+  <div class="sel" id="sel"><span style="font-size:12px;white-space:nowrap">大きさ</span><input type="range" id="selsz" min="20" max="400"><button id="selrot">↻</button><button id="seldel">🗑</button><button id="selok">✓</button></div>
+</div>
+<div class="panel" id="panel" style="display:none">
+  <div class="tool on" id="t-flt"><div class="row" id="flts"></div></div>
+  <div class="tool" id="t-adj"></div>
+  <div class="tool" id="t-txt">
+    <div class="txtrow"><input id="txtin" placeholder="文字を入れる / စာ ရိုက်ပါ" maxlength="40"><button class="tb pri" id="txtadd">追加</button></div>
+    <div class="row" id="txtopt"></div>
+  </div>
+  <div class="tool" id="t-stk"><div class="row" id="stks"></div></div>
+  <div class="tool" id="t-frm"><div class="row" id="frms" style="flex-wrap:wrap"></div></div>
+  <div class="tabs">
+    <button data-t="flt" class="on"><span>🎨</span>フィルター</button>
+    <button data-t="adj"><span>🔆</span>調整</button>
+    <button data-t="txt"><span>🔤</span>文字</button>
+    <button data-t="stk"><span>😊</span>スタンプ</button>
+    <button data-t="frm"><span>🖼️</span>フレーム</button>
+  </div>
+</div>
+<input type="file" id="file" accept="image/*" style="display:none">
+<div class="toast" id="toast"></div>
+<div id="saveimg"><img id="outimg" alt=""><p>画像を<b>長押し</b> →「写真に保存」<br><span class="mm">ပုံကို ကြာကြာ ဖိပြီး “Save to Photos”</span></p><button class="tb" id="closeimg">とじる</button></div>
+<script>
+const $=id=>document.getElementById(id);
+const cv=$("cv"),ctx=cv.getContext("2d");
+let src=null,base=document.createElement("canvas"),items=[],sel=null,frame="none",curF="none";
+const ADJ={b:0,c:0,s:0,w:0,v:0,sh:0};
+const ADJL=[["b","明るさ"],["c","コントラスト"],["s","あざやかさ"],["w","あたたかさ"],["v","ふちを暗く"],["sh","ぼかし→くっきり"]];
+const FILTERS=[
+ ["none","なし",{}],["bright","明るく",{b:18,c:5,s:8}],["warm","あたたか",{w:30,s:10,b:5}],["cool","クール",{w:-30,c:5}],
+ ["vivid","あざやか",{s:45,c:15}],["soft","ふんわり",{b:15,c:-20,s:-10,w:8}],["film","フィルム",{c:-10,s:-15,w:15,v:35,fade:20}],
+ ["mono","モノクロ",{gray:1,c:15}],["sepia","セピア",{sepia:1,v:25}],["night","ナイト",{w:-20,c:25,b:-10,v:40}],["sakura","さくら",{pink:1,b:10,c:-5}],["retro","レトロ",{w:25,s:-25,fade:30,v:30}]
+];
+const STK=["❤️","💕","✨","⭐","🌸","🌷","🍀","🎀","👑","😍","😂","🥰","😎","🐱","🐶","🐰","🎂","🎉","🎈","☕","🍜","🌙","☀️","🌈","🔥","💯","👍","🙏","🇲🇲","🇯🇵"];
+const COLORS=["#ffffff","#000000","#ff4d6d","#ffb703","#06d6a0","#4cc9f0","#9b5de5","#ff8fab"];
+const FONTS=[["Noto Sans JP","ゴシック","900"],["Kosugi Maru","まる",""],["Yusei Magic","手書き",""],["Noto Sans Myanmar","မြန်မာ","700"]];
+let tColor="#ffffff",tFont=0,tStroke=true;
+const FRAMES=[["none","なし"],["white","白ふち"],["polaroid","ポラロイド"],["black","黒ふち"],["round","まるい角"],["film","フィルム"],["heart","ハート"]];
+
+function toast(t){const e=$("toast");e.innerHTML=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",1600)}
+$("pick").onclick=$("newb").onclick=()=>$("file").click();
+$("file").onchange=e=>{const f=e.target.files[0];if(!f)return;const url=URL.createObjectURL(f);const im=new Image();im.onload=()=>{
+  const M=1600,r=Math.min(1,M/Math.max(im.naturalWidth,im.naturalHeight));src=document.createElement("canvas");src.width=Math.round(im.naturalWidth*r);src.height=Math.round(im.naturalHeight*r);src.getContext("2d").drawImage(im,0,0,src.width,src.height);URL.revokeObjectURL(url);
+  items=[];sel=null;Object.keys(ADJ).forEach(k=>ADJ[k]=0);curF="none";frame="none";
+  $("empty").style.display="none";cv.style.display="block";$("panel").style.display="block";$("newb").style.display=$("saveb").style.display="inline-block";
+  buildThumbs();buildAdj();buildFrames();process();};im.src=url;e.target.value=""};
+
+function params(){const f=FILTERS.find(x=>x[0]===curF)[2];const p=Object.assign({b:0,c:0,s:0,w:0,v:0,fade:0},f);for(const k of["b","c","s","w","v"])p[k]=(p[k]||0)+ADJ[k];return p}
+function applyPx(cnv,p,sharp){
+  const c=cnv.getContext("2d"),W=cnv.width,H=cnv.height;
+  if(sharp)applySharp(cnv,sharp);
+  const id=c.getImageData(0,0,W,H),d=id.data;
+  const br=p.b*2.2,ct=(100+p.c)/100,sat=(100+p.s)/100,wr=p.w*0.6,fade=p.fade||0,vig=Math.max(0,p.v)/100;
+  const cx=W/2,cy=H/2,md=Math.hypot(cx,cy);
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const i=(y*W+x)*4;let r=d[i],g=d[i+1],b=d[i+2];
+    r+=br;g+=br;b+=br;
+    r=(r-128)*ct+128;g=(g-128)*ct+128;b=(b-128)*ct+128;
+    const l=.299*r+.587*g+.114*b;
+    if(p.gray){r=g=b=l}else if(p.sepia){r=l*1.07+30;g=l*.93+12;b=l*.75}else{r=l+(r-l)*sat;g=l+(g-l)*sat;b=l+(b-l)*sat}
+    if(p.pink){r+=18;b+=10;g+=2}
+    r+=wr;b-=wr;
+    if(fade){r=r*(1-fade/250)+fade*.9;g=g*(1-fade/250)+fade*.9;b=b*(1-fade/250)+fade*.9}
+    if(vig){const dd=Math.hypot(x-cx,y-cy)/md;const k=1-vig*Math.max(0,dd-.35)*1.6;r*=k;g*=k;b*=k}
+    d[i]=r;d[i+1]=g;d[i+2]=b}
+  c.putImageData(id,0,0)}
+function applySharp(cnv,amt){ // amt -100..100 : negative=blur, positive=sharpen
+  const c=cnv.getContext("2d");
+  if(amt<0){const t=document.createElement("canvas");t.width=cnv.width;t.height=cnv.height;const tc=t.getContext("2d");const n=Math.round(-amt/20)+1;
+    for(let k=0;k<n;k++){const s=document.createElement("canvas");const f=.5;s.width=Math.max(1,cnv.width*f);s.height=Math.max(1,cnv.height*f);s.getContext("2d").drawImage(cnv,0,0,s.width,s.height);c.imageSmoothingQuality="high";c.drawImage(s,0,0,cnv.width,cnv.height)}return}
+  const W=cnv.width,H=cnv.height,id=c.getImageData(0,0,W,H),d=id.data,o=new Uint8ClampedArray(d),a=amt/100;
+  for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){const i=(y*W+x)*4;for(let ch=0;ch<3;ch++){const v=5*o[i+ch]-o[i-4+ch]-o[i+4+ch]-o[i-W*4+ch]-o[i+W*4+ch];d[i+ch]=o[i+ch]+(v-o[i+ch])*a}}
+  c.putImageData(id,0,0)}
+let pending=false;
+function process(){if(pending)return;pending=true;requestAnimationFrame(()=>{pending=false;base.width=src.width;base.height=src.height;base.getContext("2d").drawImage(src,0,0);applyPx(base,params(),ADJ.sh);render()})}
+
+function frameDims(){const W=base.width,H=base.height,m=Math.round(Math.min(W,H)*.05);
+  if(frame==="white"||frame==="black")return{W:W+m*2,H:H+m*2,x:m,y:m};
+  if(frame==="polaroid")return{W:W+m*2,H:H+m*5,x:m,y:m};
+  if(frame==="film")return{W:W,H:H+m*4,x:0,y:m*2};
+  return{W,H,x:0,y:0}}
+function render(forExport){
+  const f=frameDims();cv.width=f.W;cv.height=f.H;
+  ctx.fillStyle=frame==="black"||frame==="film"?"#111":frame==="heart"?"#ffe3ea":"#fff";ctx.fillRect(0,0,f.W,f.H);
+  ctx.save();
+  if(frame==="round"){const r=Math.min(f.W,f.H)*.08;rr(ctx,0,0,f.W,f.H,r);ctx.clip();ctx.clearRect(0,0,f.W,f.H)}
+  if(frame==="heart"){heartPath(ctx,f.W,f.H);ctx.clip()}
+  ctx.drawImage(base,f.x,f.y);ctx.restore();
+  if(frame==="film"){const m=f.y/2,hw=m*.9;ctx.fillStyle="#eee";for(let x=m*.6;x<f.W;x+=m*2.2){rr(ctx,x,m*.55,hw,m*.9,m*.2);ctx.fill();rr(ctx,x,f.H-m*1.45,hw,m*.9,m*.2);ctx.fill()}}
+  for(const it of items){ctx.save();ctx.translate(it.x*f.W,it.y*f.H);ctx.rotate(it.r);const sz=it.s*f.W/1000;
+    if(it.t==="e"){ctx.font=`${sz}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(it.v,0,0)}
+    else{const F=FONTS[it.f];ctx.font=`${F[2]} ${sz}px "${F[0]}",sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";
+      if(it.st){ctx.lineJoin="round";ctx.lineWidth=sz*.16;ctx.strokeStyle=it.c==="#000000"?"#fff":"#000";ctx.globalAlpha=.85;ctx.strokeText(it.v,0,0);ctx.globalAlpha=1}
+      ctx.fillStyle=it.c;ctx.fillText(it.v,0,0)}
+    if(it===sel&&!forExport){const w=measure(it,sz);ctx.strokeStyle="#ff6b8b";ctx.lineWidth=Math.max(2,f.W/300);ctx.setLineDash([f.W/80,f.W/120]);ctx.strokeRect(-w/2-8,-sz*.65,w+16,sz*1.3)}
+    ctx.restore()}}
+function measure(it,sz){if(it.t==="e")return sz*1.1;const F=FONTS[it.f];ctx.font=`${F[2]} ${sz}px "${F[0]}",sans-serif`;return ctx.measureText(it.v).width}
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function heartPath(c,W,H){const s=Math.min(W,H),x0=(W-s)/2,y0=(H-s)/2;c.beginPath();c.moveTo(x0+s/2,y0+s*.95);c.bezierCurveTo(x0-s*.05,y0+s*.6,x0+s*.02,y0+s*.05,x0+s/2,y0+s*.28);c.bezierCurveTo(x0+s*.98,y0+s*.05,x0+s*1.05,y0+s*.6,x0+s/2,y0+s*.95);c.closePath()}
+
+// thumbnails
+function buildThumbs(){const box=$("flts");box.innerHTML="";const t=document.createElement("canvas"),r=128/Math.min(src.width,src.height);t.width=t.height=128;
+  t.getContext("2d").drawImage(src,(128-src.width*r)/2,(128-src.height*r)/2,src.width*r,src.height*r);
+  FILTERS.forEach(F=>{const b=document.createElement("button");b.className="flt"+(F[0]===curF?" on":"");const c=document.createElement("canvas");c.width=c.height=128;c.getContext("2d").drawImage(t,0,0);applyPx(c,Object.assign({b:0,c:0,s:0,w:0,v:0},F[2]),0);b.appendChild(c);b.append(F[1]);
+    b.onclick=()=>{curF=F[0];box.querySelectorAll(".flt").forEach(x=>x.classList.remove("on"));b.classList.add("on");process()};box.appendChild(b)})}
+function buildAdj(){const box=$("t-adj");box.innerHTML=ADJL.map(a=>`<div class="sl"><label>${a[1]}</label><input type="range" min="-100" max="100" value="${ADJ[a[0]]}" data-k="${a[0]}"><b>${ADJ[a[0]]}</b></div>`).join("");
+  box.querySelectorAll("input").forEach(i=>{i.oninput=()=>{ADJ[i.dataset.k]=+i.value;i.nextElementSibling.textContent=i.value;process()};i.ondblclick=()=>{i.value=0;i.oninput()}})}
+function buildFrames(){$("frms").innerHTML=FRAMES.map(f=>`<button class="fbtn${f[0]===frame?" on":""}" data-f="${f[0]}">${f[1]}</button>`).join("");
+  $("frms").querySelectorAll("button").forEach(b=>b.onclick=()=>{frame=b.dataset.f;buildFrames();render()})}
+$("stks").innerHTML=STK.map(s=>`<button class="stk">${s}</button>`).join("");
+$("stks").querySelectorAll("button").forEach(b=>b.onclick=()=>{const it={t:"e",v:b.textContent,x:.3+Math.random()*.4,y:.3+Math.random()*.2,s:180,r:0};items.push(it);select(it);render()});
+function buildTxtOpt(){$("txtopt").innerHTML=COLORS.map(c=>`<button class="sw${c===tColor?" on":""}" style="background:${c}" data-c="${c}"></button>`).join("")+FONTS.map((f,i)=>`<button class="fbtn${i===tFont?" on":""}" data-f="${i}" style="font-family:'${f[0]}'">${f[1]}</button>`).join("")+`<button class="fbtn${tStroke?" on":""}" id="stb">ふち</button>`;
+  $("txtopt").querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{tColor=b.dataset.c;if(sel&&sel.t==="t"){sel.c=tColor;render()}buildTxtOpt()});
+  $("txtopt").querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{tFont=+b.dataset.f;if(sel&&sel.t==="t"){sel.f=tFont;render()}buildTxtOpt()});
+  $("stb").onclick=()=>{tStroke=!tStroke;if(sel&&sel.t==="t"){sel.st=tStroke;render()}buildTxtOpt()}}
+buildTxtOpt();
+$("txtadd").onclick=()=>{const v=$("txtin").value.trim();if(!v){$("txtin").focus();return}
+  if(/[က-႟]/.test(v)&&tFont!==3)tFont=3;
+  const it={t:"t",v,x:.5,y:.75,s:90,r:0,c:tColor,f:tFont,st:tStroke};items.push(it);$("txtin").value="";$("txtin").blur();buildTxtOpt();document.fonts.load(`${FONTS[tFont][2]} 40px "${FONTS[tFont][0]}"`,v).then(()=>{select(it);render()})};
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("on",x===b));document.querySelectorAll(".tool").forEach(t=>t.classList.toggle("on",t.id==="t-"+b.dataset.t))});
+
+// selection & drag
+function select(it){sel=it;$("sel").classList.toggle("on",!!it);if(it)$("selsz").value=it.s;render()}
+$("selsz").oninput=e=>{if(sel){sel.s=+e.target.value*(sel.t==="e"?1:1);render()}};
+$("selrot").onclick=()=>{if(sel){sel.r+=Math.PI/12;render()}};
+$("seldel").onclick=()=>{if(sel){items=items.filter(x=>x!==sel);select(null)}};
+$("selok").onclick=()=>select(null);
+function pos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height}}
+let drag=null,pts=new Map(),pinch=null;
+cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId);pts.set(e.pointerId,pos(e));
+  if(pts.size===2&&sel){const [a,b]=[...pts.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),s:sel.s,a:Math.atan2(b.y-a.y,b.x-a.x),r:sel.r};drag=null;return}
+  const p=pos(e),f=frameDims();let hit=null;
+  for(let i=items.length-1;i>=0;i--){const it=items[i],sz=it.s*f.W/1000,w=measure(it,sz)/f.W/2+.03,h=sz*.7/f.H;if(Math.abs(p.x-it.x)<w&&Math.abs(p.y-it.y)<h){hit=it;break}}
+  if(hit){items=items.filter(x=>x!==hit);items.push(hit);select(hit);drag={dx:p.x-hit.x,dy:p.y-hit.y}}else{select(null)}});
+cv.addEventListener("pointermove",e=>{if(!pts.has(e.pointerId))return;pts.set(e.pointerId,pos(e));
+  if(pinch&&sel&&pts.size===2){const [a,b]=[...pts.values()];sel.s=Math.max(20,Math.min(600,pinch.s*Math.hypot(a.x-b.x,a.y-b.y)/pinch.d));sel.r=pinch.r+Math.atan2(b.y-a.y,b.x-a.x)-pinch.a;$("selsz").value=sel.s;render();return}
+  if(drag&&sel){const p=pos(e);sel.x=Math.max(0,Math.min(1,p.x-drag.dx));sel.y=Math.max(0,Math.min(1,p.y-drag.dy));render()}});
+const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size)drag=null};
+cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+cv.ondblclick=()=>{if(sel&&sel.t==="t"){const v=prompt("文字を変える",sel.v);if(v){sel.v=v;render()}}};
+
+// save
+$("saveb").onclick=()=>{render(true);cv.toBlob(async blob=>{render();
+  const file=new File([blob],"win-photo-"+Date.now()+".jpg",{type:"image/jpeg"});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});return}}catch(e){if(e.name==="AbortError")return}
+  const url=URL.createObjectURL(blob);
+  if(/iPhone|iPad|iPod/.test(navigator.userAgent)){$("outimg").src=url;$("saveimg").style.display="flex";return}
+  const a=document.createElement("a");a.href=url;a.download=file.name;a.click();toast("保存しました ✓");},"image/jpeg",.92)};
+$("closeimg").onclick=()=>$("saveimg").style.display="none";
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+</body>
+</html>

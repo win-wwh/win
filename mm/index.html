@@ -73,6 +73,20 @@ header h1 small{display:block;font-size:11px;font-weight:400;color:#6b6b5e}
 .opt small{display:block;font-size:13px;color:var(--g);font-weight:700}
 .opt.ok{border-color:#2a9d63;background:#e6f6ec}.opt.ng{border-color:var(--r);background:#fde8e8}
 .score{display:flex;justify-content:space-between;font-size:13px;color:#888;margin-bottom:8px}
+.abcgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.abc{border:0;background:#fff;border-radius:14px;padding:10px 4px 8px;box-shadow:0 1px 4px #0001;text-align:center}
+.abc .L{font-family:"Noto Sans Myanmar",sans-serif;font-size:34px;line-height:1.5;display:block;color:#1b4d33}
+.abc .S{font-size:12px;color:var(--g);font-weight:700}
+.big1{background:#fff;border-radius:22px;box-shadow:0 4px 16px #0002;text-align:center;padding:18px;margin-bottom:12px}
+.big1 .L{font-family:"Noto Sans Myanmar",sans-serif;font-size:96px;line-height:1.4;color:#1b4d33}
+.big1 .S{font-size:24px;font-weight:900;color:var(--g)}
+.big1 .R{font-size:14px;color:#888}
+.big1 .N{font-size:15px;margin-top:8px}
+.big1 .M{font-size:13px;color:#8a7d55;background:#fbf6e4;border-radius:10px;padding:6px 10px;margin-top:8px;display:inline-block}
+.vrow{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:10px 14px;margin-bottom:8px;box-shadow:0 1px 3px #0001}
+.vrow .L{font-family:"Noto Sans Myanmar",sans-serif;font-size:34px;min-width:70px;text-align:center;color:#1b4d33;line-height:1.5}
+.vrow .S{font-weight:700;color:var(--g)}
+.vrow .M{font-size:12px;color:#8a7d55}
 .culture{background:#fff;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px #0001;line-height:1.75;font-size:15px}
 .culture b{color:var(--g)}
 .note2{font-size:12px;color:#8a7d55;margin-top:18px;line-height:1.7;background:#fff;border-radius:12px;padding:10px 12px}
@@ -449,6 +463,61 @@ const W=[
  ["phone","もうすぐ着きます","မကြာခင် ရောက်မယ်","マチャーギン ヤウッ メー",""]
 ];
 (window.W_ADD||[]).forEach(w=>{if(!W.some(x=>x[1]===w[1]&&x[2]===w[2]))W.push(w)});
+
+// ミャンマー文字  [letter, sound(katakana), romaji, name(burmese), name(katakana), memo]
+const ABC=[
+ ["က","カ","ka","ကကြီး","カ ジー","「大きいカ」。最初の文字"],
+ ["ခ","カ（息を強く）","kha","ခခွေး","カ クェー","「犬のカ」。ခွေး＝犬"],
+ ["ဂ","ガ","ga","ဂငယ်","ガ ンゲー","「小さいガ」"],
+ ["ဃ","ガ","ga","ဃကြီး","ガ ジー","「大きいガ」。あまり使わない"],
+ ["င","ンガ","nga","င","ンガー","日本語にない音。「ン」と「ガ」を一緒に"],
+ ["စ","サ","sa","စလုံး","サ ロウン","「丸いサ」"],
+ ["ဆ","サ（息を強く）","hsa","ဆလိမ်","サ レイン","「くるんとしたサ」"],
+ ["ဇ","ザ","za","ဇကွဲ","ザ グェー","「割れたザ」"],
+ ["ဈ","ザ","za","ဈမျဉ်းဆွဲ","ザ ミンズェー","「線を引いたザ」。あまり使わない"],
+ ["ည","ニャ","nya","ညကြီး","ニャ ジー","「大きいニャ」。ည＝夜"],
+ ["ဋ","タ","ta","ဋသန်လျင်းချိတ်","タ タリンジェイッ","パーリ語の言葉で使う"],
+ ["ဌ","タ（息を強く）","hta","ဌဝမ်းဘဲ","タ ウンベー","パーリ語の言葉で使う"],
+ ["ဍ","ダ","da","ဍရင်ကောက်","ダ インガウッ","パーリ語の言葉で使う"],
+ ["ဎ","ダ","da","ဎရေမှုတ်","ダ イェーフモウッ","パーリ語の言葉で使う"],
+ ["ဏ","ナ","na","ဏကြီး","ナ ジー","「大きいナ」"],
+ ["တ","タ","ta","တဝမ်းပူ","タ ウンブー","「おなかがふくらんだタ」"],
+ ["ထ","タ（息を強く）","hta","ထဆင်ထူး","タ スィントゥー",""],
+ ["ဒ","ダ","da","ဒထွေး","ダ ドェー",""],
+ ["ဓ","ダ","da","ဓအောက်ခြိုက်","ダ アウッチャイッ","「下がへこんだダ」"],
+ ["န","ナ","na","နငယ်","ナ ンゲー","「小さいナ」"],
+ ["ပ","パ","pa","ပစောက်","パ ザウッ",""],
+ ["ဖ","パ（息を強く）","hpa","ဖဦးထုပ်","パ オウットウッ","「帽子のパ」。ဦးထုပ်＝帽子"],
+ ["ဗ","バ","ba","ဗထက်ခြိုက်","バ テッチャイッ","「上がへこんだバ」"],
+ ["ဘ","バ","ba","ဘကုန်း","バ ゴウン","「背中の曲がったバ」"],
+ ["မ","マ","ma","မ","マー",""],
+ ["ယ","ヤ","ya","ယပက်လက်","ヤ ペッレッ","「あおむけのヤ」"],
+ ["ရ","ヤ","ya / ra","ရကောက်","ヤ ガウッ","「曲がったヤ」。ヤンゴンの「ヤ」"],
+ ["လ","ラ","la","လ","ラー","လ＝月"],
+ ["ဝ","ワ","wa","ဝ","ワー","まん丸。数字の0（၀）とそっくり"],
+ ["သ","タ（英語の th）","tha","သ","ター","舌を歯のあいだに軽く"],
+ ["ဟ","ハ","ha","ဟ","ハー",""],
+ ["ဠ","ラ","la","ဠကြီး","ラ ジー","「大きいラ」。あまり使わない"],
+ ["အ","ア","a","အ","アー","母音だけの音を書くときに使う"]
+];
+// 母音（က＝カ を使った例） [example, katakana, romaji, memo]
+const VOW=[
+ ["က","カ","ka","短く、軽く下がる音"],
+ ["ကာ","カー","kaa","右に「ာ」をつけると「アー」"],
+ ["ကား","カー（高く）","kàa","「း」は高く強い声。ကား＝車"],
+ ["ကိ","キ","ki","上に「ိ」"],
+ ["ကီ","キー","kii","上に「ီ」"],
+ ["ကု","ク","ku","下に「ု」"],
+ ["ကူ","クー","kuu","下に「ူ」。ကူ＝手伝う"],
+ ["ကေ","ケー","kei","左に「ေ」。書く順番は文字の前！"],
+ ["ကဲ","ケ（エ）","ke","右上に「ဲ」"],
+ ["ကော","コー（オ）","kaw","左と右に「ေ ာ」で包む"],
+ ["ကို","コー（オ）","ko","上に「ိ」＋下に「ု」"],
+ ["ကံ","カン","kan","上に点「ံ」で「ン」。ကံ＝運"],
+ ["ကစ်","キッ","kit","「်」（アタッ）がつくと音がつまる"],
+ ["ကန်","カン","kan","န်＝「ン」で終わる"]
+];
+const DIG=[["၀","0","トウンニャ"],["၁","1","ティッ"],["၂","2","ニッ"],["၃","3","トウン"],["၄","4","レー"],["၅","5","ンガー"],["၆","6","チャウッ"],["၇","7","クニッ"],["၈","8","シッ"],["၉","9","コー"]];
 const CULTURE=[
  ["名字がない","ミャンマー人には、ふつう<b>名字（家族の名前）がありません</b>。「ウィンウィンテー」のように、全部で1つの名前です。"],
  ["呼び方","年上の男性には<b>「ウー」</b>、年上の女性には<b>「ドー」</b>、若い男性には<b>「コー」</b>、若い女性には<b>「マ」</b>を名前の前につけると、ていねいです。"],
@@ -474,6 +543,7 @@ function home(){sub(false);setTitle('ミンガラーバー！ミャンマー語<
  <input class="search" id="q" placeholder="🔍 さがす（例：ありがとう / thank you）">
  <div id="res"></div>
  <div class="grid" id="grid">
+  <button class="cat wide" data-go="abc" style="background:#1b4d33;color:#fff"><span class="e mm" style="font-size:30px;line-height:1.3">ကခဂ</span><span>ミャンマー文字<span class="n" style="color:#cfe8da">33の子音・母音・数字を覚えよう</span></span></button>
   <button class="cat wide q-btn" data-go="quiz"><span class="e">🎯</span><span>クイズで覚える<span class="n" style="color:#6b5a00">4択でチャレンジ</span></span></button>
   ${CATS.map(c=>`<button class="cat" data-go="cat:${c[0]}"><span class="e">${c[1]}</span>${c[2]}<span class="n">${W.filter(w=>w[0]===c[0]).length}語</span></button>`).join("")}
   <button class="cat" data-go="fav"><span class="e">⭐</span>お気に入り<span class="n">${fav.size}語</span></button>
@@ -488,6 +558,8 @@ function route(r){sub(true);window.scrollTo(0,0);
  if(r.startsWith("cat:")){const c=CATS.find(x=>x[0]===r.slice(4));listView(c[1]+" "+c[2],W.filter(w=>w[0]===c[0]))}
  else if(r==="fav"){listView("⭐ お気に入り",W.filter(w=>fav.has(id(w))),"まだありません。単語の⭐を押すとここに集まります。")}
  else if(r==="quiz")quiz();
+ else if(r==="abc")abcView();
+ else if(r==="abcquiz")abcQuiz();
  else if(r==="culture"){setTitle("🇲🇲 ミャンマー文化メモ");main.innerHTML=CULTURE.map(c=>`<div class="culture"><b>■ ${c[0]}</b><br>${c[1]}</div>`).join("")}
 }
 function listView(title,list,emptyMsg){setTitle(title);let mode="list",i=0,show=false;
@@ -499,6 +571,30 @@ function listView(title,list,emptyMsg){setTitle(title);let mode="list",i=0,show=
    $("#fl").onclick=()=>{show=!show;draw()};$("#pv").onclick=()=>{i=(i-1+list.length)%list.length;show=false;draw()};$("#nx").onclick=()=>{i=(i+1)%list.length;show=false;draw()}}
   main.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{mode=b.dataset.m;i=0;show=false;draw()})};
  draw()}
+
+function abcView(){setTitle('<span class="mm">ကခဂ</span> ミャンマー文字');let tab="con",sel=null;
+ const draw=()=>{const tabs=`<div class="tabs"><button class="${tab==="con"?"on":""}" data-t="con">子音 33</button><button class="${tab==="vow"?"on":""}" data-t="vow">母音</button><button class="${tab==="dig"?"on":""}" data-t="dig">数字</button></div>`;
+  let h=tabs;
+  if(tab==="con"){const a=sel!=null?ABC[sel]:null;
+   if(a)h+=`<div class="big1"><div class="L">${a[0]}</div><div class="S">${a[1]}</div><div class="R">${a[2]}</div><div class="N">名前：<span class="mm">${a[3]}</span>（${a[4]}）</div>${a[5]?`<div class="M">💡 ${a[5]}</div>`:""}<div class="nav"><button id="ap">←</button><button class="pri" id="an">次の文字 →</button></div></div>`;
+   else h+=`<div style="font-size:13px;color:#6b6b5e;margin-bottom:10px;line-height:1.7">ミャンマー文字は<b>33の子音</b>が基本。丸い形が多いのは、昔ヤシの葉に書いていて、まっすぐな線だと葉が破れたからと言われています。文字をタップしてみよう👇</div>`;
+   h+=`<div class="abcgrid">${ABC.map((x,i)=>`<button class="abc" data-i="${i}" style="${i===sel?"outline:3px solid var(--y)":""}"><span class="L">${x[0]}</span><span class="S">${x[1].replace(/（.*）/,"")}</span></button>`).join("")}</div>`;
+   h+=`<div class="nav"><button class="pri" id="aq">🎯 文字クイズ</button></div>`}
+  else if(tab==="vow"){h+=`<div style="font-size:13px;color:#6b6b5e;margin-bottom:10px;line-height:1.7">母音は、子音の<b>上・下・左・右</b>に記号をつけて表します。ここでは「က（カ）」を使った例です。</div>`+VOW.map(v=>`<div class="vrow"><div class="L">${v[0]}</div><div><div class="S">${v[1]} <span style="color:#999;font-weight:400;font-size:12px">${v[2]}</span></div><div class="M">${v[3]}</div></div></div>`).join("")}
+  else{h+=`<div class="abcgrid">${DIG.map(d=>`<div class="abc"><span class="L">${d[0]}</span><span class="S">${d[1]}　${d[2]}</span></div>`).join("")}</div><div style="font-size:13px;color:#6b6b5e;margin-top:10px;line-height:1.7">例：<span class="mm" style="font-size:20px">၂၀၂၆</span> ＝ 2026。お札や値段、バスの番号にも使われています。</div>`}
+  main.innerHTML=h;
+  main.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{tab=b.dataset.t;sel=null;draw()});
+  main.querySelectorAll(".abc[data-i]").forEach(b=>b.onclick=()=>{sel=+b.dataset.i;draw();window.scrollTo({top:0,behavior:"smooth"})});
+  const ap=$("#ap"),an=$("#an"),aq=$("#aq");if(ap)ap.onclick=()=>{sel=(sel-1+ABC.length)%ABC.length;draw()};if(an)an.onclick=()=>{sel=(sel+1)%ABC.length;draw()};if(aq)aq.onclick=()=>go("abcquiz")};
+ draw()}
+function abcQuiz(){setTitle("🎯 文字クイズ");let n=0,ok=0;const pool=ABC.filter(a=>!/パーリ|あまり使わない/.test(a[5]));
+ const next=()=>{if(n>=10){main.innerHTML=`<div class="qbox" style="text-align:center"><div style="font-size:60px">${ok>=9?"🏆":ok>=6?"⭐":"🌱"}</div><div class="qq">${ok} / 10 正解</div><div class="nav"><button class="pri" id="again">もう一回</button><button id="hm">もどる</button></div></div>`;$("#again").onclick=abcQuiz;$("#hm").onclick=()=>history.back();return}
+  const a=pool[Math.floor(Math.random()*pool.length)];const rev=Math.random()<.5;
+  const others=pool.filter(x=>x!==a&&x[1]!==a[1]).sort(()=>Math.random()-.5).slice(0,3);const opts=[a,...others].sort(()=>Math.random()-.5);
+  main.innerHTML=`<div class="score"><span>第${n+1}問 / 10</span><span>正解 ${ok}</span></div><div class="qbox"><div class="qt">${rev?"この音の文字はどれ？":"この文字の音は？"}</div><div class="qq" style="text-align:center">${rev?`<span style="font-size:36px;color:var(--g)">${a[1]}</span><div style="font-size:14px;color:#999">${a[2]}</div>`:`<span class="mm" style="font-size:80px;line-height:1.4">${a[0]}</span>`}</div>
+   ${opts.map((o,k)=>`<button class="opt" data-k="${k}" style="${rev?"text-align:center":""}">${rev?`<span class="mm" style="font-size:34px">${o[0]}</span>`:`${o[1]} <small style="display:inline;color:#999">${o[2]}</small>`}</button>`).join("")}</div>`;
+  main.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(main.querySelector(".opt.ok"))return;const pick=opts[+b.dataset.k];main.querySelectorAll(".opt").forEach((x,k)=>{if(opts[k]===a)x.classList.add("ok")});if(pick===a)ok++;else b.classList.add("ng");n++;setTimeout(next,pick===a?700:1500)})};
+ next()}
 function quiz(){setTitle("🎯 クイズ");let n=0,ok=0;const pool=W.slice();
  const next=()=>{if(n>=10){const msg=ok>=9?"すばらしい！🎉":ok>=6?"よくできました！👏":"もう一回やってみよう💪";
    main.innerHTML=`<div class="qbox" style="text-align:center"><div style="font-size:60px">${ok>=9?"🏆":ok>=6?"⭐":"🌱"}</div><div class="qq">${ok} / 10 正解</div><div style="font-size:18px">${msg}</div><div class="nav"><button class="pri" id="again">もう一回</button><button id="hm">ホームへ</button></div></div>`;$("#again").onclick=quiz;$("#hm").onclick=()=>history.back();return}

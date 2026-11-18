@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Win 日本で働く ガイド</title>
+<meta name="description" content="外国人が日本で働くための情報。ビザ・給料・休み・税金・保険・相談先を日本語とミャンマー語で。無料。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Win 日本で働く ガイド">
+<meta property="og:description" content="ビザ・給料・休み・税金・保険・相談先を日本語とミャンマー語で。無料。">
+<meta property="og:image" content="https://win-wwh.github.io/win/work/icon-512.png">
+<meta property="og:url" content="https://win-wwh.github.io/win/work/">
+<meta name="twitter:card" content="summary">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="働くガイド">
+<meta name="theme-color" content="#1f5f8b">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+Myanmar:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#f2f6fa;color:#1d2b36;font-family:"Noto Sans JP","Noto Sans Myanmar",system-ui,sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:620px;margin:0 auto;padding:14px 14px 48px}
+header{display:flex;align-items:center;gap:10px;margin:4px 0 12px}
+header h1{font-size:20px;margin:0;flex:1;line-height:1.3}
+header h1 small{display:block;font-size:12px;color:#5b6b78;font-weight:400}
+.back{border:0;background:#fff;border-radius:12px;width:42px;height:42px;font-size:20px;box-shadow:0 1px 3px #0002;display:none}
+.lang{display:flex;background:#dfe8f0;border-radius:12px;padding:3px}
+.lang button{border:0;background:none;padding:7px 10px;border-radius:9px;font-size:13px;font-weight:700;color:#456}
+.lang button.on{background:#fff;color:#1f5f8b;box-shadow:0 1px 2px #0002}
+.sub header h1{font-size:15px}.sub header h1 small{display:none}
+.mm{font-family:"Noto Sans Myanmar",sans-serif;line-height:1.9}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.cat{border:0;background:#fff;border-radius:16px;padding:14px 10px;text-align:center;box-shadow:0 1px 4px #0001;font-size:15px;font-weight:700;color:#1d2b36}
+.cat .e{font-size:34px;display:block;margin-bottom:4px}
+.cat .m{display:block;font-size:12px;font-weight:400;color:#5b6b78}
+.sos{display:block;width:100%;margin:12px 0;border:0;border-radius:16px;padding:14px;background:#c0392b;color:#fff;font-size:17px;font-weight:700;box-shadow:0 2px 6px #c0392b55}
+.sos small{display:block;font-weight:400;font-size:12px;opacity:.9}
+.search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid #cbd7e1;font-size:16px;margin-bottom:12px;background:#fff}
+.item{background:#fff;border-radius:14px;margin-bottom:10px;box-shadow:0 1px 4px #0001;overflow:hidden}
+.item>button{width:100%;border:0;background:none;text-align:left;padding:14px 40px 14px 14px;font-size:16px;font-weight:700;color:#1d2b36;position:relative}
+.item>button::after{content:"＋";position:absolute;right:14px;top:14px;color:#1f5f8b}
+.item.open>button::after{content:"－"}
+.item>button .m{display:block;font-size:13px;font-weight:400;color:#5b6b78;margin-top:2px}
+.body{display:none;padding:0 14px 14px;font-size:15px;line-height:1.75}
+.item.open .body{display:block}
+.body ul{margin:4px 0;padding-left:20px}
+.body li{margin:3px 0}
+.body .mmb{background:#f4f7fb;border-radius:10px;padding:8px 12px;margin-top:8px;font-size:14px}
+.tel{display:flex;align-items:center;gap:10px;background:#e9f5ee;border-radius:12px;padding:10px 12px;margin:8px 0;text-decoration:none;color:#155d36}
+.tel b{font-size:18px;letter-spacing:.5px}
+.tel span{font-size:12px;color:#3b6b50;display:block}
+.links a{display:inline-block;margin:6px 6px 0 0;padding:6px 10px;border-radius:9px;background:#e6eef6;color:#1f5f8b;font-size:13px;text-decoration:none}
+.note{font-size:12px;color:#6a7884;margin-top:18px;line-height:1.7;background:#fff;border-radius:12px;padding:10px 12px}
+.hide-jp .jp{display:none}.hide-mm .mmonly{display:none}
+mark{background:#fff3b0;padding:0 2px;border-radius:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <button class="back" id="back" aria-label="もどる">‹</button>
+  <h1 id="ttl">日本で働く ガイド<small class="mm">ဂျပန်မှာ အလုပ်လုပ်ရန် လမ်းညွှန်</small></h1>
+  <div class="lang"><button data-l="both" class="on">両方</button><button data-l="jp">日本語</button><button data-l="mm">မြန်မာ</button></div>
+</header>
+<main id="main"></main>
+<div class="note">
+⚠️ このアプリは一般的な情報です。法律や金額は変わることがあります。大事なことは必ず<b>公式サイト</b>か<b>相談窓口</b>で確認してください。（最終確認：2026年11月）
+<div class="mm">⚠️ ဒီ App က ယေဘုယျ အချက်အလက်ပါ။ ဥပဒေ နဲ့ ငွေပမာဏ ပြောင်းနိုင်ပါတယ်။ အရေးကြီးတာတွေကို တရားဝင် ဝက်ဘ်ဆိုက် ဒါမှမဟုတ် အကြံပေးဌာနမှာ အမြဲ စစ်ဆေးပါ။</div>
+</div>
+</div>
+<script>
+const D=[
+{id:"visa",e:"🪪",jp:"ビザ・在留カード",mm:"ဗီဇာ / နေထိုင်ခွင့်ကတ်",items:[
+ {jp:"在留カードはいつも持つ",mm:"နေထိုင်ခွင့်ကတ်ကို အမြဲ ကိုင်ထားပါ",
+  b:["外に出るときは在留カードをいつも持ってください。警察などに見せてと言われたら見せます。","カードの「在留期間（満了日）」と「就労制限」の欄を確認しましょう。"],
+  m:"အပြင်ထွက်တိုင်း နေထိုင်ခွင့်ကတ်ကို ယူသွားပါ။ ရဲ စသည်က တောင်းရင် ပြရပါမယ်။ ကတ်ပေါ်က “နေထိုင်ခွင့် ကုန်ဆုံးရက်” နဲ့ “အလုပ်လုပ်ခွင့် ကန့်သတ်ချက်” ကို စစ်ပါ။"},
+ {jp:"ビザの更新（期間更新）",mm:"ဗီဇာ သက်တမ်းတိုး",
+  b:["更新の申請は、在留期間が終わる日の約<b>3か月前</b>からできます。早めに準備しましょう。","許可のときの手数料は<b>6,000円</b>（オンライン申請は5,500円）。収入印紙で払います。","オンライン申請もできます。"],
+  m:"သက်တမ်းတိုး လျှောက်ထားခြင်းကို နေထိုင်ခွင့် ကုန်ဆုံးရက်မတိုင်မီ <b>၃ လ</b> လောက်ကစပြီး လုပ်နိုင်ပါတယ်။ ခွင့်ပြုရင် ကြေး <b>၆,၀၀၀ ယန်း</b> (အွန်လိုင်း ၅,၅၀၀ ယန်း)။",
+  l:[["出入国在留管理庁（更新）","https://www.moj.go.jp/isa/applications/procedures/16-3.html"]]},
+ {jp:"引っこし・仕事を変えたとき",mm:"အိမ်ပြောင်း / အလုပ်ပြောင်းရင်",
+  b:["引っこしたら、<b>14日以内</b>に新しい住所の市区町村役所で届け出ます。","就労ビザ（特定技能・技人国など）の人は、会社をやめた・変わったとき、<b>14日以内</b>に入管へ届け出ます（オンラインも可）。","特定技能の人は、仕事を変える前に必ず確認しましょう。"],
+  m:"အိမ်ပြောင်းရင် <b>၁၄ ရက်အတွင်း</b> အိမ်သစ်ရှိရာ မြို့နယ်ရုံးမှာ အကြောင်းကြားပါ။ အလုပ်ဗီဇာ ရှိသူများ ကုမ္ပဏီ ထွက်/ပြောင်းရင် <b>၁၄ ရက်အတွင်း</b> လဝက (Immigration) ကို အကြောင်းကြားပါ။"},
+ {jp:"日本人の配偶者ビザの人",mm:"ဂျပန်လူမျိုး၏ အိမ်ထောင်ဖက် ဗီဇာ",
+  b:["日本人の配偶者等のビザは、仕事の種類の制限がありません。どんな仕事もできます。","離婚などで状況が変わったら、早めに入管に相談してください。"],
+  m:"ဒီဗီဇာမှာ အလုပ်အမျိုးအစား ကန့်သတ်ချက် မရှိပါ။ ကွာရှင်း စသည် အခြေအနေပြောင်းရင် လဝကကို စောစော တိုင်ပင်ပါ။"},
+ {jp:"入管の電話相談",mm:"လဝက ဖုန်းဖြင့် မေးမြန်းရန်",
+  b:["外国人在留総合インフォメーションセンターで、ビザの手続きを聞けます（多言語）。"],
+  m:"ဗီဇာ လုပ်ငန်းစဉ်တွေကို ဖုန်းဆက်မေးနိုင်ပါတယ်။",
+  t:[["0570-013904","外国人在留総合インフォメーションセンター","平日（海外・IP電話は 03-5796-7112）"]]}
+]},
+{id:"pay",e:"💴",jp:"給料",mm:"လစာ",items:[
+ {jp:"最低賃金（さいていちんぎん）",mm:"အနိမ့်ဆုံး လုပ်ခ",
+  b:["時給は、都道府県の<b>最低賃金</b>より低くてはいけません。外国人も同じです。","2025年度の全国平均は<b>1,121円</b>。一番高い東京は1,226円、一番低い県は1,023円。全部の県で1,000円以上です。","毎年10月ごろから変わります。自分の県の金額を確認しましょう。"],
+  m:"တစ်နာရီ လုပ်ခသည် ခရိုင် (ken) တစ်ခုချင်းစီ၏ <b>အနိမ့်ဆုံးလုပ်ခ</b> ထက် နည်းလို့ မရပါ။ နိုင်ငံခြားသားလည်း အတူတူပါ။ ၂၀၂၅ ခုနှစ် ပျမ်းမျှ <b>၁,၁၂၁ ယန်း</b>၊ တိုကျို ၁,၂၂၆ ယန်း။ နှစ်စဉ် အောက်တိုဘာလ ဝန်းကျင်မှာ ပြောင်းပါတယ်။",
+  l:[["厚生労働省 最低賃金","https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/minimumichiran/"]]},
+ {jp:"残業・夜勤の割増し",mm:"အချိန်ပို / ညဆိုင်း အပိုလုပ်ခ",
+  b:["1日8時間・1週40時間をこえた残業は、<b>25%以上</b>多くもらえます。","夜10時〜朝5時の仕事（深夜）も<b>25%以上</b>プラス。","法律の休日に働いたら<b>35%以上</b>プラス。"],
+  m:"တစ်ရက် ၈ နာရီ / တစ်ပတ် ၄၀ နာရီ ကျော်ရင် <b>၂၅%</b> ထက်မနည်း ပိုရပါတယ်။ ည ၁၀ နာရီ – မနက် ၅ နာရီ အလုပ်လည်း <b>၂၅%</b> ပို။ ဥပဒေ ပိတ်ရက်မှာ လုပ်ရင် <b>၃၅%</b> ပို။"},
+ {jp:"給料明細を確認しよう",mm:"လစာစာရွက်ကို စစ်ပါ",
+  b:["給料は、毎月1回以上、決まった日に、全部お金でもらうのがルールです。","明細の「総支給額」「控除（税金・保険）」「差引支給額（手取り）」を見ましょう。","働いた時間をメモしておくと、トラブルのとき役に立ちます。"],
+  m:"လစာကို လစဉ် အနည်းဆုံး တစ်ကြိမ်၊ သတ်မှတ်ရက်မှာ အပြည့်ရရမယ်။ စာရွက်မှာ “စုစုပေါင်း” “နုတ်ငွေ (အခွန်/အာမခံ)” “လက်ထဲရငွေ” ကို ကြည့်ပါ။ အလုပ်ချိန်ကို မှတ်ထားပါ။"},
+ {jp:"雇用契約書（労働条件通知書）",mm:"အလုပ်ခန့်စာချုပ်",
+  b:["働く前に、給料・時間・休みなどが書いた紙をもらいます。会社は書面で渡す義務があります。","わからない言葉はサインする前に聞きましょう。"],
+  m:"အလုပ်မစခင် လစာ၊ အချိန်၊ ပိတ်ရက် ရေးထားတဲ့ စာရွက်ကို ရရမယ်။ နားမလည်ရင် လက်မှတ်မထိုးခင် မေးပါ။"}
+]},
+{id:"rest",e:"🌴",jp:"休み・有給",mm:"အားလပ်ရက် / လစာနဲ့ခွင့်",items:[
+ {jp:"有給休暇（ゆうきゅう）",mm:"လစာပါ ခွင့်",
+  b:["6か月つづけて働き、出勤日の8割以上来た人は、<b>10日</b>の有給休暇がもらえます。そのあと毎年ふえます（最大20日）。","パート・アルバイトも、働く日数に合わせてもらえます。","有給が10日以上ある人は、1年に<b>5日</b>は必ず休ませる決まりです。"],
+  m:"၆ လ ဆက်တိုက်လုပ်ပြီး ၈၀% ထက်မနည်း တက်ရင် လစာပါ ခွင့် <b>၁၀ ရက်</b> ရပါတယ်။ နောက်နှစ်တွေ တိုးလာပါတယ် (အများဆုံး ၂၀)။ အချိန်ပိုင်းလည်း ရပါတယ်။ ၁၀ ရက်နှင့်အထက်ရှိသူ တစ်နှစ် <b>၅ ရက်</b> မဖြစ်မနေ နားရပါမယ်။"},
+ {jp:"休憩時間",mm:"အနားယူချိန်",
+  b:["6時間をこえて働く日は<b>45分以上</b>、8時間をこえる日は<b>1時間以上</b>の休憩があります。"],
+  m:"၆ နာရီ ကျော်လုပ်ရင် <b>မိနစ် ၄၅</b> ထက်မနည်း၊ ၈ နာရီ ကျော်ရင် <b>၁ နာရီ</b> ထက်မနည်း အနားရပါတယ်။"},
+ {jp:"休日",mm:"ပိတ်ရက်",
+  b:["少なくとも<b>1週間に1日</b>（または4週間に4日）の休日があります。"],
+  m:"အနည်းဆုံး <b>တစ်ပတ် ၁ ရက်</b> (သို့) ၄ ပတ်မှာ ၄ ရက် ပိတ်ရက် ရှိရမယ်။"},
+ {jp:"妊娠・出産・育児",mm:"ကိုယ်ဝန် / မွေးဖွား / ကလေးပြုစု",
+  b:["産前6週間・産後8週間の休み（産休）があります。育児休業もあります。外国人も使えます。","妊娠を理由にクビにするのは法律違反です。"],
+  m:"မွေးဖွားမီ ၆ ပတ် / မွေးပြီး ၈ ပတ် ခွင့် ရှိပါတယ်။ ကလေးပြုစုခွင့်လည်း ရှိပါတယ်။ ကိုယ်ဝန်ကြောင့် အလုပ်ထုတ်တာ ဥပဒေနဲ့ မညီပါ။"}
+]},
+{id:"tax",e:"🧾",jp:"税金",mm:"အခွန်",items:[
+ {jp:"所得税（しょとくぜい）",mm:"ဝင်ငွေခွန်",
+  b:["給料から毎月引かれます（源泉徴収）。","12月ごろ会社が「年末調整」をして、多く払った分がもどることがあります。","2か所以上で働く・副業がある・医療費が多い人などは、<b>確定申告</b>（だいたい2月中旬〜3月中旬）が必要なことがあります。"],
+  m:"လစာထဲက လစဉ် နုတ်ပါတယ်။ ဒီဇင်ဘာလ ဝန်းကျင် ကုမ္ပဏီက “နှစ်ကုန် ညှိခြင်း” လုပ်ပြီး ပိုပေးထားတာ ပြန်ရနိုင်ပါတယ်။ နေရာ ၂ ခု လုပ်သူ စသည်တို့ <b>ဝင်ငွေ ကြေညာ</b> (ဖေဖော်ဝါရီ လယ် – မတ် လယ်) လုပ်ရနိုင်ပါတယ်။",
+  l:[["国税庁 外国人向け","https://www.nta.go.jp/english/"]]},
+ {jp:"住民税（じゅうみんぜい）",mm:"ဒေသခံ နေထိုင်သူ အခွန်",
+  b:["前の年の収入に対してかかります。だから日本で働いて<b>2年目</b>からかかります。","1月1日に住んでいる市区町村に払います。","帰国する前に、残りの住民税の払い方を役所か会社に確認しましょう。"],
+  m:"ယခင်နှစ် ဝင်ငွေပေါ် မူတည်ပြီး ပေးရတာမို့ ဂျပန်မှာ အလုပ်လုပ်တဲ့ <b>ဒုတိယနှစ်</b> ကစ ပေးရပါတယ်။ ဇန်နဝါရီ ၁ ရက်နေ့ နေထိုင်ရာ မြို့နယ်ကို ပေးရ။ နိုင်ငံပြန်မီ ကျန်ငွေ ပေးပုံကို မေးပါ။"},
+ {jp:"税金を払わないと…",mm:"အခွန် မပေးရင်…",
+  b:["税金・保険料を払っていないと、ビザの更新や永住申請で問題になることがあります。払えないときは、すぐ役所に相談しましょう。"],
+  m:"အခွန်/အာမခံကြေး မပေးရင် ဗီဇာ သက်တမ်းတိုး၊ အမြဲနေထိုင်ခွင့် လျှောက်ရာမှာ ပြဿနာ ဖြစ်နိုင်ပါတယ်။ မပေးနိုင်ရင် ရုံးကို ချက်ချင်း တိုင်ပင်ပါ။"}
+]},
+{id:"ins",e:"🏥",jp:"保険・年金",mm:"အာမခံ / ပင်စင်",items:[
+ {jp:"健康保険",mm:"ကျန်းမာရေး အာမခံ",
+  b:["日本に住む人はみんな健康保険に入ります。病院で払うのは、ふつう<b>3割</b>です。","会社の社会保険に入らない人は、市区町村の国民健康保険に入ります。"],
+  m:"ဂျပန်မှာ နေသူတိုင်း ကျန်းမာရေးအာမခံ ဝင်ရပါတယ်။ ဆေးရုံမှာ ပုံမှန် <b>၃၀%</b> ပဲ ပေးရပါတယ်။ ကုမ္ပဏီ အာမခံ မဝင်သူ မြို့နယ်ရုံးရဲ့ အမျိုးသား ကျန်းမာရေးအာမခံ ဝင်ရပါတယ်။"},
+ {jp:"年金と脱退一時金",mm:"ပင်စင် နှင့် တစ်လုံးတစ်ခဲ ပြန်အမ်းငွေ",
+  b:["厚生年金や国民年金に入ります。","6か月以上入って、日本を出てから2年以内に申請すると、<b>脱退一時金</b>がもらえることがあります。"],
+  m:"ပင်စင် ဝင်ရပါတယ်။ ၆ လနှင့်အထက် ပေးပြီး ဂျပန်က ထွက်ပြီး ၂ နှစ်အတွင်း လျှောက်ရင် <b>ပြန်အမ်းငွေ</b> ရနိုင်ပါတယ်။",
+  l:[["日本年金機構 脱退一時金","https://www.nenkin.go.jp/service/jukyu/sonota-kyufu/dattai-ichiji/20150406.html"]]},
+ {jp:"雇用保険（失業したとき）",mm:"အလုပ်အကိုင် အာမခံ",
+  b:["週20時間以上働く人は、雇用保険に入ります。","仕事をなくしたとき、ハローワークで手当をもらえることがあります。"],
+  m:"တစ်ပတ် ၂၀ နာရီနှင့်အထက် လုပ်သူ ဝင်ရပါတယ်။ အလုပ်ပြုတ်ရင် Hello Work မှာ ထောက်ပံ့ငွေ ရနိုင်ပါတယ်။"},
+ {jp:"仕事中のけが（労災）",mm:"အလုပ်ချိန် ဒဏ်ရာ",
+  b:["仕事中や通勤中のけが・病気は<b>労災保険</b>で治療できます。パート・外国人もOK。お金は会社が払う保険です。","「労災を使わないで」と言われても、労働基準監督署に相談できます。"],
+  m:"အလုပ်ချိန် / အလုပ်သွားလာစဉ် ဒဏ်ရာ၊ ရောဂါကို <b>အလုပ်ထိခိုက်မှု အာမခံ</b> နဲ့ ကုသနိုင်ပါတယ်။ အချိန်ပိုင်း၊ နိုင်ငံခြားသား အားလုံး ရပါတယ်။ ကုမ္ပဏီက “မသုံးနဲ့” ပြောရင်လည်း အလုပ်သမားဌာနကို တိုင်ပင်နိုင်ပါတယ်။"}
+]},
+{id:"quit",e:"🚪",jp:"やめる・クビ",mm:"အလုပ်ထွက် / အလုပ်ထုတ်",items:[
+ {jp:"会社にやめさせられるとき",mm:"ကုမ္ပဏီက အလုပ်ထုတ်ရင်",
+  b:["会社は、少なくとも<b>30日前</b>に言うか、30日分以上のお金（解雇予告手当）を払う必要があります。","理由のない解雇はできません。おかしいと思ったら相談しましょう。","パスポートや在留カードを会社が預かるのは問題です。"],
+  m:"ကုမ္ပဏီက အနည်းဆုံး <b>ရက် ၃၀ ကြို</b> ပြောရမယ်၊ ဒါမှမဟုတ် ရက် ၃၀ စာ ငွေ ပေးရမယ်။ အကြောင်းမရှိဘဲ ထုတ်လို့မရ။ ပတ်စပို့/ကတ်ကို ကုမ္ပဏီက သိမ်းထားတာ ပြဿနာပါ။"},
+ {jp:"自分でやめるとき",mm:"ကိုယ်တိုင် ထွက်ရင်",
+  b:["契約を確認して、早めに伝えましょう。","就労ビザの人は、14日以内に入管へ届け出。次の仕事がビザに合うか確認しましょう。","仕事をさがすのは<b>ハローワーク</b>（無料・通訳がいる所もあり）。"],
+  m:"စာချုပ်ကို စစ်ပြီး စောစော ပြောပါ။ အလုပ်ဗီဇာ ရှိသူ ၁၄ ရက်အတွင်း လဝကကို အကြောင်းကြားပါ။ အလုပ်ရှာရန် <b>Hello Work</b> (အခမဲ့)။"}
+]},
+{id:"help",e:"☎️",jp:"困ったとき 相談先",mm:"အကူအညီ လိုရင်",items:[
+ {jp:"仕事のトラブル（ミャンマー語）",mm:"အလုပ် ပြဿနာ (မြန်မာလို)",
+  b:["給料が払われない、急にクビ、残業代なし、などを相談できます（厚生労働省）。","<b>外国人労働者向け相談ダイヤル</b>：平日10時〜15時。ミャンマー語は火・水・金（曜日は変わることがあります）。電話代がかかります。","<b>労働条件相談ほっとライン</b>：無料。夜（平日17〜22時）と土日祝（9〜21時）。言語ごとに曜日がちがいます。"],
+  m:"လစာ မရ၊ ရုတ်တရက် အလုပ်ထုတ်၊ အချိန်ပိုခ မရ စသည်တို့ကို မြန်မာလို တိုင်ပင်နိုင်ပါတယ်။ ရုံးဖွင့်ရက် ၁၀ နာရီ – ၁၅ နာရီ၊ မြန်မာဘာသာ အင်္ဂါ၊ ဗုဒ္ဓဟူး၊ သောကြာ (ပြောင်းနိုင်)။ ညနေ/ပိတ်ရက် အခမဲ့ လိုင်းလည်း ရှိပါတယ်။",
+  t:[["0570-001-707","外国人労働者向け相談ダイヤル ミャンマー語","有料・平日10〜15時（昼休みあり）"],["0120-531-407","労働条件相談ほっとライン ミャンマー語","無料・夜と土日祝"],["0120-811-610","労働条件相談ほっとライン 日本語","無料"]],
+  l:[["厚生労働省 外国人労働者の相談","https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/gyosei/kantoku/index.html"]]},
+ {jp:"ビザ・生活の相談",mm:"ဗီဇာ / နေထိုင်မှု အကြံ",
+  b:["入管のインフォメーションセンターで、ビザの手続きを聞けます。","東京・四谷の<b>FRESC（外国人在留支援センター）</b>には、入管・労働局など国の窓口が集まっています。"],
+  m:"ဗီဇာ လုပ်ငန်းစဉ်ကို လဝက ဖုန်းဖြင့် မေးနိုင်ပါတယ်။ တိုကျို Yotsuya ရှိ FRESC မှာ အစိုးရဌာနတွေ စုထားပါတယ်။",
+  t:[["0570-013904","外国人在留総合インフォメーションセンター","平日"]],
+  l:[["入管 相談窓口","https://www.moj.go.jp/isa/consultation/center/index.html"]]},
+ {jp:"法律のトラブル",mm:"ဥပဒေ ပြဿနာ",
+  b:["<b>法テラス</b>：国がつくった法律トラブルの案内所。多言語の通訳サービスがあります（対応言語は公式サイトで確認）。収入が少ない人は無料の法律相談も。"],
+  m:"<b>Houterasu</b> – ဥပဒေ ပြဿနာ အတွက် အစိုးရ လမ်းညွှန်ဌာန။ ဘာသာစကားစုံ စကားပြန် ဝန်ဆောင်မှု ရှိပါတယ်။ ဝင်ငွေနည်းသူ အခမဲ့ ဥပဒေ အကြံ ရနိုင်ပါတယ်။",
+  t:[["0570-078377","法テラス 多言語情報提供サービス","通訳つき"],["0570-078374","法テラス サポートダイヤル（日本語）",""]]},
+ {jp:"緊急",mm:"အရေးပေါ်",
+  b:["けが・病気・火事は <b>119</b>、事件・事故は <b>110</b>。"],
+  m:"ဒဏ်ရာ၊ ရောဂါ၊ မီးလောင် <b>119</b>၊ ရာဇဝတ်မှု/မတော်တဆ <b>110</b>။",
+  t:[["119","救急・消防","無料"],["110","警察","無料"]]}
+]}
+];
+const main=document.getElementById("main"),back=document.getElementById("back");
+let lang=localStorage.getItem("work-lang")||"both",cur=null;
+function setLang(l){lang=l;localStorage.setItem("work-lang",l);document.body.classList.toggle("hide-jp",l==="mm");document.body.classList.toggle("hide-mm",l==="jp");document.querySelectorAll(".lang button").forEach(b=>b.classList.toggle("on",b.dataset.l===l))}
+document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+function itemHTML(it,open){
+ const tels=(it.t||[]).map(t=>`<a class="tel" href="tel:${t[0].replace(/-/g,"")}">📞 <div><b>${t[0]}</b><span>${t[1]}${t[2]?"・"+t[2]:""}</span></div></a>`).join("");
+ const links=it.l?`<div class="links">${it.l.map(x=>`<a href="${x[1]}" target="_blank" rel="noopener">🔗 ${x[0]}</a>`).join("")}</div>`:"";
+ return `<div class="item${open?" open":""}"><button><span class="jp">${it.jp}</span><span class="m mm mmonly">${it.mm}</span></button><div class="body"><ul class="jp">${it.b.map(x=>`<li>${x}</li>`).join("")}</ul><div class="mmb mm mmonly">${it.m}</div>${tels}${links}</div></div>`}
+function bind(){main.querySelectorAll(".item>button").forEach(b=>b.onclick=()=>b.parentElement.classList.toggle("open"))}
+function home(){cur=null;back.style.display="none";document.body.classList.remove("sub");
+ main.innerHTML=`<button class="sos" id="sos">☎️ 困ったとき・相談先<small class="mm">အကူအညီ လိုရင် ဒီမှာ နှိပ်ပါ</small></button>
+ <input class="search" id="q" placeholder="さがす 例：有給、残業、更新 / ရှာရန်">
+ <div id="res"></div><div class="grid" id="grid">${D.map(c=>`<button class="cat" data-id="${c.id}"><span class="e">${c.e}</span><span class="jp">${c.jp}</span><span class="m mm">${c.mm}</span></button>`).join("")}</div>`;
+ main.querySelectorAll(".cat").forEach(b=>b.onclick=()=>open(b.dataset.id));
+ document.getElementById("sos").onclick=()=>open("help");
+ const q=document.getElementById("q"),res=document.getElementById("res"),grid=document.getElementById("grid");
+ q.oninput=()=>{const s=q.value.trim();if(!s){res.innerHTML="";grid.style.display="";return}
+  const hits=[];D.forEach(c=>c.items.forEach(it=>{if((it.jp+it.mm+it.b.join("")+it.m+(it.t||[]).flat().join("")).includes(s))hits.push(it)}));
+  grid.style.display="none";res.innerHTML=hits.length?hits.map(it=>itemHTML(it,true)).join(""):`<p>見つかりません / မတွေ့ပါ</p>`;bind()};
+ window.scrollTo(0,0)}
+function open(id){const c=D.find(x=>x.id===id);cur=id;back.style.display="block";document.body.classList.add("sub");
+ main.innerHTML=`<h2 style="margin:4px 0 12px;font-size:19px">${c.e} <span class="jp">${c.jp}</span> <span class="mm mmonly" style="font-size:15px;font-weight:600">${c.mm}</span></h2>`+c.items.map((it,i)=>itemHTML(it,i===0)).join("");
+ bind();history.pushState({c:id},"");window.scrollTo(0,0)}
+back.onclick=()=>history.back();
+window.onpopstate=()=>home();
+setLang(lang);home();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+</body>
+</html>

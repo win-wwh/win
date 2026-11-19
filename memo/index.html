@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>わたしのメモ</title>
+<meta name="description" content="かんたん個人メモ。色分け・カテゴリー・ピン留め・チェックリスト・検索・パスコードロック。メモはスマホの中だけ。無料。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="わたしのメモ">
+<meta property="og:description" content="色分け・チェックリスト・パスコードロックつきの、かんたん個人メモ。">
+<meta property="og:image" content="https://win-wwh.github.io/win/memo/icon-512.png">
+<meta property="og:url" content="https://win-wwh.github.io/win/memo/">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="メモ">
+<meta name="theme-color" content="#f2b33d">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--p:#e09a1a;--bg:#faf7f0;--ink:#2d2a24}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Hiragino Sans","Noto Sans JP","Noto Sans Myanmar",sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:620px;margin:0 auto;padding:10px 12px 110px}
+header{display:flex;align-items:center;gap:8px;margin:4px 2px 10px}
+header h1{flex:1;margin:0;font-size:21px;font-weight:900}
+.ib{border:0;background:#fff;border-radius:12px;min-width:40px;height:40px;padding:0 10px;font-size:17px;box-shadow:0 1px 4px #0001;color:var(--ink);font-family:inherit}
+.search{width:100%;border:0;border-radius:14px;padding:12px 14px;font-size:16px;background:#fff;box-shadow:0 1px 4px #0000000d;margin-bottom:10px;font-family:inherit}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:4px}
+.chip{flex:none;border:0;border-radius:20px;padding:7px 13px;font-size:14px;font-weight:700;background:#fff;color:#6b6457;box-shadow:0 1px 3px #0000000d;font-family:inherit}
+.chip.on{background:var(--ink);color:#fff}
+.sec{font-size:12px;color:#9a917f;font-weight:800;margin:10px 4px 6px}
+.grid{columns:2;column-gap:10px}
+.note{break-inside:avoid;display:block;width:100%;border:0;text-align:left;border-radius:16px;padding:12px 12px 10px;margin:0 0 10px;font:inherit;color:inherit;box-shadow:0 2px 6px #00000010;position:relative}
+.note b{display:block;font-size:15px;margin-bottom:4px;word-break:break-word}
+.note p{margin:0;font-size:13px;line-height:1.55;color:#4a453b;white-space:pre-wrap;word-break:break-word;max-height:9.4em;overflow:hidden}
+.note small{display:block;margin-top:8px;font-size:11px;color:#8a826f}
+.note .pin{position:absolute;right:8px;top:6px;font-size:13px}
+.note .ck{font-size:13px;line-height:1.6}
+.empty{text-align:center;color:#9a917f;padding:40px 10px;line-height:1.9}
+.fab{position:fixed;right:max(16px,calc(50% - 294px));bottom:calc(env(safe-area-inset-bottom) + 18px);width:62px;height:62px;border-radius:50%;border:0;background:var(--ink);color:#fff;font-size:30px;box-shadow:0 8px 20px #0004;z-index:9}
+.ed{position:fixed;inset:0;z-index:20;display:none;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.ed.on{display:flex}
+.edh{display:flex;align-items:center;gap:6px;padding:10px 12px;max-width:620px;width:100%;margin:0 auto}
+.edh .sp{flex:1}
+.edb{flex:1;overflow:auto;max-width:620px;width:100%;margin:0 auto;padding:4px 16px 20px}
+.edb input.t{width:100%;border:0;background:transparent;font-size:22px;font-weight:900;padding:6px 0;font-family:inherit;color:inherit;outline:none}
+.edb textarea{width:100%;border:0;background:transparent;font-size:17px;line-height:1.7;resize:none;min-height:50vh;font-family:inherit;color:inherit;outline:none;padding:6px 0}
+.cl{display:flex;align-items:center;gap:8px;padding:4px 0}
+.cl input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:#2d2a24}
+.cl input[type=text]{flex:1;border:0;background:transparent;font-size:17px;font-family:inherit;color:inherit;outline:none;padding:6px 0}
+.cl.dn input[type=text]{text-decoration:line-through;color:#8a826f}
+.cl button{border:0;background:none;font-size:16px;color:#9a917f}
+.edf{display:flex;gap:8px;align-items:center;overflow-x:auto;padding:10px 12px;max-width:620px;width:100%;margin:0 auto;border-top:1px solid #0000000f}
+.col{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid #0000001a}
+.col.on{border:3px solid var(--ink)}
+.small{flex:none;border:0;border-radius:12px;padding:8px 10px;background:#ffffffaa;font-size:13px;font-weight:700;font-family:inherit;color:var(--ink)}
+.meta{font-size:12px;color:#8a826f;margin:2px 0 6px}
+.sheet-bg{position:fixed;inset:0;background:#0006;z-index:30;display:none}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;padding:16px 16px calc(env(safe-area-inset-bottom) + 16px);z-index:31;max-width:620px;margin:0 auto;transform:translateY(105%);transition:transform .2s;max-height:85vh;overflow:auto}
+.sheet.on{transform:none}
+.sheet h2{margin:0 0 10px;font-size:18px}
+.btn{border:0;border-radius:14px;padding:13px;font-size:16px;font-weight:800;background:var(--ink);color:#fff;width:100%;margin-top:10px;font-family:inherit}
+.btn.sub{background:#f1ede4;color:var(--ink)}
+.btn.red{background:#fde8e6;color:#b4382b}
+.lock{position:fixed;inset:0;background:var(--bg);z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.dots{display:flex;gap:14px}.dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--ink)}.dots i.f{background:var(--ink)}
+.pad{display:grid;grid-template-columns:repeat(3,72px);gap:12px}
+.pad button{height:72px;border-radius:50%;border:0;background:#fff;font-size:26px;font-weight:700;box-shadow:0 2px 6px #0000001a;color:var(--ink);font-family:inherit}
+.shake{animation:sh .35s}@keyframes sh{25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);background:#2d2a24ee;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:60;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>📝 わたしのメモ</h1><button class="ib" id="trashB" title="ゴミ箱">🗑</button><button class="ib" id="setB" title="設定">⚙️</button></header>
+<input class="search" id="q" placeholder="🔍 メモをさがす">
+<div class="chips" id="chips"></div>
+<div id="list"></div>
+</div>
+<button class="fab" id="fab" aria-label="新しいメモ">＋</button>
+<div class="ed" id="ed"></div>
+<div class="sheet-bg" id="bg"></div><div class="sheet" id="sheet"></div>
+<div class="lock" id="lock"><div style="font-size:40px">🔒</div><div id="lockT" style="font-weight:800">パスコードを入れてください</div><div class="dots" id="dots"></div><div class="pad" id="pad"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const COLS=["#ffffff","#fff4c2","#ffe0e6","#dff3e4","#dceeff","#efe3ff","#ffe8d1","#e9e9e9"];
+const CATS=[["all","すべて"],["pin","📌 ピン"],["work","💼 仕事"],["home","🏠 家"],["kids","👶 子ども"],["money","💰 お金"],["idea","💡 アイデア"],["other","📄 その他"]];
+let M=JSON.parse(localStorage.getItem("memo-v1")||"null")||{notes:[],trash:[],pin:null};
+const save=()=>localStorage.setItem("memo-v1",JSON.stringify(M));
+let cat="all";
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",1600)}
+const fmtD=t=>{const d=new Date(t),n=new Date();const same=d.toDateString()===n.toDateString();return same?`今日 ${d.getHours()}:${String(d.getMinutes()).padStart(2,"0")}`:`${d.getMonth()+1}/${d.getDate()}${d.getFullYear()!==n.getFullYear()?" "+d.getFullYear():""}`};
+function preview(n){if(n.type==="list"){const it=n.items||[];return it.slice(0,6).map(x=>`<div class="ck">${x.d?"☑":"☐"} ${esc(x.t)}</div>`).join("")+(it.length>6?`<div class="ck">…ほか${it.length-6}</div>`:"")}return`<p>${esc((n.body||"").slice(0,240))}</p>`}
+function render(){
+ $("#chips").innerHTML=CATS.map(c=>`<button class="chip${cat===c[0]?" on":""}" data-c="${c[0]}">${c[1]}</button>`).join("");
+ $("#chips").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{cat=b.dataset.c;render()});
+ const q=$("#q").value.trim().toLowerCase();
+ let ns=M.notes.filter(n=>cat==="all"||(cat==="pin"?n.pin:n.cat===cat));
+ if(q)ns=ns.filter(n=>((n.title||"")+" "+(n.body||"")+" "+(n.items||[]).map(x=>x.t).join(" ")).toLowerCase().includes(q));
+ ns.sort((a,b)=>b.up-a.up);
+ const pins=ns.filter(n=>n.pin),rest=ns.filter(n=>!n.pin);
+ const card=n=>`<button class="note" data-id="${n.id}" style="background:${n.color}">${n.pin?'<span class="pin">📌</span>':""}${n.title?`<b>${esc(n.title)}</b>`:""}${preview(n)}<small>${fmtD(n.up)}${n.cat&&n.cat!=="other"?" ・ "+CATS.find(c=>c[0]===n.cat)[1]:""}</small></button>`;
+ $("#list").innerHTML=!ns.length?`<div class="empty">${q?"見つかりませんでした":"メモがありません<br>右下の ＋ で書いてみよう ✍️"}</div>`:
+  (pins.length&&cat!=="pin"?`<div class="sec">📌 ピン留め</div><div class="grid">${pins.map(card).join("")}</div>`+(rest.length?`<div class="sec">メモ</div>`:""):"")+`<div class="grid">${(cat==="pin"?ns:rest).map(card).join("")}</div>`;
+ $("#list").querySelectorAll(".note").forEach(b=>b.onclick=()=>edit(M.notes.find(n=>n.id===b.dataset.id)))}
+$("#q").oninput=render;
+// ---------- editor
+function edit(n,type){const isNew=!n;n=n||{id:Date.now().toString(36),title:"",body:"",type:type||"text",items:[],color:"#ffffff",cat:cat!=="all"&&cat!=="pin"?cat:"other",pin:cat==="pin",up:Date.now(),cr:Date.now()};
+ let dirty=false;const ed=$("#ed");
+ const draw=(focus)=>{ed.style.background=n.color;
+  ed.innerHTML=`<div class="edh"><button class="ib" id="eb">‹ もどる</button><span class="sp"></span><button class="ib" id="ep" title="ピン">${n.pin?"📌":"📍"}</button><button class="ib" id="es" title="共有">📤</button><button class="ib" id="ex" title="消す">🗑</button></div>
+  <div class="edb"><input class="t" id="et" placeholder="タイトル" value="${esc(n.title)}"><div class="meta">${isNew?"新しいメモ":"更新："+fmtD(n.up)}</div>
+  ${n.type==="list"?`<div id="items">${(n.items||[]).map((x,i)=>`<div class="cl${x.d?" dn":""}"><input type="checkbox" data-i="${i}" ${x.d?"checked":""}><input type="text" data-t="${i}" value="${esc(x.t)}"><button data-x="${i}">✕</button></div>`).join("")}</div><div class="cl"><span style="width:22px;text-align:center;color:#9a917f">＋</span><input type="text" id="newIt" placeholder="項目を追加（Enter で次へ）"></div>`:`<textarea id="eb2" placeholder="ここにメモを書く…">${esc(n.body)}</textarea>`}</div>
+  <div class="edf">${COLS.map(c=>`<button class="col${n.color===c?" on":""}" data-col="${c}" style="background:${c}"></button>`).join("")}
+   <select class="small" id="ecat">${CATS.slice(2).map(c=>`<option value="${c[0]}" ${n.cat===c[0]?"selected":""}>${c[1]}</option>`).join("")}</select>
+   <button class="small" id="etype">${n.type==="list"?"📝 文章にする":"☑ チェックリストにする"}</button></div>`;
+  const ta=$("#eb2");if(ta){const fit=()=>{ta.style.height="auto";ta.style.height=Math.max(ta.scrollHeight,innerHeight*.5)+"px"};fit();ta.oninput=()=>{n.body=ta.value;dirty=true;fit()}}
+  $("#et").oninput=e=>{n.title=e.target.value;dirty=true};
+  ed.querySelectorAll("[data-col]").forEach(b=>b.onclick=()=>{n.color=b.dataset.col;dirty=true;draw()});
+  $("#ecat").onchange=e=>{n.cat=e.target.value;dirty=true};
+  $("#ep").onclick=()=>{n.pin=!n.pin;dirty=true;draw();toast(n.pin?"📌 ピン留めしました":"ピンをはずしました")};
+  $("#etype").onclick=()=>{if(n.type==="text"){n.items=(n.body||"").split("\n").map(s=>s.replace(/^[-・*□☐]\s*/,"").trim()).filter(Boolean).map(t=>({t,d:false}));n.type="list"}else{n.body=(n.items||[]).map(x=>(x.d?"☑ ":"")+x.t).join("\n");n.type="text"}dirty=true;draw()};
+  ed.querySelectorAll("[data-i]").forEach(c=>c.onchange=()=>{n.items[+c.dataset.i].d=c.checked;dirty=true;c.parentElement.classList.toggle("dn",c.checked)});
+  ed.querySelectorAll("[data-t]").forEach(c=>c.oninput=()=>{n.items[+c.dataset.t].t=c.value;dirty=true});
+  ed.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{n.items.splice(+b.dataset.x,1);dirty=true;draw()});
+  const ni=$("#newIt");if(ni){ni.onkeydown=e=>{if(e.key==="Enter"&&ni.value.trim()){e.preventDefault();n.items.push({t:ni.value.trim(),d:false});dirty=true;draw("newIt")}};if(focus==="newIt")setTimeout(()=>$("#newIt").focus(),0)}
+  $("#eb").onclick=close;
+  $("#es").onclick=async()=>{const txt=(n.title?n.title+"\n\n":"")+(n.type==="list"?(n.items||[]).map(x=>(x.d?"☑ ":"☐ ")+x.t).join("\n"):n.body);try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e.name==="AbortError")return}try{await navigator.clipboard.writeText(txt);toast("コピーしました")}catch(e){}};
+  $("#ex").onclick=()=>{if(isNew&&!dirty){ed.classList.remove("on");return}const i=M.notes.findIndex(x=>x.id===n.id);if(i>=0)M.notes.splice(i,1);M.trash.unshift({...n,del:Date.now()});M.trash=M.trash.slice(0,100);save();ed.classList.remove("on");render();toast("🗑 ゴミ箱に入れました")}};
+ const close=()=>{const has=(n.title||"").trim()||(n.body||"").trim()||(n.items||[]).length;
+  if(dirty&&has){n.up=Date.now();const i=M.notes.findIndex(x=>x.id===n.id);if(i<0)M.notes.push(n);else M.notes[i]=n;save()}
+  ed.classList.remove("on");history.state&&history.state.ed&&history.back();render()};
+ draw();ed.classList.add("on");history.pushState({ed:1},"");window.onpopstate=()=>{if(ed.classList.contains("on"))close()};
+ if(isNew)setTimeout(()=>{const t=n.type==="list"?$("#newIt"):$("#eb2");t&&t.focus()},50)}
+$("#fab").onclick=()=>sheet(`<h2>＋ 新しいメモ</h2><button class="btn" id="nT">📝 ふつうのメモ</button><button class="btn sub" id="nL">☑ チェックリスト（買い物など）</button>`,()=>{$("#nT").onclick=()=>{closeSheet();edit(null,"text")};$("#nL").onclick=()=>{closeSheet();edit(null,"list")}});
+// ---------- trash
+$("#trashB").onclick=()=>{const draw=()=>{$("#sheet").innerHTML=`<h2>🗑 ゴミ箱（${M.trash.length}）</h2>${M.trash.length?M.trash.map((n,i)=>`<div style="display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #f1ede4"><div style="flex:1;min-width:0"><b style="font-size:14px">${esc(n.title||(n.body||"").slice(0,20)||(n.items||[]).map(x=>x.t).join("、").slice(0,20)||"（無題）")}</b><div style="font-size:11px;color:#9a917f">${fmtD(n.del)}に削除</div></div><button class="small" data-r="${i}" style="background:#f1ede4">↩ もどす</button></div>`).join("")+`<button class="btn red" id="empty">ゴミ箱を空にする</button>`:`<div class="empty">ゴミ箱は空です</div>`}`;
+ $("#sheet").querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{const n=M.trash.splice(+b.dataset.r,1)[0];delete n.del;M.notes.push(n);save();render();draw();toast("↩ もどしました")});
+ const e=$("#empty");if(e)e.onclick=()=>{if(confirm("ゴミ箱のメモを完全に消しますか？")){M.trash=[];save();draw()}}};draw();openSheet()};
+// ---------- settings & lock
+$("#setB").onclick=()=>sheet(`<h2>⚙️ 設定</h2>
+ <button class="btn" id="pinB">${M.pin?"🔓 パスコードをはずす":"🔒 パスコードをつける（4けた）"}</button>
+ <button class="btn sub" id="bk">💾 メモを全部書き出す（バックアップ）</button>
+ <p style="font-size:12px;color:#8a826f;line-height:1.7;margin-top:12px">🔒 メモは<b>このスマホの中だけ</b>に保存されます。インターネットには送りません。<br>パスコードは、ほかの人にアプリを開かれないようにするためのものです。<br>スマホを変えるときやアプリを消す前は、バックアップを保存してください。</p>`,()=>{
+ $("#pinB").onclick=()=>{closeSheet();if(M.pin){askPin("今のパスコードを入れてください",p=>{if(p===M.pin){M.pin=null;save();hideLock();toast("パスコードをはずしました");return true}return false},true)}else{askPin("新しいパスコード（4けた）",p1=>{setTimeout(()=>askPin("もう一度入れてください",p2=>{if(p2===p1){M.pin=p1;save();hideLock();toast("🔒 パスコードをつけました");return true}toast("ちがいました。もう一度");return false},true),50);return true},true)}};
+ $("#bk").onclick=async()=>{const txt=M.notes.sort((a,b)=>b.up-a.up).map(n=>`■ ${n.title||"（無題）"}　${new Date(n.up).toLocaleString("ja-JP")}\n${n.type==="list"?(n.items||[]).map(x=>(x.d?"☑ ":"☐ ")+x.t).join("\n"):n.body}`).join("\n\n----------\n\n");
+  const f=new File([txt],`メモ_${new Date().toISOString().slice(0,10)}.txt`,{type:"text/plain"});try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}}catch(e){if(e.name==="AbortError")return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(f);a.download=f.name;a.click()}});
+let pinCb=null,pinBuf="",pinCancel=false;
+function askPin(title,cb,cancelable){pinCb=cb;pinBuf="";pinCancel=cancelable;$("#lockT").textContent=title;drawPad();$("#lock").style.display="flex"}
+function hideLock(){$("#lock").style.display="none"}
+function drawPad(){$("#dots").innerHTML=[0,1,2,3].map(i=>`<i class="${i<pinBuf.length?"f":""}"></i>`).join("");
+ $("#pad").innerHTML=[1,2,3,4,5,6,7,8,9,pinCancel?"✕":"",0,"⌫"].map(k=>`<button data-k="${k}" ${k===""?'style="visibility:hidden"':""}>${k}</button>`).join("");
+ $("#pad").querySelectorAll("button").forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k==="⌫"){pinBuf=pinBuf.slice(0,-1);drawPad();return}if(k==="✕"){hideLock();return}if(pinBuf.length>=4)return;pinBuf+=k;drawPad();
+  if(pinBuf.length===4){const v=pinBuf;setTimeout(()=>{const ok=pinCb(v);if(!ok){$("#dots").classList.add("shake");setTimeout(()=>$("#dots").classList.remove("shake"),400);pinBuf="";drawPad()}},120)}})}
+function lockNow(){if(M.pin)askPin("パスコードを入れてください",p=>{if(p===M.pin){hideLock();return true}return false},false)}
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&M.pin){if($("#ed").classList.contains("on"))$("#eb").click();lockNow()}});
+// ---------- sheet
+function sheet(h,after){$("#sheet").innerHTML=h;openSheet();after&&after()}
+function openSheet(){$("#bg").style.display="block";requestAnimationFrame(()=>$("#sheet").classList.add("on"))}
+function closeSheet(){$("#sheet").classList.remove("on");setTimeout(()=>$("#bg").style.display="none",200)}
+$("#bg").onclick=closeSheet;
+render();lockNow();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+</body>
+</html>

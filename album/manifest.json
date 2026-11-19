@@ -1,0 +1,1 @@
+{"name": "Win アルバム工房", "short_name": "アルバム工房", "start_url": ".", "display": "standalone", "background_color": "#f6f1ea", "theme_color": "#b5835a", "icons": [{"src": "icon-180.png", "sizes": "180x180", "type": "image/png"}, {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}]}

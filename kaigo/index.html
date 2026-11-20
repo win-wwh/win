@@ -139,8 +139,10 @@ footer{font-size:11px;color:var(--sub);text-align:center;padding:16px 0 0;line-h
   <button data-mode="list"><b>📖</b>一覧</button>
   <button data-mode="card"><b>🃏</b>カード</button>
   <button data-mode="quiz"><b>✏️</b>クイズ</button>
+  <button data-mode="kk"><b>🎓</b>国家試験</button>
 </div></nav>
 <div class="toast" id="toast"></div>
+<script src="kokushi.js"></script>
 <script>
 const CATS = [
   {id:"all",  jp:"すべて",   mm:"အားလုံး"},
@@ -652,7 +654,7 @@ function words(){let w=inCat(cat);
 function todays(){const seed=dkey(new Date()).split("-").reduce((a,b)=>a*31+ +b,7);let pool=W.filter(x=>!learned.has(x.id));if(pool.length<5)pool=W;
  const out=[];let s=seed;while(out.length<5&&out.length<pool.length){s=(s*9301+49297)%233280;const x=pool[Math.floor(s/233280*pool.length)];if(!out.includes(x))out.push(x)}return out}
 
-function renderChips(){const ch=$("#chips");if(mode==="home"){ch.style.display="none";return}ch.style.display="flex";
+function renderChips(){const ch=$("#chips");if(mode==="home"||mode==="kk"){ch.style.display="none";return}ch.style.display="flex";
  ch.innerHTML=CATS.filter(c=>c.id!=="weak"||Object.keys(weak).length).map(c=>`<button class="chip ${c.id===cat?"on":""}" data-cat="${c.id}">${c.id==="all"||c.id==="fav"||c.id==="weak"?"":meta(c.id)[0]+" "}${c.jp}</button>`).join("");
  const on=ch.querySelector(".on");if(on)on.scrollIntoView({inline:"center",block:"nearest"})}
 
@@ -670,6 +672,7 @@ function renderHome(){rollDay();const done=st.ids.length,goal=st.goal,pct=Math.m
    <button class="act" data-go="quiz"><b>✏️</b><span>クイズ</span><small>10問・3種類</small></button>
    <button class="act" data-go="weak"><b>❗</b><span>苦手を復習</span><small>${wk?wk+"語":"まだありません"}</small></button>
    <button class="act" data-go="fav"><b>⭐</b><span>お気に入り</span><small>${favs.size?favs.size+"語":"☆で追加"}</small></button></div>
+  <button class="act" data-mode="kk" style="width:100%;margin-top:10px;background:linear-gradient(135deg,#eef1fb,#fff);display:flex;gap:12px;align-items:center"><b style="margin:0">🎓</b><div><span>介護福祉士 国家試験 練習</span><small>2025年（第37回）の出題範囲・11科目群・${(window.KK||[]).length}問</small></div></button>
   <div class="sec"><h2>🗂 カテゴリー</h2><span>覚えた / 全部</span></div>
   <div class="cats">${CATS.filter(c=>!["all","fav","weak"].includes(c.id)).map(c=>{const ws=W.filter(x=>x.cat===c.id),l=ws.filter(x=>learned.has(x.id)).length;const[e,bg]=meta(c.id);
    return`<button class="cat" style="background:${bg}" data-opencat="${c.id}"><div class="e">${e}</div><div class="n">${c.jp}</div><div class="m mm">${c.mm}</div><div class="p"><i style="width:${ws.length?l/ws.length*100:0}%"></i></div><span class="c">${l}/${ws.length}</span></button>`}).join("")}</div>
@@ -743,9 +746,52 @@ function renderQuiz(){
   $("#nextwrap").innerHTML=`${!ok&&quizDir!=="jp"?`<div style="text-align:center;font-size:13px;margin-bottom:8px">${x.jp}（${x.kana}）＝ <span class="mm">${x.mm}</span></div>`:""}<button class="btn primary" style="width:100%" id="qnext">${quiz.i===quiz.qs.length-1?"結果を見る":"次へ ▶"}</button>`;
   $("#qnext").onclick=()=>{quiz.i++;quiz.answered=false;quiz.opts=null;renderQuiz()}})}
 
-function render(){renderChips();if(mode==="home")renderHome();else if(mode==="list")renderList();else if(mode==="card")renderCard();else renderQuiz()}
+// ---------- 国家試験
+let kkRes=LS("kaigo-kk",{}),kk=null;
+const saveKK=()=>SV("kaigo-kk",kkRes);
+function kkStart(list,title){kk={qs:list,i:0,score:0,ans:null,title,miss:[]};renderKK()}
+function renderKK(){const G=window.KK_GROUPS||[],Q=window.KK||[];
+ if(!kk){const done=Object.keys(kkRes).length,ok=Object.values(kkRes).filter(v=>v===1).length;
+  $("#main").innerHTML=`<div class="hero" style="background:linear-gradient(135deg,#3b5bdb,#5c7cfa);box-shadow:0 10px 24px #3b5bdb33"><div class="t">🎓 介護福祉士 国家試験 練習 <span class="mm">အမျိုးသား စာမေးပွဲ လေ့ကျင့်ခန်း</span></div>
+   <div class="big">${ok} <small>/ ${Q.length} 問 正解</small></div><div class="bar"><i style="width:${Q.length?ok/Q.length*100:0}%"></i></div>
+   <div style="font-size:12px;line-height:1.7;position:relative;z-index:1">2025年（第37回）の試験：125問・5つから1つ選ぶ<br>合格ライン：70点以上 ＋ 11の科目群すべてで1問以上正解<br>※第37回から実技試験はありません</div></div>
+   <div class="acts"><button class="act" id="kkRand"><b>🎲</b><span>ランダム10問</span><small>いろいろな科目から</small></button>
+   <button class="act" id="kkAll"><b>📋</b><span>模擬テスト</span><small>全${Q.length}問・合格ライン56%</small></button>
+   <button class="act" id="kkMiss"><b>❗</b><span>まちがえた問題</span><small>${Object.values(kkRes).filter(v=>v===0).length}問</small></button>
+   <button class="act" id="kkNew"><b>🆕</b><span>まだ解いていない</span><small>${Q.length-done}問</small></button></div>
+   <div class="sec"><h2>📚 11の科目群</h2><span>正解 / 問題数</span></div>
+   <div class="cats" style="grid-template-columns:1fr">${G.map(g=>{const qs=Q.filter(x=>x.g===g.g),o=qs.filter(x=>kkRes[Q.indexOf(x)]===1).length;
+    return`<button class="cat" style="background:#fff;box-shadow:0 2px 10px #0000000a;display:flex;gap:10px;align-items:center" data-kkg="${g.g}"><div class="e">${g.e}</div><div style="flex:1;min-width:0"><div class="n">${g.g}. ${g.jp}</div><div class="m mm">${g.mm}</div><div class="p" style="background:#eef1fb"><i style="width:${qs.length?o/qs.length*100:0}%;background:#3b5bdb"></i></div></div><span style="font-size:12px;font-weight:700;color:#5d544c">${o}/${qs.length}</span></button>`}).join("")}</div>
+   <footer>📝 これは本物の試験問題ではありません。2025年（第37回）の出題範囲（11科目群）に合わせて作った<b>オリジナルの練習問題</b>です。<br>本物の過去の問題と正答は、<a href="https://www.sssc.or.jp/" target="_blank" rel="noopener">社会福祉振興・試験センター</a>のホームページで見られます。<br>${done?`<button class="chip" id="kkReset" style="margin-top:8px">記録をリセット</button>`:""}</footer>`;
+  const idx=Q.map((x,i)=>i);
+  $("#kkRand").onclick=()=>kkStart(shuffle(idx).slice(0,10),"ランダム10問");
+  $("#kkAll").onclick=()=>kkStart(shuffle(idx),"模擬テスト");
+  $("#kkMiss").onclick=()=>{const m=idx.filter(i=>kkRes[i]===0);if(!m.length){toast("まちがえた問題はありません 👏");return}kkStart(shuffle(m),"まちがえた問題")};
+  $("#kkNew").onclick=()=>{const m=idx.filter(i=>kkRes[i]===undefined);if(!m.length){toast("全部解きました 🎉");return}kkStart(shuffle(m).slice(0,10),"まだ解いていない問題")};
+  document.querySelectorAll("[data-kkg]").forEach(b=>b.onclick=()=>{const g=+b.dataset.kkg;kkStart(idx.filter(i=>Q[i].g===g),G.find(x=>x.g===g).jp)});
+  const rs=$("#kkReset");if(rs)rs.onclick=()=>{if(confirm("国家試験の記録をリセットしますか？")){kkRes={};saveKK();renderKK()}};return}
+ if(kk.i>=kk.qs.length){const pct=Math.round(kk.score/kk.qs.length*100),pass=pct>=56;
+  $("#main").innerHTML=`<div class="result"><div style="font-size:13px;color:var(--sub)">${esc(kk.title)}</div><div class="big">${kk.score} / ${kk.qs.length}</div><p style="font-size:18px;font-weight:700">${pct}% ${pass?"🎉 合格ライン（約56%）こえ！":"💪 もう少し！合格ラインは約56%"}</p>
+   ${kk.miss.length?`<div class="miss"><b style="font-size:13px;display:block;padding-top:6px">❗ まちがえた問題</b>${kk.miss.map(i=>{const x=Q[i];return`<div><span style="font-size:11px;color:var(--sub)">${G.find(g=>g.g===x.g).jp}</span><br>${esc(x.q)}<br><b style="color:var(--ok)">正解：${esc(x.o[x.a-1])}</b></div>`}).join("")}</div>`:""}
+   <button class="btn primary" id="kkBack" style="width:100%">🎓 国家試験のトップへ</button></div>`;
+  if(pass)confetti();$("#kkBack").onclick=()=>{kk=null;renderKK();scrollTo(0,0)};return}
+ const i=kk.qs[kk.i],x=Q[i],g=G.find(y=>y.g===x.g);if(!kk.perm)kk.perm=shuffle([0,1,2,3,4]);const P=kk.perm,ca=P.indexOf(x.a-1)+1;
+ $("#main").innerHTML=`<div class="row" style="justify-content:space-between;margin:2px 0 6px"><button class="chip" id="kkQuit">✕ やめる</button><span style="font-size:13px;color:var(--sub)">${kk.i+1} / ${kk.qs.length}　正解 ${kk.score}</span></div>
+  <div class="pbar"><i style="width:${kk.i/kk.qs.length*100}%;background:#3b5bdb"></i></div>
+  <div class="q" style="text-align:left"><div class="ask">${g.e} ${g.g}. ${g.jp}</div><div style="font-size:16px;line-height:1.75;font-weight:700">${esc(x.q)}</div></div>
+  <div class="opts">${P.map((k,j)=>`<button class="opt" data-kka="${j+1}"><b style="color:#3b5bdb">${j+1}</b>　${esc(x.o[k])}</button>`).join("")}</div>
+  <div id="kkExp" style="margin-top:12px"></div>`;
+ $("#kkQuit").onclick=()=>{kk=null;renderKK()};
+ document.querySelectorAll("[data-kka]").forEach(b=>b.onclick=()=>{if(kk.ans)return;const a=+b.dataset.kka;kk.ans=a;const ok=a===ca;
+  if(ok)kk.score++;else kk.miss.push(i);kkRes[i]=ok?1:0;saveKK();
+  document.querySelectorAll("[data-kka]").forEach(c=>{const n=+c.dataset.kka;if(n===ca)c.classList.add("ok");else if(n===a)c.classList.add("ng")});
+  $("#kkExp").innerHTML=`<div style="background:${ok?"#e5f3ea":"#fbe6e3"};border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.75"><b>${ok?"⭕ 正解！":"❌ ざんねん"}　正解は ${ca}. ${esc(x.o[x.a-1])}</b><br>💡 ${esc(x.e)}</div>
+   <button class="btn primary" id="kkNext" style="width:100%;margin-top:10px">${kk.i===kk.qs.length-1?"結果を見る":"次へ ▶"}</button>`;
+  $("#kkNext").onclick=()=>{kk.i++;kk.ans=null;kk.perm=null;renderKK();scrollTo(0,0)};$("#kkExp").scrollIntoView({behavior:"smooth",block:"nearest"})})}
+
+function render(){renderChips();if(mode==="kk"){renderKK();return}if(mode==="home")renderHome();else if(mode==="list")renderList();else if(mode==="card")renderCard();else renderQuiz()}
 function setMode(m,keep){mode=m;document.querySelectorAll(".bnav button").forEach(b=>b.classList.toggle("on",b.dataset.mode===m));
- if(m==="card"&&!keep)startCards();if(m==="quiz")startQuiz();render();window.scrollTo(0,0)}
+ if(m==="kk")kk=null;if(m==="card"&&!keep)startCards();if(m==="quiz")startQuiz();render();window.scrollTo(0,0)}
 
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
  if(t.dataset.mode){setMode(t.dataset.mode)}

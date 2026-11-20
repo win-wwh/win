@@ -130,7 +130,7 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <div class="cal"><div class="wk"><div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div></div><div class="days" id="days"></div></div>
 <div class="card"><h3>👥 これからのミーティング <span class="mm">အစည်းအဝေး</span></h3><div id="mtl"></div></div>
 <div class="card"><h3 id="sumT">📊 今月のまとめ</h3><div id="sum"></div></div>
-<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 7</div>
+<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 8</div>
 </div>
 
 <div class="paint" id="paint">
@@ -144,7 +144,7 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <input type="file" id="impF" accept=".json,application/json,text/plain" style="display:none">
 
 <script>
-const VER=7;
+const VER=8;
 const $=s=>document.querySelector(s);
 const pad=n=>String(n).padStart(2,"0");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -343,6 +343,7 @@ $("#fixB").onclick=()=>{const y=cur.getFullYear(),m=cur.getMonth();
  $("#sheet").innerHTML=`<h2>🔁 固定シフト <span class="mm">ပုံသေဆိုင်း</span></h2>
   <p style="font-size:13px;color:#5d6e6b;margin:0 0 10px;line-height:1.6">毎週同じ曜日に同じシフトの人は、ここで決めておくと<b>1か月分をまとめて</b>入れられます。<br>例：月〜金は日勤、土日は休み</p>
   ${fixedEditor()}
+  <button class="btn sub" id="fxPaste" style="margin-top:8px;background:#fff1e3;color:#c0661a">📋 もらったリンクから入れる</button>
   <label class="chk" style="font-size:14px;font-weight:800;margin-top:12px;background:#e3f3f1;border-radius:12px;padding:10px"><input type="checkbox" id="fxAuto" ${S.autoFix?"checked":""}>📅 毎月、自動で入れる<br><span style="font-weight:600;font-size:11px;color:#5d6e6b">月が変わっても、ボタンを押さなくても入ります</span></label>
   <button class="btn" id="fxA">${m+1}月の<b>空いている日</b>に入れる</button>
   <button class="btn sub" id="fxO">${m+1}月を全部この形にする（上書き）</button>
@@ -353,6 +354,9 @@ $("#fixB").onclick=()=>{const y=cur.getFullYear(),m=cur.getMonth();
   const ym=`${y}-${pad(m+1)}`;if(!S.filled.includes(ym))S.filled.push(ym);
   save();close();render();toast(`🔁 ${n}日分 入れました`)};
  $("#fxA").onclick=()=>apply(false);
+ $("#fxPaste").onclick=()=>{$("#sheet").innerHTML=`<h2>📋 リンクから入れる</h2><p style="font-size:13px;color:#5d6e6b;line-height:1.6;margin:0 0 8px">もらったリンクを長押しして「コピー」→ ここに貼りつけて、「入れる」を押してください。</p>
+  <textarea id="pTx" rows="4" placeholder="https://win-wwh.github.io/win/myshift/#fx=..."></textarea><button class="btn" id="pOk">入れる</button>`;
+  $("#pOk").onclick=()=>{const t=$("#pTx").value.trim();if(!/#fx=|[#&]pay=/.test(t)){toast("リンクが見つかりません");return}if(importFixed(t)||/pay=/.test(t)){render();$("#fixB").click();toast("✓ 入れました")}}};
  $("#fxAuto").onchange=e=>{S.autoFix=e.target.checked;if(S.autoFix){const t=new Date();S.fixFrom=key(t.getFullYear(),t.getMonth(),1);S.filled=[];save();render();toast("📅 毎月 自動で入れます")}else{save();render()}};$("#fxO").onclick=()=>{if(confirm(`${m+1}月のシフトを全部、固定シフトで上書きしますか？`))apply(true)};
  $("#fxS").onclick=()=>{save();close();render();toast("保存しました ✓")}};
 // ---- settings
@@ -453,8 +457,8 @@ function whatsNew(){$("#sheet").innerHTML=`<div style="text-align:center;font-si
  <li><b>⏱ アルバイトは時間をえらぶだけ</b><br>「1時間」「2時間」などのボタンで入れられます。給料は「時間×時給」で計算します（1.25倍になるのは、1日8時間をこえた分だけ）。</li>
  <li><b>👥 ミーティング</b><br>会議の予定を入れて、LINEでみんなにお知らせを送れます。</li></ul>
  <button class="btn" id="nOk">OK</button>`;open();$("#nOk").onclick=()=>{S.ver=VER;save();close()}}
-function importFixed(){const pm=location.hash.match(/[#&]pay=(\d+)\.(\d)\.(\d+)/);if(pm){S.close=+pm[1];S.payNext=pm[2]==="1";S.payDay=+pm[3];save()}
- const m=location.hash.match(/#fx=([\w-]+)/);if(!m){if(pm){history.replaceState(null,"",location.pathname);toast("💴 "+closeLbl()+" にしました")}return false}history.replaceState(null,"",location.pathname);
+function importFixed(src){const H=src||location.hash;const pm=H.match(/[#&]pay=(\d+)\.(\d)\.(\d+)/);if(pm){S.close=+pm[1];S.payNext=pm[2]==="1";S.payDay=+pm[3];save()}
+ const m=H.match(/#fx=([\w-]+)/);if(!m){if(pm){history.replaceState(null,"",location.pathname);toast("💴 "+closeLbl()+" にしました")}return false}history.replaceState(null,"",location.pathname);
  try{const f=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,"+").replace(/_/g,"/")))));if(!Array.isArray(f)||f.length!==7)throw 0;S.fixed=f;S.autoFix=true;const t=new Date();S.fixFrom=key(t.getFullYear(),t.getMonth(),1);S.filled=[];save();return true}catch(e){toast("リンクが読めませんでした");return false}}
 const gotFx=importFixed();
 addEventListener("hashchange",()=>{if(importFixed()){render();$("#fixB").click();toast("🔁 固定シフトを受け取りました")}});

@@ -130,7 +130,7 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <div class="cal"><div class="wk"><div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div></div><div class="days" id="days"></div></div>
 <div class="card"><h3>👥 これからのミーティング <span class="mm">အစည်းအဝေး</span></h3><div id="mtl"></div></div>
 <div class="card"><h3>📊 今月のまとめ <span class="mm">ဒီလ အနှစ်ချုပ်</span></h3><div id="sum"></div></div>
-<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 5</div>
+<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 6</div>
 </div>
 
 <div class="paint" id="paint">
@@ -144,7 +144,7 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <input type="file" id="impF" accept=".json,application/json,text/plain" style="display:none">
 
 <script>
-const VER=5;
+const VER=6;
 const $=s=>document.querySelector(s);
 const pad=n=>String(n).padStart(2,"0");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -159,7 +159,7 @@ const DEF_TYPES=[
  {k:"有",name:"有給",mm:"လစာရခွင့်",c:"#0ea5e9",s:"",e:"",br:0,night:false,h:8,rest:true}
 ];
 let S=JSON.parse(localStorage.getItem("myshift-v1")||"null")||{name:"",wage:1300,nightPay:5000,otRate:1.25,types:JSON.parse(JSON.stringify(DEF_TYPES)),d:{}};
-function migrate(){S.job=S.job||"part";S.salary=S.salary??220000;S.stdH=S.stdH||160;S.otUnit=S.otUnit??0;S.fixed=S.fixed||[null,null,null,null,null,null,null];S.recent=S.recent||[];S.limit28=!!S.limit28;S.d=S.d||{}}
+function migrate(){S.job=S.job||"part";S.salary=S.salary??220000;S.stdH=S.stdH||160;S.otUnit=S.otUnit??0;S.fixed=S.fixed||[null,null,null,null,null,null,null];S.recent=S.recent||[];S.autoFix=!!S.autoFix;S.filled=S.filled||[];S.limit28=!!S.limit28;S.d=S.d||{}}
 migrate();
 const save=()=>localStorage.setItem("myshift-v1",JSON.stringify(S));
 let cur=new Date();cur.setDate(1);
@@ -182,7 +182,14 @@ const yen=n=>"¥"+Math.round(n).toLocaleString();
 const otUnit=()=>S.job==="full"?(+S.otUnit||((+S.salary||0)/(+S.stdH||160))*(+S.otRate||1.25)):(+S.wage||0)*(+S.otRate||1.25);
 const dLabel=d=>`${d.getMonth()+1}/${d.getDate()}（${W[d.getDay()]}）`;
 function setDay(k,v){if(!(+v.wh>0)){delete v.wh;delete v.wn}if(!v.wn)delete v.wn;if(!v.k&&!v.cs&&!v.wh&&!v.ot&&!v.m&&!(v.mt&&v.mt.length))delete S.d[k];else S.d[k]=v}
-function render(){
+function fxOn(){return S.fixed.some(f=>f&&(typeof f!=="object"||f.wh>0))}
+function fillDay(k,f){const v={...(S.d[k]||{})};delete v.cs;delete v.ce;delete v.cb;if(f&&typeof f==="object"){v.k=null;v.wh=+f.wh||0;v.wn=f.n||""}else{v.k=f||null;v.wh=0;v.wn=""}setDay(k,v)}
+function autoFill(y,m){if(!S.autoFix||!fxOn())return;const ym=`${y}-${pad(m+1)}`;if(S.filled.includes(ym))return;const from=S.fixFrom||"0000";
+ if(`${ym}-31`<from)return;const dim=new Date(y,m+1,0).getDate();
+ for(let d=1;d<=dim;d++){const k=key(y,m,d);if(k<from)continue;const v=S.d[k];if(v&&(v.k||v.wh||v.cs))continue;const f=S.fixed[new Date(y,m,d).getDay()];if(f)fillDay(k,f)}
+ S.filled.push(ym);save()}
+function autoAll(){const t=new Date();autoFill(t.getFullYear(),t.getMonth());const n=new Date(t.getFullYear(),t.getMonth()+1,1);autoFill(n.getFullYear(),n.getMonth());autoFill(cur.getFullYear(),cur.getMonth())}
+function render(){autoAll();
  $("#ttl").innerHTML=`📅 ${esc(S.name||"わたし")}のシフト<small>${S.job==="full"?"💼 正社員":"⏰ アルバイト・パート"}</small>`;
  const y=cur.getFullYear(),m=cur.getMonth();$("#ym").textContent=`${y}年 ${m+1}月`;
  const first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),t=new Date();
@@ -193,7 +200,7 @@ function render(){
    ${ty?`<span class="pill" style="background:${ty.c}">${esc(ty.k)}</span><span class="tm">${ty.wh?ty.h+"時間":isWork(ty)?(v.cs?sh(ty.s)+"-"+sh(ty.e):hm(ty.s)):""}</span>`:""}${v.m?'<i class="memo-dot"></i>':""}${v.mt&&v.mt.length?'<span class="mtb">👥</span>':""}</button>`}
  $("#days").innerHTML=h;
  $("#days").querySelectorAll(".day[data-d]").forEach(b=>b.onclick=()=>tapDay(+b.dataset.d));
- $("#fixB").textContent=S.fixed.some(f=>f)?`🔁 固定シフトを${m+1}月に入れる`:"🔁 固定シフトを設定";
+ $("#fixB").textContent=S.autoFix&&fxOn()?"🔁 固定シフト（毎月自動）":S.fixed.some(f=>f)?`🔁 固定シフトを${m+1}月に入れる`:"🔁 固定シフトを設定";
  renderNow();renderMeet();summary(y,m,dim);renderPaint()}
 function renderNow(){const t=new Date();t.setHours(0,0,0,0);
  const at=i=>{const d=new Date(t);d.setDate(d.getDate()+i);return{d,v:S.d[key(d.getFullYear(),d.getMonth(),d.getDate())]||{}}};
@@ -326,15 +333,17 @@ $("#fixB").onclick=()=>{const y=cur.getFullYear(),m=cur.getMonth();
  $("#sheet").innerHTML=`<h2>🔁 固定シフト <span class="mm">ပုံသေဆိုင်း</span></h2>
   <p style="font-size:13px;color:#5d6e6b;margin:0 0 10px;line-height:1.6">毎週同じ曜日に同じシフトの人は、ここで決めておくと<b>1か月分をまとめて</b>入れられます。<br>例：月〜金は日勤、土日は休み</p>
   ${fixedEditor()}
+  <label class="chk" style="font-size:14px;font-weight:800;margin-top:12px;background:#e3f3f1;border-radius:12px;padding:10px"><input type="checkbox" id="fxAuto" ${S.autoFix?"checked":""}>📅 毎月、自動で入れる<br><span style="font-weight:600;font-size:11px;color:#5d6e6b">月が変わっても、ボタンを押さなくても入ります</span></label>
   <button class="btn" id="fxA">${m+1}月の<b>空いている日</b>に入れる</button>
   <button class="btn sub" id="fxO">${m+1}月を全部この形にする（上書き）</button>
   <button class="btn sub" id="fxS" style="background:#f3f6f5;color:#5d6e6b">決めた形だけ保存する</button>
   <div style="font-size:11px;color:#8a9a97;margin-top:8px;line-height:1.6">入れたあとで、ちがう日だけタップして直せます。ミーティング・残業・メモは消えません。</div>`;open();bindFixed();
  const apply=over=>{if(!S.fixed.some(f=>f&&(typeof f!=="object"||f.wh>0))){toast("曜日のシフトを選んでください");return}const dim=new Date(y,m+1,0).getDate();let n=0;
-  for(let d=1;d<=dim;d++){const k=key(y,m,d),f=S.fixed[new Date(y,m,d).getDay()];const v={...(S.d[k]||{})};if((v.k||v.wh||v.cs)&&!over)continue;if(!f&&!over)continue;delete v.cs;delete v.ce;delete v.cb;
-   if(f&&typeof f==="object"){v.k=null;v.wh=+f.wh||0;v.wn=f.n||""}else{v.k=f||null;v.wh=0;v.wn=""}setDay(k,v);if(f)n++}
+  for(let d=1;d<=dim;d++){const k=key(y,m,d),f=S.fixed[new Date(y,m,d).getDay()];const v=S.d[k]||{};if((v.k||v.wh||v.cs)&&!over)continue;if(!f&&!over)continue;fillDay(k,f);if(f)n++}
+  const ym=`${y}-${pad(m+1)}`;if(!S.filled.includes(ym))S.filled.push(ym);
   save();close();render();toast(`🔁 ${n}日分 入れました`)};
- $("#fxA").onclick=()=>apply(false);$("#fxO").onclick=()=>{if(confirm(`${m+1}月のシフトを全部、固定シフトで上書きしますか？`))apply(true)};
+ $("#fxA").onclick=()=>apply(false);
+ $("#fxAuto").onchange=e=>{S.autoFix=e.target.checked;if(S.autoFix){const t=new Date();S.fixFrom=key(t.getFullYear(),t.getMonth(),1);S.filled=[];save();render();toast("📅 毎月 自動で入れます")}else{save();render()}};$("#fxO").onclick=()=>{if(confirm(`${m+1}月のシフトを全部、固定シフトで上書きしますか？`))apply(true)};
  $("#fxS").onclick=()=>{save();close();render();toast("保存しました ✓")}};
 // ---- settings
 $("#setB").onclick=()=>{const draw=()=>{const full=S.job==="full";$("#sheet").innerHTML=`<h2>⚙️ 設定 <span class="mm">ဆက်တင်</span></h2>
@@ -424,12 +433,12 @@ function whatsNew(){$("#sheet").innerHTML=`<div style="text-align:center;font-si
  <ul class="new" style="font-size:14px;padding-left:20px">
  <li><b>💼 正社員にも対応</b><br>⚙️ 設定で「アルバイト」か「正社員」を選べます。正社員は月給＋残業で計算します。</li>
  <li><b>🔁 固定シフト</b><br>毎週同じ曜日のシフトを決めて、1か月分をまとめて入れられます。</li>
- <li><b>🔁 固定シフトに「時間」も</b><br>「平日1時間」「日曜 メッセージ対応 3時間」のように、時間と内容で固定にできます。</li>
+ <li><b>🔁 固定シフトに「時間」も・毎月自動</b><br>「平日1時間」「日曜 メッセージ対応 3時間」のように固定にできます。「毎月、自動で入れる」をオンにすると、月が変わっても自動で入ります。</li>
  <li><b>⏱ アルバイトは時間をえらぶだけ</b><br>「1時間」「2時間」などのボタンで入れられます。給料は「時間×時給」で計算します（1.25倍になるのは、1日8時間をこえた分だけ）。</li>
  <li><b>👥 ミーティング</b><br>会議の予定を入れて、LINEでみんなにお知らせを送れます。</li></ul>
  <button class="btn" id="nOk">OK</button>`;open();$("#nOk").onclick=()=>{S.ver=VER;save();close()}}
 function importFixed(){const m=location.hash.match(/#fx=([\w-]+)/);if(!m)return false;history.replaceState(null,"",location.pathname);
- try{const f=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,"+").replace(/_/g,"/")))));if(!Array.isArray(f)||f.length!==7)throw 0;S.fixed=f;save();return true}catch(e){toast("リンクが読めませんでした");return false}}
+ try{const f=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,"+").replace(/_/g,"/")))));if(!Array.isArray(f)||f.length!==7)throw 0;S.fixed=f;S.autoFix=true;const t=new Date();S.fixFrom=key(t.getFullYear(),t.getMonth(),1);S.filled=[];save();return true}catch(e){toast("リンクが読めませんでした");return false}}
 const gotFx=importFixed();
 addEventListener("hashchange",()=>{if(importFixed()){render();$("#fixB").click();toast("🔁 固定シフトを受け取りました")}});
 render();if(!S.name)welcome();else if(gotFx){S.ver=VER;save();$("#fixB").click();toast("🔁 固定シフトを受け取りました")}else if(S.ver!==VER)whatsNew();

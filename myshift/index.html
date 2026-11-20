@@ -129,8 +129,8 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <div class="tools"><button id="fixB">🔁 固定シフトを入れる</button><button id="mtB" style="color:var(--m)">👥 ミーティング追加</button></div>
 <div class="cal"><div class="wk"><div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div></div><div class="days" id="days"></div></div>
 <div class="card"><h3>👥 これからのミーティング <span class="mm">အစည်းအဝေး</span></h3><div id="mtl"></div></div>
-<div class="card"><h3>📊 今月のまとめ <span class="mm">ဒီလ အနှစ်ချုပ်</span></h3><div id="sum"></div></div>
-<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 6</div>
+<div class="card"><h3 id="sumT">📊 今月のまとめ</h3><div id="sum"></div></div>
+<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 7</div>
 </div>
 
 <div class="paint" id="paint">
@@ -144,7 +144,7 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <input type="file" id="impF" accept=".json,application/json,text/plain" style="display:none">
 
 <script>
-const VER=6;
+const VER=7;
 const $=s=>document.querySelector(s);
 const pad=n=>String(n).padStart(2,"0");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -159,7 +159,7 @@ const DEF_TYPES=[
  {k:"有",name:"有給",mm:"လစာရခွင့်",c:"#0ea5e9",s:"",e:"",br:0,night:false,h:8,rest:true}
 ];
 let S=JSON.parse(localStorage.getItem("myshift-v1")||"null")||{name:"",wage:1300,nightPay:5000,otRate:1.25,types:JSON.parse(JSON.stringify(DEF_TYPES)),d:{}};
-function migrate(){S.job=S.job||"part";S.salary=S.salary??220000;S.stdH=S.stdH||160;S.otUnit=S.otUnit??0;S.fixed=S.fixed||[null,null,null,null,null,null,null];S.recent=S.recent||[];S.autoFix=!!S.autoFix;S.filled=S.filled||[];S.limit28=!!S.limit28;S.d=S.d||{}}
+function migrate(){S.job=S.job||"part";S.salary=S.salary??220000;S.stdH=S.stdH||160;S.otUnit=S.otUnit??0;S.fixed=S.fixed||[null,null,null,null,null,null,null];S.recent=S.recent||[];S.autoFix=!!S.autoFix;S.close=S.close??0;S.payDay=S.payDay??25;S.payNext=S.payNext??true;S.filled=S.filled||[];S.limit28=!!S.limit28;S.d=S.d||{}}
 migrate();
 const save=()=>localStorage.setItem("myshift-v1",JSON.stringify(S));
 let cur=new Date();cur.setDate(1);
@@ -188,15 +188,16 @@ function autoFill(y,m){if(!S.autoFix||!fxOn())return;const ym=`${y}-${pad(m+1)}`
  if(`${ym}-31`<from)return;const dim=new Date(y,m+1,0).getDate();
  for(let d=1;d<=dim;d++){const k=key(y,m,d);if(k<from)continue;const v=S.d[k];if(v&&(v.k||v.wh||v.cs))continue;const f=S.fixed[new Date(y,m,d).getDay()];if(f)fillDay(k,f)}
  S.filled.push(ym);save()}
-function autoAll(){const t=new Date();autoFill(t.getFullYear(),t.getMonth());const n=new Date(t.getFullYear(),t.getMonth()+1,1);autoFill(n.getFullYear(),n.getMonth());autoFill(cur.getFullYear(),cur.getMonth())}
+function autoAll(){if(S.close){const p=new Date(cur.getFullYear(),cur.getMonth()-1,1);autoFill(p.getFullYear(),p.getMonth())}const t=new Date();autoFill(t.getFullYear(),t.getMonth());const n=new Date(t.getFullYear(),t.getMonth()+1,1);autoFill(n.getFullYear(),n.getMonth());autoFill(cur.getFullYear(),cur.getMonth())}
 function render(){autoAll();
  $("#ttl").innerHTML=`📅 ${esc(S.name||"わたし")}のシフト<small>${S.job==="full"?"💼 正社員":"⏰ アルバイト・パート"}</small>`;
  const y=cur.getFullYear(),m=cur.getMonth();$("#ym").textContent=`${y}年 ${m+1}月`;
  const first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),t=new Date();
  let h="";for(let i=0;i<first;i++)h+=`<div class="day out"></div>`;
- for(let d=1;d<=dim;d++){const k=key(y,m,d),v=S.d[k]||{},ty=E(v),dw=(first+d-1)%7;
+ const pdks=[-1,0].map(i=>{const b=new Date(y,m+i,1);const p=payDate(b.getFullYear(),b.getMonth());return key(p.getFullYear(),p.getMonth(),p.getDate())});
+ for(let d=1;d<=dim;d++){const k=key(y,m,d),pdk=pdks.includes(k)?k:"",v=S.d[k]||{},ty=E(v),dw=(first+d-1)%7;
   const tod=t.getFullYear()===y&&t.getMonth()===m&&t.getDate()===d;
-  h+=`<button class="day${dw===0?" sun":dw===6?" sat":""}${tod?" today":""}" data-d="${d}"><span class="d">${d}</span>${v.ot?`<span class="ot">+${v.ot}h</span>`:""}
+  h+=`<button class="day${dw===0?" sun":dw===6?" sat":""}${tod?" today":""}" data-d="${d}"><span class="d">${d}${k===pdk?" 💴":""}${S.close&&d===Math.min(S.close,dim)?'<small style="font-size:8px;color:#8a9a97"> 締</small>':""}</span>${v.ot?`<span class="ot">+${v.ot}h</span>`:""}
    ${ty?`<span class="pill" style="background:${ty.c}">${esc(ty.k)}</span><span class="tm">${ty.wh?ty.h+"時間":isWork(ty)?(v.cs?sh(ty.s)+"-"+sh(ty.e):hm(ty.s)):""}</span>`:""}${v.m?'<i class="memo-dot"></i>':""}${v.mt&&v.mt.length?'<span class="mtb">👥</span>':""}</button>`}
  $("#days").innerHTML=h;
  $("#days").querySelectorAll(".day[data-d]").forEach(b=>b.onclick=()=>tapDay(+b.dataset.d));
@@ -214,7 +215,8 @@ function renderNow(){const t=new Date();t.setHours(0,0,0,0);
   <div class="t">${ty?`${esc(ty.name)} <span class="mm" style="opacity:.95">${esc(ty.mm||"")}</span>`:"未入力"}</div>
   <div class="s">${ty&&isWork(ty)?`🕘 ${tStr(ty)}　`:""}${ty&&ty.rest?"ゆっくり休んでね ☕":""}</div>
   ${mts.map(x=>`<div class="s">👥 ${hm(x.t)} ${esc(x.n)}${x.p?"（"+esc(x.p)+"）":""}</div>`).join("")}
-  <div class="s" style="margin-top:3px">${nxs}</div></div>`}
+  <div class="s" style="margin-top:3px">${nxs}</div>
+  ${(()=>{const n=nextPay();if(!n)return"";const c=calc(n.y,n.m);return`<div class="s" style="margin-top:3px">💴 給料日 ${n.pd.getMonth()+1}/${n.pd.getDate()}まで${n.days?"あと"+n.days+"日":"<b>今日！</b>"}（${n.m+1}月分 約${yen(c.pay)}）</div>`})()}</div>`}
 function upcoming(days){const t=new Date();t.setHours(0,0,0,0);const out=[];
  for(let i=0;i<=days;i++){const d=new Date(t);d.setDate(d.getDate()+i);const k=key(d.getFullYear(),d.getMonth(),d.getDate());const v=S.d[k];
   if(v&&v.mt)v.mt.slice().sort((a,b)=>(a.t||"").localeCompare(b.t||"")).forEach((x,j)=>out.push({d,k,x,i:v.mt.indexOf(x)}))}return out}
@@ -224,8 +226,14 @@ function renderMeet(){const u=upcoming(60).slice(0,6);
  $("#mtl").innerHTML=u.length?u.map((o,j)=>`<div class="mrow"><div class="dt">${o.d.getMonth()+1}/${o.d.getDate()}<small>${W[o.d.getDay()]}曜${o.x.t?" "+hm(o.x.t):""}</small></div><div class="tx"><b>${esc(o.x.n)}</b><span>${o.x.p?"📍 "+esc(o.x.p):""}</span></div><button data-sh="${j}">📤 知らせる</button></div>`).join("")
   :`<div style="font-size:13px;color:#8a9a97;line-height:1.7">まだありません。「👥 ミーティング追加」で入れると、ここに出ます。<br>LINEでみんなにお知らせも送れます。</div>`;
  $("#mtl").querySelectorAll("[data-sh]").forEach(b=>b.onclick=()=>shareText(meetText(u[+b.dataset.sh])))}
-function calc(y,m,dim){const cnt={};let hours=0,nights=0,ot=0,work=0,rest=0,mt=0,prem=0;
- for(let d=1;d<=dim;d++){const v=S.d[key(y,m,d)];if(!v)continue;mt+=(v.mt||[]).length;ot+=+v.ot||0;const ty=E(v);if(!ty)continue;const ck=ty.name;cnt[ck]=cnt[ck]||{c:ty.c,n:0};cnt[ck].n++;
+const lastD=(y,m)=>new Date(y,m+1,0).getDate();
+function period(y,m){if(!S.close)return[new Date(y,m,1),new Date(y,m,lastD(y,m))];const pe=new Date(y,m,Math.min(S.close,lastD(y,m)));const pm=new Date(y,m-1,1);const ps=new Date(pm.getFullYear(),pm.getMonth(),Math.min(S.close,lastD(pm.getFullYear(),pm.getMonth()))+1);return[ps,pe]}
+function payDate(y,m){const pm=new Date(y,m+(S.payNext?1:0),1);const Y=pm.getFullYear(),M=pm.getMonth();return new Date(Y,M,S.payDay?Math.min(S.payDay,lastD(Y,M)):lastD(Y,M))}
+const md=d=>`${d.getMonth()+1}/${d.getDate()}`;
+const closeLbl=()=>`${S.close?S.close+"日":"末日"}締め・${S.payNext?"翌月":"当月"}${S.payDay?S.payDay+"日":"末日"}払い`;
+function nextPay(){const t=new Date();t.setHours(0,0,0,0);for(let i=-2;i<3;i++){const b=new Date(t.getFullYear(),t.getMonth()+i,1);const pd=payDate(b.getFullYear(),b.getMonth());if(pd>=t)return{y:b.getFullYear(),m:b.getMonth(),pd,days:Math.round((pd-t)/864e5)}}return null}
+function calc(y,m){const cnt={};let hours=0,nights=0,ot=0,work=0,rest=0,mt=0,prem=0;const[ps,pe]=period(y,m);
+ for(let dd=new Date(ps);dd<=pe;dd.setDate(dd.getDate()+1)){const v=S.d[key(dd.getFullYear(),dd.getMonth(),dd.getDate())];if(!v)continue;mt+=(v.mt||[]).length;ot+=+v.ot||0;const ty=E(v);if(!ty)continue;const ck=ty.name;cnt[ck]=cnt[ck]||{c:ty.c,n:0};cnt[ck].n++;
   hours+=hoursOf(ty);if(ty.night)nights++;if(isWork(ty))work++;if(ty.rest)rest++;
   if(!ty.rest){const tot=hoursOf(ty)+(+v.ot||0);prem+=Math.max(0,tot-8)}}
  if(S.job==="full"){const base=+S.salary||0,otp=ot*otUnit(),np=nights*(+S.nightPay||0);return{cnt,hours,nights,ot,work,rest,mt,base,otp,np,prem:0,pay:Math.round(base+otp+np)}}
@@ -237,7 +245,8 @@ function weekly(y,m){const first=new Date(y,m,1),start=new Date(first);start.set
   rows+=`<div style="display:grid;grid-template-columns:86px 1fr 62px;gap:8px;align-items:center;font-size:12px;margin-top:6px"><span>${w.getMonth()+1}/${w.getDate()}〜${e.getMonth()+1}/${e.getDate()}</span><div style="background:#eef3f2;border-radius:6px;height:10px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${over?"#e0505e":"#0f9b8e"}"></div></div><b style="text-align:right;color:${over?"#e0505e":"inherit"}">${r1(h)}h${over?" ⚠️":""}</b></div>`}
  return`<div style="margin-top:12px;border-top:1px solid #eef3f2;padding-top:10px"><div style="font-size:12px;font-weight:800">⏰ 週ごとの時間 <span class="mm">တစ်ပတ်ချင်း အချိန်</span>${S.limit28?` <span style="color:#e0505e">（上限 週28時間）</span>`:""}</div>${rows}
  ${S.limit28?`<div style="font-size:10px;color:#8a9a97;margin-top:6px;line-height:1.5">留学生・家族滞在の資格外活動は、どの曜日から数えても週28時間以内です。くわしくは学校や入管で確認してください。</div>`:""}</div>`}
-function summary(y,m,dim){const c=calc(y,m,dim);
+function summary(y,m,dim){const c=calc(y,m);const[ps,pe]=period(y,m),pd=payDate(y,m);
+ $("#sumT").innerHTML=`📊 ${m+1}月分のまとめ <span class="mm">ဒီလ အနှစ်ချုပ်</span><div style="font-size:12px;font-weight:700;color:#5d6e6b;margin-top:3px">📅 ${md(ps)}〜${md(pe)}（${closeLbl()}）</div>`;
  $("#sum").innerHTML=`<div class="stats">
   <div class="st"><b>${c.work}</b><span>出勤日<br><span class="mm">အလုပ်ဆင်းရက်</span></span></div>
   <div class="st"><b>${c.rest}</b><span>休み・有給<br><span class="mm">နားရက်</span></span></div>
@@ -246,6 +255,7 @@ function summary(y,m,dim){const c=calc(y,m,dim);
   <div class="st"><b>${r1(c.ot)}</b><span>残業時間<br><span class="mm">အချိန်ပို</span></span></div>
   <div class="st"><b>${c.mt}</b><span>ミーティング<br><span class="mm">အစည်းအဝေး</span></span></div></div>
   <div class="pay"><div style="font-size:12px;font-weight:700">💴 給料の目安 <span class="mm">လစာ ခန့်မှန်း</span></div><div class="big">${yen(c.pay)}</div>
+  <div style="font-size:13px;font-weight:800;margin:2px 0 6px">🗓 給料日：${pd.getMonth()+1}月${pd.getDate()}日（${W[pd.getDay()]}）</div>
   ${S.job==="full"?`<div class="row"><span>月給（基本給）</span><b>${yen(c.base)}</b></div>
   ${c.ot?`<div class="row"><span>残業（${r1(c.ot)}時間×${Math.round(otUnit()).toLocaleString()}円）</span><b>${yen(c.otp)}</b></div>`:""}`
   :`<div class="row"><span>時給分（${r1(c.all-c.prem)}時間×${(+S.wage).toLocaleString()}円）</span><b>${yen(c.base)}</b></div>
@@ -361,6 +371,11 @@ $("#setB").onclick=()=>{const draw=()=>{const full=S.job==="full";$("#sheet").in
    <div><div class="lab">夜勤手当/回</div><input id="sNight" type="number" inputmode="numeric" value="${S.nightPay}"></div>
    <div><div class="lab">残業の倍率</div><input id="sOt" type="number" step="0.05" inputmode="decimal" value="${S.otRate}"></div></div>
    <label class="chk" style="font-size:13px;margin-top:10px"><input type="checkbox" id="sL28" ${S.limit28?"checked":""}>週28時間の上限をチェックする<br>（留学生・家族滞在の人）</label>`}
+  <div class="lab" style="margin-top:16px">💴 締め日・給料日 <span class="mm">လစာရက်</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px"><label style="font-size:10px;color:#777">締め日<select id="sClose">${[0,...Array.from({length:28},(_,i)=>i+1)].map(d=>`<option value="${d}" ${S.close===d?"selected":""}>${d?d+"日":"末日"}</option>`).join("")}</select></label>
+   <label style="font-size:10px;color:#777">給料の月<select id="sPayN"><option value="0" ${S.payNext?"":"selected"}>当月</option><option value="1" ${S.payNext?"selected":""}>翌月</option></select></label>
+   <label style="font-size:10px;color:#777">給料日<select id="sPayD">${[0,...Array.from({length:28},(_,i)=>i+1)].map(d=>`<option value="${d}" ${S.payDay===d?"selected":""}>${d?d+"日":"末日"}</option>`).join("")}</select></label></div>
+  <div style="font-size:11px;color:#8a9a97;margin-top:4px">例：25日締め・翌月10日払い／末日締め・翌月25日払い</div>
   <div class="lab" style="margin-top:16px">🔁 固定シフト（毎週同じ）</div>${fixedEditor()}
   <div class="lab" style="margin-top:16px">シフトの種類 <span class="mm">ဆိုင်းအမျိုးအစား</span></div>
   ${S.types.map((t,j)=>`<div class="trow"><div class="a"><input type="color" value="${t.c}" data-t="${j}" data-f="c"><input value="${esc(t.k)}" maxlength="1" data-t="${j}" data-f="k" ${j<DEF_TYPES.length?"disabled style='background:#f3f6f5'":""}><input value="${esc(t.name)}" data-t="${j}" data-f="name" placeholder="名前"><button class="x" data-del="${j}" ${j<DEF_TYPES.length?"style='visibility:hidden'":""}>✕</button></div>
@@ -373,7 +388,7 @@ $("#setB").onclick=()=>{const draw=()=>{const full=S.job==="full";$("#sheet").in
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button class="btn sub" id="bk" style="margin:0">書き出す</button><button class="btn sub" id="rsB" style="margin:0">読みこむ</button></div>`;
   bindFixed();
   const num=(id,f)=>{const e=$(id);if(e)S[f]=+e.value||0};
-  const apply=()=>{S.name=$("#sName").value.trim();num("#sWage","wage");num("#sNight","nightPay");num("#sSal","salary");num("#sStd","stdH");num("#sOtU","otUnit");const o=$("#sOt");if(o)S.otRate=+o.value||1.25;const l=$("#sL28");if(l)S.limit28=l.checked;if(!S.stdH)S.stdH=160;
+  const apply=()=>{S.name=$("#sName").value.trim();num("#sWage","wage");num("#sNight","nightPay");num("#sSal","salary");num("#sStd","stdH");num("#sOtU","otUnit");const o=$("#sOt");if(o)S.otRate=+o.value||1.25;const l=$("#sL28");if(l)S.limit28=l.checked;S.close=+$("#sClose").value;S.payNext=$("#sPayN").value==="1";S.payDay=+$("#sPayD").value;if(!S.stdH)S.stdH=160;
    $("#sheet").querySelectorAll("[data-t]").forEach(e=>{const t=S.types[+e.dataset.t];const f=e.dataset.f;t[f]=e.type==="checkbox"?e.checked:e.type==="number"?+e.value:e.value})};
   $("#sheet").querySelectorAll("[data-job]").forEach(b=>b.onclick=()=>{apply();S.job=b.dataset.job;draw()});
   $("#addT").onclick=()=>{apply();const used=S.types.map(t=>t.k);const k=["研","会","A","B","C","D","E"].find(x=>!used.includes(x))||"?";S.types.push({k,name:"新しいシフト",mm:"",c:"#e67e22",s:"10:00",e:"15:00",br:0,night:false});draw()};
@@ -405,7 +420,7 @@ function drawImage(){const y=cur.getFullYear(),m=cur.getMonth(),dim=new Date(y,m
  let lx=30,ly=top+rows*ch+50;g.textAlign="left";
  S.types.forEach(t=>{g.font=F(700,24);const label=`${t.k} ${t.name}${isWork(t)?" "+hm(t.s)+"-"+hm(t.e):""}`;const w=g.measureText(label).width+52;
   if(lx+w>Wd-30){lx=30;ly+=46}g.fillStyle=t.c;rr(g,lx,ly-24,30,30,8);g.fill();g.fillStyle="#1f2d2b";g.fillText(label,lx+40,ly);lx+=w});
- const c=calc(y,m,dim);g.fillStyle="#5d6e6b";g.font=F(700,26);g.fillText(`出勤 ${c.work}日 ・ 休み ${c.rest}日 ・ 夜勤 ${c.nights}回${c.mt?` ・ MTG ${c.mt}回`:""}`,30,ly+70);
+ const c=calc(y,m);g.fillStyle="#5d6e6b";g.font=F(700,26);g.fillText(`出勤 ${c.work}日 ・ 休み ${c.rest}日 ・ 夜勤 ${c.nights}回${c.mt?` ・ MTG ${c.mt}回`:""}`,30,ly+70);
  return cv}
 function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
 function monthText(){const y=cur.getFullYear(),m=cur.getMonth(),dim=new Date(y,m+1,0).getDate();let s=`📅 ${m+1}月の勤務表${S.name?"（"+S.name+"）":""}\n`;
@@ -433,11 +448,13 @@ function whatsNew(){$("#sheet").innerHTML=`<div style="text-align:center;font-si
  <ul class="new" style="font-size:14px;padding-left:20px">
  <li><b>💼 正社員にも対応</b><br>⚙️ 設定で「アルバイト」か「正社員」を選べます。正社員は月給＋残業で計算します。</li>
  <li><b>🔁 固定シフト</b><br>毎週同じ曜日のシフトを決めて、1か月分をまとめて入れられます。</li>
+ <li><b>💴 締め日・給料日</b><br>「25日締め」なら、10/26〜11/25 のように給料の期間で数えます。給料日までの日数も出ます（⚙️ 設定）。</li>
  <li><b>🔁 固定シフトに「時間」も・毎月自動</b><br>「平日1時間」「日曜 メッセージ対応 3時間」のように固定にできます。「毎月、自動で入れる」をオンにすると、月が変わっても自動で入ります。</li>
  <li><b>⏱ アルバイトは時間をえらぶだけ</b><br>「1時間」「2時間」などのボタンで入れられます。給料は「時間×時給」で計算します（1.25倍になるのは、1日8時間をこえた分だけ）。</li>
  <li><b>👥 ミーティング</b><br>会議の予定を入れて、LINEでみんなにお知らせを送れます。</li></ul>
  <button class="btn" id="nOk">OK</button>`;open();$("#nOk").onclick=()=>{S.ver=VER;save();close()}}
-function importFixed(){const m=location.hash.match(/#fx=([\w-]+)/);if(!m)return false;history.replaceState(null,"",location.pathname);
+function importFixed(){const pm=location.hash.match(/[#&]pay=(\d+)\.(\d)\.(\d+)/);if(pm){S.close=+pm[1];S.payNext=pm[2]==="1";S.payDay=+pm[3];save()}
+ const m=location.hash.match(/#fx=([\w-]+)/);if(!m){if(pm){history.replaceState(null,"",location.pathname);toast("💴 "+closeLbl()+" にしました")}return false}history.replaceState(null,"",location.pathname);
  try{const f=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,"+").replace(/_/g,"/")))));if(!Array.isArray(f)||f.length!==7)throw 0;S.fixed=f;S.autoFix=true;const t=new Date();S.fixFrom=key(t.getFullYear(),t.getMonth(),1);S.filled=[];save();return true}catch(e){toast("リンクが読めませんでした");return false}}
 const gotFx=importFixed();
 addEventListener("hashchange",()=>{if(importFixed()){render();$("#fixB").click();toast("🔁 固定シフトを受け取りました")}});

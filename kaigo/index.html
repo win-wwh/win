@@ -2,16 +2,15 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Win 介護手帳</title>
-<meta name="description" content="介護の日本語437語をミャンマー語訳つきで。無料。">
+<meta name="description" content="介護の日本語437語をミャンマー語訳つきで。カード・クイズ・苦手復習・毎日の目標。無料。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Win 介護手帳">
-<meta property="og:description" content="介護の日本語437語をミャンマー語訳つきで。無料。">
+<meta property="og:description" content="介護の日本語437語をミャンマー語訳つきで。カード・クイズ・苦手復習。無料。">
 <meta property="og:image" content="https://win-wwh.github.io/win/kaigo/icon-512.png">
 <meta property="og:url" content="https://win-wwh.github.io/win/kaigo/">
 <meta name="twitter:card" content="summary">
-
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -19,82 +18,129 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Win 介護手帳">
 <meta name="theme-color" content="#c2553a">
-
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+Myanmar:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+Myanmar:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#f6f3ee; --card:#fff; --ink:#2b2622; --sub:#7a6f66; --line:#e6dfd6;
-  --accent:#c2553a; --accent-soft:#f6e3dc; --ok:#3f8a5a; --ng:#c0392b;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:"Noto Sans JP","Noto Sans Myanmar",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
-.mm{font-family:"Noto Sans Myanmar","Myanmar Text","Padauk",sans-serif;line-height:1.9}
-header{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 16px 0}
-h1{font-size:20px;margin:0}
-h1 small{display:block;font-size:12px;color:var(--sub);font-weight:400;margin-top:2px}
-nav.modes{display:flex;gap:6px;margin:12px 0 0;border-bottom:1px solid var(--line)}
-nav.modes button{flex:1;border:0;background:none;padding:10px 0 9px;font:inherit;font-size:14px;color:var(--sub);border-bottom:3px solid transparent;cursor:pointer}
-nav.modes button.on{color:var(--accent);border-color:var(--accent);font-weight:700}
-.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
+:root{--bg:#f7f2ec;--card:#fff;--ink:#2b2622;--sub:#7a6f66;--line:#ece4da;--accent:#c2553a;--accent2:#e8845f;--soft:#fbe9e2;--ok:#2f8f5b;--ng:#c0392b;--gold:#e0a400}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP","Noto Sans Myanmar",system-ui,sans-serif;padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Text","Myanmar Sangam MN",sans-serif;line-height:1.9}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 16px 4px;display:flex;align-items:center;gap:10px}
+header img{width:34px;height:34px;border-radius:9px}
+header h1{font-size:18px;margin:0;line-height:1.2;flex:1}
+header h1 small{display:block;font-size:11px;color:var(--sub);font-weight:400}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 16px 10px;scrollbar-width:none;position:sticky;top:58px;z-index:4;background:var(--bg)}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;color:var(--ink)}
+.chip{flex:none;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;color:var(--ink)}
 .chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
-main{padding:0 16px 40px;max-width:640px;margin:0 auto}
-.search{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:15px;background:var(--card);margin-bottom:10px}
-.count{font-size:12px;color:var(--sub);margin:0 2px 8px}
-.item{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;box-shadow:0 1px 0 var(--line)}
+main{padding:0 16px calc(env(safe-area-inset-bottom) + 96px);max-width:640px;margin:0 auto}
+/* bottom nav */
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#fffffff2;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:center;padding:6px 6px calc(env(safe-area-inset-bottom) + 6px)}
+.bnav .in{display:flex;width:100%;max-width:520px}
+.bnav button{flex:1;border:0;background:none;font:inherit;font-size:11px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0;border-radius:12px}
+.bnav button b{font-size:22px;line-height:1.2;filter:grayscale(1);opacity:.6}
+.bnav button.on{color:var(--accent);font-weight:700}
+.bnav button.on b{filter:none;opacity:1}
+/* home */
+.hero{border-radius:22px;padding:18px;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 10px 24px #c2553a33;margin:6px 0 14px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;right:-30px;top:-30px;width:140px;height:140px;border-radius:50%;background:#ffffff1a}
+.hero .t{font-size:13px;opacity:.9}
+.hero .big{font-size:30px;font-weight:900;margin:2px 0}
+.hero .big small{font-size:15px;font-weight:700;opacity:.9}
+.bar{height:10px;border-radius:6px;background:#ffffff40;overflow:hidden;margin:8px 0 10px}
+.bar i{display:block;height:100%;background:#fff;border-radius:6px;transition:width .4s}
+.hero .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;position:relative;z-index:1}
+.hero .row3 div{background:#ffffff26;border-radius:14px;padding:8px 4px;text-align:center;font-size:11px}
+.hero .row3 b{display:block;font-size:20px}
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin:18px 2px 8px}
+.sec h2{font-size:16px;margin:0}
+.sec span{font-size:12px;color:var(--sub)}
+.today{background:var(--card);border-radius:18px;padding:6px 14px;box-shadow:0 2px 10px #0000000a}
+.today .w{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.today .w:last-child{border:0}
+.today .w .b{flex:1;min-width:0}
+.today .w .jp{font-size:17px;font-weight:700}
+.today .w .k{font-size:11px;color:var(--sub)}
+.today .w .mm{font-size:13px;color:#4c443d}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.act{border:0;border-radius:18px;padding:14px;text-align:left;font:inherit;background:var(--card);box-shadow:0 2px 10px #0000000a;color:var(--ink)}
+.act b{display:block;font-size:24px;margin-bottom:4px}
+.act span{font-size:14px;font-weight:700}
+.act small{display:block;font-size:11px;color:var(--sub);margin-top:2px}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat{border:0;border-radius:18px;padding:12px;text-align:left;font:inherit;color:var(--ink);position:relative}
+.cat .e{font-size:26px}
+.cat .n{font-size:14px;font-weight:700;margin-top:2px}
+.cat .m{font-size:11px;color:#5d544c;line-height:1.6}
+.cat .p{height:6px;border-radius:4px;background:#ffffff99;margin-top:8px;overflow:hidden}
+.cat .p i{display:block;height:100%;background:#2b262299;border-radius:4px}
+.cat .c{position:absolute;right:10px;top:10px;font-size:11px;font-weight:700;color:#5d544c}
+/* list */
+.search{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:14px;font:inherit;font-size:16px;background:var(--card);margin-bottom:8px}
+.count{font-size:12px;color:var(--sub);margin:0 2px 8px;display:flex;justify-content:space-between}
+.item{background:var(--card);border-radius:14px;padding:12px 10px 12px 14px;margin-bottom:8px;display:flex;gap:4px;align-items:center;box-shadow:0 1px 0 var(--line)}
+.item.done{background:#f1f8f3}
 .item .body{flex:1;min-width:0}
 .jp{font-size:18px;font-weight:700}
 .kana{font-size:12px;color:var(--sub)}
-.item .mm{font-size:15px;margin-top:4px}
-.icon{border:0;background:none;font-size:20px;padding:4px;cursor:pointer;line-height:1;color:var(--sub)}
-.icon.fav{color:#e0a400}
-.empty{text-align:center;color:var(--sub);padding:40px 0}
-/* flashcard */
-.flash{perspective:1000px;margin:8px 0 14px}
-.fcard{position:relative;height:260px;transition:transform .45s;transform-style:preserve-3d;cursor:pointer}
-.fcard.flip{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;background:var(--card);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;backface-visibility:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06)}
-.face.back{transform:rotateY(180deg);background:var(--accent-soft)}
-.face .jp{font-size:30px}
-.face .kana{font-size:15px;margin-top:6px}
-.face .mm{font-size:22px}
-.hint{font-size:12px;color:var(--sub);margin-top:14px}
-.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
-.btn{border:0;border-radius:10px;padding:12px 14px;font:inherit;font-size:14px;cursor:pointer;background:var(--card);color:var(--ink);box-shadow:0 1px 0 var(--line)}
-.btn.primary{background:var(--accent);color:#fff}
-.btn:disabled{opacity:.4}
-.prog{text-align:center;font-size:13px;color:var(--sub)}
-.toggle{display:flex;gap:6px;margin:6px 0 4px}
+.item .mm{font-size:14px;margin-top:2px}
+.icon{border:0;background:none;font-size:20px;padding:6px;line-height:1;color:var(--sub);border-radius:10px}
+.icon.fav{color:var(--gold)}
+.icon.lr{font-size:16px;border:1.5px solid var(--line);width:34px;height:34px;padding:0;color:#bbb}
+.icon.lr.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.empty{text-align:center;color:var(--sub);padding:40px 10px;line-height:1.9}
+/* cards */
+.toggle{display:flex;gap:6px;margin:4px 0 6px;flex-wrap:wrap}
 .toggle .chip{font-size:12px}
+.flash{perspective:1000px;margin:8px 0 12px}
+.fcard{position:relative;height:270px;transition:transform .45s;transform-style:preserve-3d}
+.fcard.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;background:var(--card);border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 6px 20px #0000000f}
+.face.back{transform:rotateY(180deg);background:var(--soft)}
+.face .jp{font-size:32px}
+.face .kana{font-size:16px;margin-top:6px}
+.face .mm{font-size:22px}
+.face .tag{position:absolute;left:14px;top:12px;font-size:11px;color:var(--sub)}
+.hint{font-size:12px;color:var(--sub);margin-top:14px}
+.row{display:flex;gap:8px;align-items:center}
+.btn{border:0;border-radius:14px;padding:13px 14px;font:inherit;font-size:15px;background:var(--card);color:var(--ink);box-shadow:0 1px 0 var(--line);font-weight:700}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.again{background:#fff3e0;color:#b45309}
+.btn:disabled{opacity:.35}
+.prog{text-align:center;font-size:13px;color:var(--sub);margin-top:10px}
+.pbar{height:6px;border-radius:4px;background:var(--line);overflow:hidden;margin:4px 0 0}
+.pbar i{display:block;height:100%;background:var(--accent)}
 /* quiz */
-.q{background:var(--card);border-radius:16px;padding:22px 16px;text-align:center;margin:8px 0 12px}
-.q .jp{font-size:26px}
+.q{background:var(--card);border-radius:20px;padding:24px 16px;text-align:center;margin:8px 0 12px;box-shadow:0 4px 14px #0000000a}
+.q .jp{font-size:28px}
 .q .mm{font-size:20px}
+.q .ask{font-size:12px;color:var(--sub);margin-bottom:6px}
 .opts{display:grid;gap:8px}
-.opt{text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;font:inherit;font-size:15px;cursor:pointer;color:var(--ink)}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:13px 14px;font:inherit;font-size:15px;color:var(--ink)}
 .opt.ok{border-color:var(--ok);background:#e5f3ea}
 .opt.ng{border-color:var(--ng);background:#fbe6e3}
-.score{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-top:6px}
-.result{text-align:center;padding:30px 10px}
-.result .big{font-size:44px;font-weight:700;color:var(--accent)}
-footer{font-size:11px;color:var(--sub);text-align:center;padding:10px 16px 30px}
+.score{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-top:8px}
+.result{text-align:center;padding:24px 6px}
+.result .big{font-size:48px;font-weight:900;color:var(--accent)}
+.miss{background:var(--card);border-radius:16px;padding:6px 14px;text-align:left;margin:14px 0}
+.miss div{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.miss div:last-child{border:0}
+.toast{position:fixed;left:50%;top:80px;transform:translateX(-50%);background:#2b2622ee;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:30;display:none;white-space:nowrap}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:40}
+footer{font-size:11px;color:var(--sub);text-align:center;padding:16px 0 0;line-height:1.8}
 </style>
 </head>
 <body>
-<header>
-  <h1>Win 介護手帳 <small class="mm">ပြုစုစောင့်ရှောက်ရေး ဂျပန်စကားလုံး</small></h1>
-  <nav class="modes">
-    <button data-mode="list" class="on">📖 一覧</button>
-    <button data-mode="card">🃏 カード</button>
-    <button data-mode="quiz">✏️ クイズ</button>
-  </nav>
-</header>
+<header><img src="icon-180.png" alt=""><h1>Win 介護手帳 <small class="mm">ပြုစုစောင့်ရှောက်ရေး ဂျပန်စကားလုံး</small></h1></header>
 <div class="chips" id="chips"></div>
 <main id="main"></main>
-<footer>🔊 で日本語の発音を聞けます ・ <span class="mm">🔊 ကိုနှိပ်ပြီး ဂျပန်အသံထွက် နားထောင်ပါ</span></footer>
-
+<nav class="bnav"><div class="in">
+  <button data-mode="home" class="on"><b>🏠</b>ホーム</button>
+  <button data-mode="list"><b>📖</b>一覧</button>
+  <button data-mode="card"><b>🃏</b>カード</button>
+  <button data-mode="quiz"><b>✏️</b>クイズ</button>
+</div></nav>
+<div class="toast" id="toast"></div>
 <script>
 const CATS = [
   {id:"all",  jp:"すべて",   mm:"အားလုံး"},
@@ -565,135 +611,153 @@ const W = [
  ["med", "看護記録", "かんごきろく", "သူနာပြု မှတ်တမ်း"],
 ].map((r,i)=>({id:i,cat:r[0],jp:r[1],kana:r[2],mm:r[3]}));
 
-let favs = new Set();
-try{ favs = new Set(JSON.parse(localStorage.getItem("kaigo-fav")||"[]")); }catch(e){}
-function saveFav(){ try{localStorage.setItem("kaigo-fav",JSON.stringify([...favs]))}catch(e){} }
+CATS.splice(2,0,{id:"weak",jp:"❗ 苦手",mm:"အားနည်းချက်"});
+const META={all:["📚","#efe7dd"],fav:["⭐","#fff3c4"],weak:["❗","#fde2df"],body:["🧍","#ffe4d6"],care:["🤝","#e3f1e7"],tool:["🦽","#e2ecf8"],sym:["🤒","#fde6e6"],vital:["🩺","#e8e4f8"],talk:["💬","#fff0d6"],work:["🏢","#e4eef0"],meal:["🍚","#fbeedb"],bath:["🛁","#dff1f6"],move:["🚶","#e9f3dc"],mind:["💭","#f3e3f1"],rec:["📝","#eceae4"],med:["💊","#e3eefc"],life:["🧹","#f1ecdf"],exam:["🎓","#e6e8fa"],time:["⏰","#fbe8de"],place:["📍","#e2f2ec"],verb:["🏃","#f6e9df"]};
+const meta=id=>META[id]||["📘","#eee"];
+const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+const SV=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+let favs=new Set(LS("kaigo-fav",[]));
+let learned=new Set(LS("kaigo-learned",[]));
+let weak=LS("kaigo-weak",{});
+let st=LS("kaigo-stats",{goal:10,day:"",ids:[],streak:0,last:"",best:0});
+const saveFav=()=>SV("kaigo-fav",[...favs]),saveLearned=()=>SV("kaigo-learned",[...learned]),saveWeak=()=>SV("kaigo-weak",weak),saveSt=()=>SV("kaigo-stats",st);
+const dkey=d=>`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+function rollDay(){const t=dkey(new Date());if(st.day!==t){st.day=t;st.ids=[];saveSt()}}
+function touch(id){rollDay();if(st.ids.includes(id))return;st.ids.push(id);
+ const t=dkey(new Date()),y=new Date();y.setDate(y.getDate()-1);
+ if(st.ids.length===st.goal){if(st.last!==t){st.streak=st.last===dkey(y)?st.streak+1:1;st.last=t;st.best=Math.max(st.best||0,st.streak)}saveSt();setTimeout(()=>{toast(`🎉 今日の目標たっせい！ 🔥${st.streak}日`);confetti()},300);return}
+ saveSt()}
+function streakNow(){const t=dkey(new Date()),y=new Date();y.setDate(y.getDate()-1);return st.last===t||st.last===dkey(y)?st.streak:0}
 
-let mode="list", cat="all", q="";
-let cardIdx=0, cardDir="jp", cardOrder=[];
-let quiz=null, quizDir="jp";
+let mode="home",cat="all",q="";
+let cardIdx=0,cardDir="jp",cardOrder=[],cardOnlyNew=true,cardDone=0;
+let quiz=null,quizDir="jp";
 
 const $=s=>document.querySelector(s);
-const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",2000)}
+function confetti(){const c=document.createElement("canvas");c.className="confetti";c.width=innerWidth;c.height=innerHeight;document.body.appendChild(c);const g=c.getContext("2d");
+ const P=Array.from({length:90},()=>({x:Math.random()*c.width,y:-20-Math.random()*c.height*.5,vx:(Math.random()-.5)*3,vy:2+Math.random()*3,r:Math.random()*6.28,s:5+Math.random()*6,c:["#c2553a","#e8845f","#e0a400","#2f8f5b","#3b82f6"][Math.random()*5|0]}));
+ let n=0;(function f(){g.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.r+=.1;g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);g.restore()});if(++n<150)requestAnimationFrame(f);else c.remove()})()}
 
 let jaVoice=null;
-function pickVoice(){ try{ jaVoice=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("ja"))||null }catch(e){} }
-try{ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }catch(e){}
-function speak(t){
-  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t); u.lang="ja-JP"; u.rate=.85; if(jaVoice)u.voice=jaVoice; speechSynthesis.speak(u);}catch(e){}
-}
+function pickVoice(){try{jaVoice=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.startsWith("ja"))||null}catch(e){}}
+try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
+function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ja-JP";u.rate=.85;if(jaVoice)u.voice=jaVoice;speechSynthesis.speak(u)}catch(e){}}
 
-function words(){
-  let w = cat==="all"?W : cat==="fav"?W.filter(x=>favs.has(x.id)) : W.filter(x=>x.cat===cat);
-  if(q && mode==="list"){ const s=q.toLowerCase(); w=w.filter(x=>x.jp.includes(q)||x.kana.includes(q)||x.mm.includes(q)||x.jp.toLowerCase().includes(s)); }
-  return w;
-}
+const inCat=(c)=>c==="all"?W:c==="fav"?W.filter(x=>favs.has(x.id)):c==="weak"?W.filter(x=>weak[x.id]).sort((a,b)=>weak[b.id]-weak[a.id]):W.filter(x=>x.cat===c);
+function words(){let w=inCat(cat);
+ if(q&&mode==="list"){const s=q.toLowerCase();w=w.filter(x=>x.jp.includes(q)||x.kana.includes(q)||x.mm.includes(q)||x.jp.toLowerCase().includes(s))}return w}
+function todays(){const seed=dkey(new Date()).split("-").reduce((a,b)=>a*31+ +b,7);let pool=W.filter(x=>!learned.has(x.id));if(pool.length<5)pool=W;
+ const out=[];let s=seed;while(out.length<5&&out.length<pool.length){s=(s*9301+49297)%233280;const x=pool[Math.floor(s/233280*pool.length)];if(!out.includes(x))out.push(x)}return out}
 
-function renderChips(){
-  $("#chips").innerHTML = CATS.map(c=>`<button class="chip ${c.id===cat?"on":""}" data-cat="${c.id}">${c.jp}</button>`).join("");
-}
+function renderChips(){const ch=$("#chips");if(mode==="home"){ch.style.display="none";return}ch.style.display="flex";
+ ch.innerHTML=CATS.filter(c=>c.id!=="weak"||Object.keys(weak).length).map(c=>`<button class="chip ${c.id===cat?"on":""}" data-cat="${c.id}">${c.id==="all"||c.id==="fav"||c.id==="weak"?"":meta(c.id)[0]+" "}${c.jp}</button>`).join("");
+ const on=ch.querySelector(".on");if(on)on.scrollIntoView({inline:"center",block:"nearest"})}
 
-function renderList(){
-  const w=words();
-  $("#main").innerHTML = `<input class="search" id="search" placeholder="検索 / ရှာဖွေရန်" value="${esc(q)}">
-  <div class="count">${w.length} 語</div>
-  ${w.length? w.map(x=>`<div class="item">
-     <div class="body"><div class="jp">${x.jp}</div>${x.kana!==x.jp?`<div class="kana">${x.kana}</div>`:""}<div class="mm">${x.mm}</div></div>
-     <button class="icon" data-say="${x.id}" aria-label="発音">🔊</button>
-     <button class="icon ${favs.has(x.id)?"fav":""}" data-fav="${x.id}" aria-label="お気に入り">${favs.has(x.id)?"★":"☆"}</button>
-   </div>`).join("") : `<div class="empty">${cat==="fav"?"☆ を押してお気に入りに追加<br><span class='mm'>☆ နှိပ်ပြီး သိမ်းထားပါ</span>":"見つかりません"}</div>`}`;
-  const s=$("#search");
-  s.oninput=e=>{q=e.target.value; const pos=s.selectionStart; renderList(); const n=$("#search"); n.focus(); n.setSelectionRange(pos,pos);};
-}
+function renderHome(){rollDay();const done=st.ids.length,goal=st.goal,pct=Math.min(100,done/goal*100),L=learned.size,wk=Object.keys(weak).length;
+ const tw=todays();
+ $("#main").innerHTML=`<div class="hero"><div class="t">今日の学習 <span class="mm">ယနေ့ လေ့လာမှု</span></div>
+  <div class="big">${done} <small>/ ${goal} 語 ${done>=goal?"🎉":""}</small></div><div class="bar"><i style="width:${pct}%"></i></div>
+  <div class="row3"><div><b>🔥 ${streakNow()}</b>日 連続</div><div><b>✅ ${L}</b>覚えた</div><div><b>${Math.round(L/W.length*100)}%</b>/ ${W.length}語</div></div></div>
+  <div class="sec"><h2>🌱 今日の5語</h2><span class="mm">ယနေ့ စကားလုံး ၅ လုံး</span></div>
+  <div class="today">${tw.map(x=>`<div class="w"><div class="b"><div class="jp">${x.jp}</div>${x.kana!==x.jp?`<div class="k">${x.kana}</div>`:""}<div class="mm">${x.mm}</div></div><button class="icon" data-say="${x.id}">🔊</button><button class="icon lr ${learned.has(x.id)?"on":""}" data-lr="${x.id}">✓</button></div>`).join("")}</div>
+  <button class="btn primary" id="todayCards" style="width:100%;margin-top:10px">🃏 今日の5語をカードで覚える</button>
+  <div class="sec"><h2>📚 練習する</h2></div>
+  <div class="acts">
+   <button class="act" data-go="card"><b>🃏</b><span>カード</span><small>めくって覚える</small></button>
+   <button class="act" data-go="quiz"><b>✏️</b><span>クイズ</span><small>10問・3種類</small></button>
+   <button class="act" data-go="weak"><b>❗</b><span>苦手を復習</span><small>${wk?wk+"語":"まだありません"}</small></button>
+   <button class="act" data-go="fav"><b>⭐</b><span>お気に入り</span><small>${favs.size?favs.size+"語":"☆で追加"}</small></button></div>
+  <div class="sec"><h2>🗂 カテゴリー</h2><span>覚えた / 全部</span></div>
+  <div class="cats">${CATS.filter(c=>!["all","fav","weak"].includes(c.id)).map(c=>{const ws=W.filter(x=>x.cat===c.id),l=ws.filter(x=>learned.has(x.id)).length;const[e,bg]=meta(c.id);
+   return`<button class="cat" style="background:${bg}" data-opencat="${c.id}"><div class="e">${e}</div><div class="n">${c.jp}</div><div class="m mm">${c.mm}</div><div class="p"><i style="width:${ws.length?l/ws.length*100:0}%"></i></div><span class="c">${l}/${ws.length}</span></button>`}).join("")}</div>
+  <div class="sec"><h2>🎯 1日の目標</h2></div>
+  <div class="toggle">${[5,10,20,30].map(g=>`<button class="chip ${st.goal===g?"on":""}" data-goal="${g}">${g}語</button>`).join("")}</div>
+  <footer>🔊 で日本語の発音を聞けます（音が出ないときは、iPhoneのマナーモードを切ってください）<br><span class="mm">🔊 ကိုနှိပ်ပြီး ဂျပန်အသံထွက် နားထောင်ပါ</span><br>🔒 学習の記録はこのスマホの中だけに保存されます</footer>`;
+ $("#todayCards").onclick=()=>{cardOrder=tw.slice();cardIdx=0;cardDone=0;setMode("card",true)}}
 
-function startCards(){ cardOrder=shuffle(words()); cardIdx=0; }
+function renderList(){const w=words(),L=w.filter(x=>learned.has(x.id)).length;
+ $("#main").innerHTML=`<input class="search" id="search" placeholder="🔍 検索 / ရှာဖွေရန်" value="${esc(q)}">
+  <div class="count"><span>${w.length} 語</span><span>✅ 覚えた ${L}</span></div>
+  ${w.length?w.map(x=>`<div class="item ${learned.has(x.id)?"done":""}"><div class="body"><div class="jp">${x.jp}${cat==="weak"?` <small style="color:var(--ng);font-size:11px">×${weak[x.id]}</small>`:""}</div>${x.kana!==x.jp?`<div class="kana">${x.kana}</div>`:""}<div class="mm">${x.mm}</div></div>
+   <button class="icon" data-say="${x.id}" aria-label="発音">🔊</button><button class="icon ${favs.has(x.id)?"fav":""}" data-fav="${x.id}" aria-label="お気に入り">${favs.has(x.id)?"★":"☆"}</button><button class="icon lr ${learned.has(x.id)?"on":""}" data-lr="${x.id}" aria-label="覚えた">✓</button></div>`).join("")
+  :`<div class="empty">${cat==="fav"?"☆ を押してお気に入りに追加<br><span class='mm'>☆ နှိပ်ပြီး သိမ်းထားပါ</span>":cat==="weak"?"苦手な単語はありません 👏<br>クイズでまちがえた語がここに入ります":"見つかりません"}</div>`}`;
+ const s=$("#search");s.oninput=e=>{q=e.target.value;const pos=s.selectionStart;renderList();const n=$("#search");n.focus();n.setSelectionRange(pos,pos)}}
+
+function startCards(){let w=words();if(cardOnlyNew){const nw=w.filter(x=>!learned.has(x.id));if(nw.length)w=nw}cardOrder=shuffle(w);cardIdx=0;cardDone=0}
 function renderCard(){
-  if(!cardOrder.length){ $("#main").innerHTML=`<div class="empty">単語がありません</div>`; return; }
-  const x=cardOrder[cardIdx];
-  const jpFace=`<div class="jp">${x.jp}</div>${x.kana!==x.jp?`<div class="kana">${x.kana}</div>`:""}`;
-  const mmFace=`<div class="mm">${x.mm}</div>`;
-  $("#main").innerHTML=`
-  <div class="toggle">
-    <button class="chip ${cardDir==="jp"?"on":""}" data-dir="jp">日本語 → မြန်မာ</button>
-    <button class="chip ${cardDir==="mm"?"on":""}" data-dir="mm">မြန်မာ → 日本語</button>
-  </div>
+ if(!cardOrder.length){$("#main").innerHTML=`<div class="empty">単語がありません</div>`;return}
+ if(cardIdx>=cardOrder.length){$("#main").innerHTML=`<div class="result"><div style="font-size:60px">🎉</div><div class="big" style="font-size:30px">${cardOrder.length}枚 おわり！</div>
+   <p>✅ 覚えた：${cardDone}語</p><p class="mm">ပြီးပါပြီ! တော်တယ်!</p><button class="btn primary" id="again" style="width:100%">もう一度</button><button class="btn" id="toQuiz" style="width:100%;margin-top:8px">✏️ クイズで確認する</button></div>`;
+  $("#again").onclick=()=>{startCards();renderCard()};$("#toQuiz").onclick=()=>setMode("quiz");confetti();return}
+ const x=cardOrder[cardIdx];
+ const jpFace=`<div class="jp">${x.jp}</div>${x.kana!==x.jp?`<div class="kana">${x.kana}</div>`:""}`,mmFace=`<div class="mm">${x.mm}</div>`;
+ $("#main").innerHTML=`<div class="toggle"><button class="chip ${cardDir==="jp"?"on":""}" data-dir="jp">日本語 → မြန်မာ</button><button class="chip ${cardDir==="mm"?"on":""}" data-dir="mm">မြန်မာ → 日本語</button>
+  <button class="chip ${cardOnlyNew?"on":""}" id="onlyNew">${cardOnlyNew?"✓ ":""}覚えていない語だけ</button></div>
   <div class="flash"><div class="fcard" id="fcard">
-    <div class="face">${cardDir==="jp"?jpFace:mmFace}<div class="hint">タップでめくる ・ <span class="mm">နှိပ်ပြီး လှန်ပါ</span></div></div>
-    <div class="face back">${cardDir==="jp"?mmFace:jpFace}</div>
-  </div></div>
-  <div class="row">
-    <button class="btn" id="prev" ${cardIdx===0?"disabled":""}>◀ 前</button>
-    <button class="btn" data-say="${x.id}">🔊</button>
-    <button class="btn ${favs.has(x.id)?"":""}" data-fav="${x.id}">${favs.has(x.id)?"★":"☆"}</button>
-    <button class="btn primary" id="next">${cardIdx===cardOrder.length-1?"もう一度":"次 ▶"}</button>
-  </div>
-  <p class="prog">${cardIdx+1} / ${cardOrder.length}</p>`;
-  $("#fcard").onclick=()=>$("#fcard").classList.toggle("flip");
-  $("#prev").onclick=()=>{cardIdx--;renderCard()};
-  $("#next").onclick=()=>{ if(cardIdx===cardOrder.length-1){startCards()}else cardIdx++; renderCard(); };
-}
+   <div class="face"><span class="tag">${meta(x.cat)[0]} ${CATS.find(c=>c.id===x.cat).jp}${learned.has(x.id)?" ・ ✅":""}</span>${cardDir==="jp"?jpFace:mmFace}<div class="hint">タップでめくる ・ <span class="mm">နှိပ်ပြီး လှန်ပါ</span></div></div>
+   <div class="face back">${cardDir==="jp"?mmFace:jpFace}</div></div></div>
+  <div class="row"><button class="btn again" id="later" style="flex:1">😅 まだ</button><button class="btn ok" id="got" style="flex:1">✅ 覚えた</button></div>
+  <div class="row" style="margin-top:8px"><button class="btn" id="prev" ${cardIdx===0?"disabled":""}>◀</button><button class="btn" data-say="${x.id}" style="flex:1">🔊 聞く</button><button class="btn" data-fav="${x.id}" style="flex:1;color:${favs.has(x.id)?"var(--gold)":"inherit"}">${favs.has(x.id)?"★":"☆"}</button></div>
+  <p class="prog">${cardIdx+1} / ${cardOrder.length}</p><div class="pbar"><i style="width:${cardIdx/cardOrder.length*100}%"></i></div>`;
+ const fc=$("#fcard");fc.onclick=()=>{fc.classList.toggle("flip");touch(x.id)};
+ $("#prev").onclick=()=>{cardIdx--;renderCard()};
+ $("#later").onclick=()=>{touch(x.id);cardOrder.splice(Math.min(cardIdx+4,cardOrder.length),0,x);cardIdx++;renderCard()};
+ $("#got").onclick=()=>{touch(x.id);if(!learned.has(x.id)){learned.add(x.id);saveLearned();cardDone++}cardIdx++;renderCard()};
+ $("#onlyNew").onclick=()=>{cardOnlyNew=!cardOnlyNew;startCards();renderCard()}}
 
-function startQuiz(){
-  const pool=words();
-  const qs=shuffle(pool).slice(0,10);
-  quiz={qs, i:0, score:0, answered:false, opts:null, pool};
-}
-function makeOpts(x){
-  const base = quiz.pool.length>=4 ? quiz.pool : W;
-  let others=shuffle(base.filter(y=>y.id!==x.id && y.cat===x.cat));
-  if(others.length<3) others=others.concat(shuffle(W.filter(y=>y.id!==x.id && !others.includes(y))));
-  return shuffle([x,...others.slice(0,3)]);
-}
+function startQuiz(){let pool=words();if(quizDir==="yomi")pool=pool.filter(x=>x.kana!==x.jp&&/[一-鿿]/.test(x.jp));
+ quiz={qs:shuffle(pool).slice(0,10),i:0,score:0,answered:false,opts:null,pool,miss:[]}}
+function makeOpts(x){const key=quizDir==="yomi"?"kana":quizDir==="jp"?"mm":"jp";
+ const base=(quizDir==="yomi"?W.filter(y=>y.kana!==y.jp):W);
+ let others=shuffle(base.filter(y=>y.id!==x.id&&y.cat===x.cat&&y[key]!==x[key]));
+ if(others.length<3)others=others.concat(shuffle(base.filter(y=>y.id!==x.id&&!others.includes(y)&&y[key]!==x[key])));
+ return shuffle([x,...others.slice(0,3)])}
 function renderQuiz(){
-  if(!quiz) startQuiz();
-  if(quiz.qs.length<1){ $("#main").innerHTML=`<div class="empty">単語がありません</div>`; return; }
-  if(quiz.i>=quiz.qs.length){
-    const pct=Math.round(quiz.score/quiz.qs.length*100);
-    $("#main").innerHTML=`<div class="result"><div class="big">${quiz.score} / ${quiz.qs.length}</div>
-      <p>${pct===100?"満点！すばらしい！🎉":pct>=70?"よくできました！👏":"もう一度がんばりましょう💪"}</p>
-      <p class="mm">${pct===100?"အမှတ်ပြည့်! အရမ်းတော်တယ်!":pct>=70?"တော်တယ်!":"နောက်တစ်ခါ ထပ်ကြိုးစားကြရအောင်"}</p>
-      <button class="btn primary" id="again">もう一度 ・ <span class="mm">ထပ်ဖြေမယ်</span></button></div>`;
-    $("#again").onclick=()=>{startQuiz();renderQuiz()};
-    return;
-  }
-  const x=quiz.qs[quiz.i];
-  if(!quiz.opts) quiz.opts=makeOpts(x);
-  const qHtml = quizDir==="jp" ? `<div class="jp">${x.jp}</div>${x.kana!==x.jp?`<div class="kana">${x.kana}</div>`:""}` : `<div class="mm">${x.mm}</div>`;
-  $("#main").innerHTML=`
-  <div class="toggle">
-    <button class="chip ${quizDir==="jp"?"on":""}" data-qdir="jp">日本語 → မြန်မာ</button>
-    <button class="chip ${quizDir==="mm"?"on":""}" data-qdir="mm">မြန်မာ → 日本語</button>
-  </div>
+ if(!quiz)startQuiz();
+ const dirs=`<div class="toggle"><button class="chip ${quizDir==="jp"?"on":""}" data-qdir="jp">日本語 → မြန်မာ</button><button class="chip ${quizDir==="mm"?"on":""}" data-qdir="mm">မြန်မာ → 日本語</button><button class="chip ${quizDir==="yomi"?"on":""}" data-qdir="yomi">漢字の読み方</button></div>`;
+ if(quiz.qs.length<1){$("#main").innerHTML=dirs+`<div class="empty">${cat==="weak"?"苦手な単語はありません 👏":"このカテゴリーには問題がありません"}</div>`;return}
+ if(quiz.i>=quiz.qs.length){const pct=Math.round(quiz.score/quiz.qs.length*100);
+  $("#main").innerHTML=`<div class="result"><div class="big">${quiz.score} / ${quiz.qs.length}</div>
+   <p style="font-size:18px;font-weight:700">${pct===100?"満点！すばらしい！🎉":pct>=70?"よくできました！👏":"もう一度がんばりましょう💪"}</p>
+   <p class="mm">${pct===100?"အမှတ်ပြည့်! အရမ်းတော်တယ်!":pct>=70?"တော်တယ်!":"နောက်တစ်ခါ ထပ်ကြိုးစားကြရအောင်!"}</p>
+   ${quiz.miss.length?`<div class="miss"><b style="font-size:13px;display:block;padding-top:6px">❗ まちがえた語（苦手に入れました）</b>${quiz.miss.map(x=>`<div><b>${x.jp}</b> ${x.kana!==x.jp?`<span class="kana">${x.kana}</span>`:""}<br><span class="mm">${x.mm}</span></div>`).join("")}</div>`:""}
+   <button class="btn primary" id="again" style="width:100%">もう一度 ・ <span class="mm">ထပ်ဖြေမယ်</span></button>
+   ${Object.keys(weak).length&&cat!=="weak"?`<button class="btn" id="toWeak" style="width:100%;margin-top:8px">❗ 苦手だけでクイズ</button>`:""}</div>`;
+  if(pct===100)confetti();
+  $("#again").onclick=()=>{startQuiz();renderQuiz()};const tw=$("#toWeak");if(tw)tw.onclick=()=>{cat="weak";startQuiz();render()};return}
+ const x=quiz.qs[quiz.i];if(!quiz.opts)quiz.opts=makeOpts(x);
+ const qHtml=quizDir==="mm"?`<div class="ask">日本語はどれ？</div><div class="mm">${x.mm}</div>`:quizDir==="yomi"?`<div class="ask">読み方はどれ？</div><div class="jp">${x.jp}</div>`:`<div class="ask">意味はどれ？ <span class="mm">အဓိပ္ပာယ်</span></div><div class="jp">${x.jp}</div>${x.kana!==x.jp?`<div class="kana">${x.kana}</div>`:""}`;
+ const lab=o=>quizDir==="jp"?o.mm:quizDir==="yomi"?o.kana:`${o.jp}${o.kana!==o.jp?` <span class="kana">（${o.kana}）</span>`:""}`;
+ $("#main").innerHTML=`${dirs}<div class="pbar"><i style="width:${quiz.i/quiz.qs.length*100}%"></i></div>
   <div class="q">${qHtml}${quizDir==="jp"?`<div><button class="icon" data-say="${x.id}">🔊</button></div>`:""}</div>
-  <div class="opts">${quiz.opts.map(o=>`<button class="opt ${quizDir==="jp"?"mm":""}" data-ans="${o.id}">${quizDir==="jp"?o.mm:`${o.jp}${o.kana!==o.jp?` <span class="kana">（${o.kana}）</span>`:""}`}</button>`).join("")}</div>
-  <div class="score"><span>${quiz.i+1} / ${quiz.qs.length}</span><span>正解 ${quiz.score}</span></div>
-  <div id="nextwrap" style="margin-top:12px"></div>`;
-  document.querySelectorAll("[data-ans]").forEach(b=>b.onclick=()=>{
-    if(quiz.answered) return; quiz.answered=true;
-    const ok=+b.dataset.ans===x.id; if(ok) quiz.score++;
-    document.querySelectorAll("[data-ans]").forEach(c=>{ if(+c.dataset.ans===x.id)c.classList.add("ok"); else if(c===b)c.classList.add("ng"); });
-    speak(x.kana);
-    $("#nextwrap").innerHTML=`<button class="btn primary" style="width:100%" id="qnext">${quiz.i===quiz.qs.length-1?"結果を見る":"次へ ▶"}</button>`;
-    $("#qnext").onclick=()=>{quiz.i++;quiz.answered=false;quiz.opts=null;renderQuiz()};
-  });
-}
+  <div class="opts">${quiz.opts.map(o=>`<button class="opt ${quizDir==="jp"?"mm":""}" data-ans="${o.id}">${lab(o)}</button>`).join("")}</div>
+  <div class="score"><span>${quiz.i+1} / ${quiz.qs.length}</span><span>正解 ${quiz.score}</span></div><div id="nextwrap" style="margin-top:12px"></div>`;
+ document.querySelectorAll("[data-ans]").forEach(b=>b.onclick=()=>{if(quiz.answered)return;quiz.answered=true;
+  const ok=+b.dataset.ans===x.id;touch(x.id);
+  if(ok){quiz.score++;if(weak[x.id]){weak[x.id]--;if(weak[x.id]<=0)delete weak[x.id]}}else{weak[x.id]=(weak[x.id]||0)+1;quiz.miss.push(x)}saveWeak();
+  document.querySelectorAll("[data-ans]").forEach(c=>{if(+c.dataset.ans===x.id)c.classList.add("ok");else if(c===b)c.classList.add("ng")});
+  speak(x.kana);
+  $("#nextwrap").innerHTML=`${!ok&&quizDir!=="jp"?`<div style="text-align:center;font-size:13px;margin-bottom:8px">${x.jp}（${x.kana}）＝ <span class="mm">${x.mm}</span></div>`:""}<button class="btn primary" style="width:100%" id="qnext">${quiz.i===quiz.qs.length-1?"結果を見る":"次へ ▶"}</button>`;
+  $("#qnext").onclick=()=>{quiz.i++;quiz.answered=false;quiz.opts=null;renderQuiz()}})}
 
-function render(){
-  renderChips();
-  if(mode==="list") renderList();
-  else if(mode==="card") renderCard();
-  else renderQuiz();
-}
+function render(){renderChips();if(mode==="home")renderHome();else if(mode==="list")renderList();else if(mode==="card")renderCard();else renderQuiz()}
+function setMode(m,keep){mode=m;document.querySelectorAll(".bnav button").forEach(b=>b.classList.toggle("on",b.dataset.mode===m));
+ if(m==="card"&&!keep)startCards();if(m==="quiz")startQuiz();render();window.scrollTo(0,0)}
 
-document.addEventListener("click",e=>{
-  const t=e.target.closest("button"); if(!t) return;
-  if(t.dataset.mode){ mode=t.dataset.mode; document.querySelectorAll("nav.modes button").forEach(b=>b.classList.toggle("on",b===t)); if(mode==="card")startCards(); if(mode==="quiz")startQuiz(); render(); window.scrollTo(0,0); }
-  else if(t.dataset.cat){ cat=t.dataset.cat; if(mode==="card")startCards(); if(mode==="quiz")startQuiz(); render(); }
-  else if(t.dataset.say!==undefined){ e.stopPropagation(); const x=W[+t.dataset.say]; speak(x.kana); }
-  else if(t.dataset.fav!==undefined){ const id=+t.dataset.fav; favs.has(id)?favs.delete(id):favs.add(id); saveFav(); render(); }
-  else if(t.dataset.dir){ cardDir=t.dataset.dir; renderCard(); }
-  else if(t.dataset.qdir){ quizDir=t.dataset.qdir; quiz.opts=null; renderQuiz(); }
+document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
+ if(t.dataset.mode){setMode(t.dataset.mode)}
+ else if(t.dataset.go){const g=t.dataset.go;if(g==="weak"||g==="fav"){cat=g;setMode(g==="weak"?"quiz":"list")}else{cat="all";setMode(g)}}
+ else if(t.dataset.opencat){cat=t.dataset.opencat;setMode("list")}
+ else if(t.dataset.goal){st.goal=+t.dataset.goal;saveSt();renderHome()}
+ else if(t.dataset.cat){cat=t.dataset.cat;if(mode==="card")startCards();if(mode==="quiz")startQuiz();render()}
+ else if(t.dataset.say!==undefined){e.stopPropagation();const x=W[+t.dataset.say];speak(x.kana)}
+ else if(t.dataset.fav!==undefined){const id=+t.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);saveFav();render()}
+ else if(t.dataset.lr!==undefined){const id=+t.dataset.lr;if(learned.has(id))learned.delete(id);else{learned.add(id);touch(id)}saveLearned();render()}
+ else if(t.dataset.dir){cardDir=t.dataset.dir;renderCard()}
+ else if(t.dataset.qdir){quizDir=t.dataset.qdir;startQuiz();renderQuiz()}
 });
 render();
 </script>

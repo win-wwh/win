@@ -130,7 +130,7 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <div class="cal"><div class="wk"><div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div></div><div class="days" id="days"></div></div>
 <div class="card"><h3>👥 これからのミーティング <span class="mm">အစည်းအဝေး</span></h3><div id="mtl"></div></div>
 <div class="card"><h3>📊 今月のまとめ <span class="mm">ဒီလ အနှစ်ချုပ်</span></h3><div id="sum"></div></div>
-<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 4</div>
+<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 5</div>
 </div>
 
 <div class="paint" id="paint">
@@ -144,7 +144,7 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <input type="file" id="impF" accept=".json,application/json,text/plain" style="display:none">
 
 <script>
-const VER=4;
+const VER=5;
 const $=s=>document.querySelector(s);
 const pad=n=>String(n).padStart(2,"0");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -167,7 +167,7 @@ let paint={on:false,k:"日"};
 function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",1900)}
 const T=k=>S.types.find(t=>t.k===k);
 const CUSTOM={k:"バ",name:"バイト",mm:"အချိန်ပိုင်း",c:"#e67e22",s:"",e:"",br:0,night:false};
-function E(v){if(!v)return null;if(+v.wh>0&&!v.cs)return{...CUSTOM,h:+v.wh,wh:true};const b=T(v.k);if(v.cs&&v.ce)return{...(b&&isWork(b)?b:CUSTOM),s:v.cs,e:v.ce,br:+v.cb||0};return b||null}
+function E(v){if(!v)return null;if(+v.wh>0&&!v.cs)return v.wn?{...CUSTOM,k:v.wn[0],name:v.wn,c:"#0891b2",h:+v.wh,wh:true}:{...CUSTOM,h:+v.wh,wh:true};const b=T(v.k);if(v.cs&&v.ce)return{...(b&&isWork(b)?b:CUSTOM),s:v.cs,e:v.ce,br:+v.cb||0};return b||null}
 const sh=t=>t?t.replace(/^0/,"").replace(/:00$/,""):"";
 const preset=()=>(S.recent&&S.recent[0])||{s:"17:00",e:"22:00",b:0};
 const key=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
@@ -181,7 +181,7 @@ const r1=n=>Math.round(n*10)/10;
 const yen=n=>"¥"+Math.round(n).toLocaleString();
 const otUnit=()=>S.job==="full"?(+S.otUnit||((+S.salary||0)/(+S.stdH||160))*(+S.otRate||1.25)):(+S.wage||0)*(+S.otRate||1.25);
 const dLabel=d=>`${d.getMonth()+1}/${d.getDate()}（${W[d.getDay()]}）`;
-function setDay(k,v){if(!(+v.wh>0))delete v.wh;if(!v.k&&!v.cs&&!v.wh&&!v.ot&&!v.m&&!(v.mt&&v.mt.length))delete S.d[k];else S.d[k]=v}
+function setDay(k,v){if(!(+v.wh>0)){delete v.wh;delete v.wn}if(!v.wn)delete v.wn;if(!v.k&&!v.cs&&!v.wh&&!v.ot&&!v.m&&!(v.mt&&v.mt.length))delete S.d[k];else S.d[k]=v}
 function render(){
  $("#ttl").innerHTML=`📅 ${esc(S.name||"わたし")}のシフト<small>${S.job==="full"?"💼 正社員":"⏰ アルバイト・パート"}</small>`;
  const y=cur.getFullYear(),m=cur.getMonth();$("#ym").textContent=`${y}年 ${m+1}月`;
@@ -193,7 +193,7 @@ function render(){
    ${ty?`<span class="pill" style="background:${ty.c}">${esc(ty.k)}</span><span class="tm">${ty.wh?ty.h+"時間":isWork(ty)?(v.cs?sh(ty.s)+"-"+sh(ty.e):hm(ty.s)):""}</span>`:""}${v.m?'<i class="memo-dot"></i>':""}${v.mt&&v.mt.length?'<span class="mtb">👥</span>':""}</button>`}
  $("#days").innerHTML=h;
  $("#days").querySelectorAll(".day[data-d]").forEach(b=>b.onclick=()=>tapDay(+b.dataset.d));
- $("#fixB").textContent=S.fixed.some(Boolean)?`🔁 固定シフトを${m+1}月に入れる`:"🔁 固定シフトを設定";
+ $("#fixB").textContent=S.fixed.some(f=>f)?`🔁 固定シフトを${m+1}月に入れる`:"🔁 固定シフトを設定";
  renderNow();renderMeet();summary(y,m,dim);renderPaint()}
 function renderNow(){const t=new Date();t.setHours(0,0,0,0);
  const at=i=>{const d=new Date(t);d.setDate(d.getDate()+i);return{d,v:S.d[key(d.getFullYear(),d.getMonth(),d.getDate())]||{}}};
@@ -218,7 +218,7 @@ function renderMeet(){const u=upcoming(60).slice(0,6);
   :`<div style="font-size:13px;color:#8a9a97;line-height:1.7">まだありません。「👥 ミーティング追加」で入れると、ここに出ます。<br>LINEでみんなにお知らせも送れます。</div>`;
  $("#mtl").querySelectorAll("[data-sh]").forEach(b=>b.onclick=()=>shareText(meetText(u[+b.dataset.sh])))}
 function calc(y,m,dim){const cnt={};let hours=0,nights=0,ot=0,work=0,rest=0,mt=0,prem=0;
- for(let d=1;d<=dim;d++){const v=S.d[key(y,m,d)];if(!v)continue;mt+=(v.mt||[]).length;ot+=+v.ot||0;const ty=E(v);if(!ty)continue;cnt[ty.k]=(cnt[ty.k]||0)+1;
+ for(let d=1;d<=dim;d++){const v=S.d[key(y,m,d)];if(!v)continue;mt+=(v.mt||[]).length;ot+=+v.ot||0;const ty=E(v);if(!ty)continue;const ck=ty.name;cnt[ck]=cnt[ck]||{c:ty.c,n:0};cnt[ck].n++;
   hours+=hoursOf(ty);if(ty.night)nights++;if(isWork(ty))work++;if(ty.rest)rest++;
   if(!ty.rest){const tot=hoursOf(ty)+(+v.ot||0);prem+=Math.max(0,tot-8)}}
  if(S.job==="full"){const base=+S.salary||0,otp=ot*otUnit(),np=nights*(+S.nightPay||0);return{cnt,hours,nights,ot,work,rest,mt,base,otp,np,prem:0,pay:Math.round(base+otp+np)}}
@@ -246,10 +246,10 @@ function summary(y,m,dim){const c=calc(y,m,dim);
   ${c.nights?`<div class="row"><span>夜勤手当（${c.nights}回）</span><b>${yen(c.np)}</b></div>`:""}
   <div style="font-size:10px;color:#8a9a97;margin-top:6px">税金・保険などを引く前の目安です <span class="mm">အခွန်မနုတ်ခင်</span></div></div>
   ${S.job==="part"?weekly(y,m):""}
-  <div class="chips">${[...S.types,CUSTOM].filter(t=>c.cnt[t.k]).map(t=>`<span class="chip" style="background:${t.c}">${esc(t.name)} ${c.cnt[t.k]}</span>`).join("")}</div>`}
+  <div class="chips">${Object.entries(c.cnt).map(([n,o])=>`<span class="chip" style="background:${o.c}">${esc(n)} ${o.n}</span>`).join("")}</div>`}
 function tapDay(d){const y=cur.getFullYear(),m=cur.getMonth(),k=key(y,m,d);
  if(paint.on){const v=S.d[k]||{};
-  if(/^h\d/.test(paint.k)){const h=+paint.k.slice(1);if(+v.wh===h&&!v.k)v.wh=0;else{v.wh=h;v.k=null;delete v.cs;delete v.ce;delete v.cb}}
+  if(/^h\d/.test(paint.k)){const h=+paint.k.slice(1);if(+v.wh===h&&!v.k)v.wh=0;else{v.wh=h;v.wn="";v.k=null;delete v.cs;delete v.ce;delete v.cb}}
   else if(paint.k==="@"){v.wh=0;const p=preset();if(!v.k&&v.cs===p.s&&v.ce===p.e){delete v.cs;delete v.ce;delete v.cb}else{v.k=null;v.cs=p.s;v.ce=p.e;v.cb=p.b}}
   else{v.k=v.k===paint.k&&!v.cs&&!v.wh?null:paint.k;v.wh=0;delete v.cs;delete v.ce;delete v.cb}
   setDay(k,v);save();render();return}
@@ -257,8 +257,9 @@ function tapDay(d){const y=cur.getFullYear(),m=cur.getMonth(),k=key(y,m,d);
 function openDay(k,y,m,d,focusMeet){const v={...(S.d[k]||{})};v.ot=+v.ot||0;v.mt=(v.mt||[]).map(x=>({...x}));
  const draw=()=>{$("#sheet").innerHTML=`<h2>${m+1}月${d}日（${W[new Date(y,m,d).getDay()]}）</h2>
   <div class="types">${S.types.map(t=>`<button class="tbtn${v.k===t.k?" sel":""}" style="background:${t.c}" data-k="${esc(t.k)}">${esc(t.k)}<small>${esc(t.name)}</small></button>`).join("")}<button class="tbtn clear" data-k="">✕<small>消す</small></button></div>
-  ${S.job==="part"?`<div class="lab">⏱ 働いた時間 <span class="mm">အလုပ်လုပ်ချိန်</span></div>
+  ${S.job==="part"||+v.wh>0?`<div class="lab">⏱ 働いた時間 <span class="mm">အလုပ်လုပ်ချိန်</span></div>
   <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">${[0.5,1,1.5,2,2.5,3,4,5,6,8].map(h=>`<button data-wh="${h}" style="border:2px solid ${+v.wh===h?"#1f2d2b":"transparent"};border-radius:12px;padding:10px 0;background:${+v.wh===h?"#e67e22":"#fff1e3"};color:${+v.wh===h?"#fff":"#c0661a"};font-weight:900;font-size:15px;font-family:inherit">${h}<small style="font-size:10px">時間</small></button>`).join("")}</div>`:""}
+  ${+v.wh>0?`<div style="margin-top:6px"><input id="wn" value="${esc(v.wn||"")}" placeholder="内容（なくてもOK）例：メッセージ対応"></div>`:""}
   <div id="hinfo" style="font-size:13px;color:#5d6e6b;margin-top:8px"></div>
   <div class="lab">⏰ ${S.job==="part"?"または、始まりと終わりの時間で入れる":"時間を自分で入れる"} ${S.job==="part"?'<span style="color:#e67e22"></span>':'<span style="font-weight:600">（いつもと違う日だけ）</span>'} <span class="mm">အချိန်</span></div>
   ${S.recent.length?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">${S.recent.map((r,i)=>`<button class="small" data-pr="${i}" style="border:0;border-radius:10px;padding:7px 10px;background:#fff1e3;color:#c0661a;font-weight:800;font-family:inherit">${sh(r.s)}〜${sh(r.e)}${r.b?` 休${r.b}`:""}</button>`).join("")}</div>`:""}
@@ -272,7 +273,7 @@ function openDay(k,y,m,d,focusMeet){const v={...(S.d[k]||{})};v.ot=+v.ot||0;v.mt
   <div class="step"><button id="om">−</button><b id="ov">${v.ot}時間</b><button id="op">＋</button></div>
   <div class="lab">📝 メモ <span class="mm">မှတ်စု</span></div><textarea id="memo" rows="2" placeholder="例：研修、早く帰る">${esc(v.m||"")}</textarea>
   <button class="btn" id="ok">保存 <span class="mm" style="opacity:.9">သိမ်းမည်</span></button>`;
-  const keep=()=>{v.m=$("#memo").value;v.cs=$("#cS").value;v.ce=$("#cE").value;v.cb=+$("#cB").value||0;if(v.cs&&v.ce)v.wh=0};
+  const keep=()=>{v.m=$("#memo").value;if($("#wn"))v.wn=$("#wn").value.trim();v.cs=$("#cS").value;v.ce=$("#cE").value;v.cb=+$("#cB").value||0;if(v.cs&&v.ce)v.wh=0};
   $("#sheet").querySelectorAll("[data-wh]").forEach(b=>b.onclick=()=>{keep();const h=+b.dataset.wh;v.wh=+v.wh===h?0:h;if(v.wh){v.cs="";v.ce="";v.cb=0;if(v.k&&!T(v.k).rest)v.k=null}draw()});
   const info=()=>{const e=E(v);$("#hinfo").innerHTML=e&&e.wh?"":e&&isWork(e)?`🕘 ${tStr(e)}（休憩${e.br}分）→ <b>${r1(hoursOf(e))}時間</b>`:""};info();
   ["#cS","#cE","#cB"].forEach(id=>{$(id).onchange=()=>{keep();info()};$(id).oninput=$(id).onchange});
@@ -310,9 +311,17 @@ $("#mtB").onclick=()=>{const t=new Date(),y=cur.getFullYear(),m=cur.getMonth();
   const x={t:$("#qT").value,n:$("#qN").value.trim()||"ミーティング",p:$("#qP").value.trim()};v.mt.push(x);setDay(k,v);save();close();const d=kd(k);cur=new Date(d.getFullYear(),d.getMonth(),1);render();toast("👥 追加しました");return{d,x}};
  $("#qOk").onclick=add;$("#qSh").onclick=()=>{const o=add();if(o)shareText(meetText(o))}};
 // ---- fixed shift
-function fixedEditor(after){const opts=k=>`<option value="">－</option>`+S.types.map(t=>`<option value="${esc(t.k)}" ${k===t.k?"selected":""}>${esc(t.k)}</option>`).join("");
- return`<div class="fx">${[..."日月火水木金土"].map(w=>`<div>${w}</div>`).join("")}${S.fixed.map((k,i)=>`<select data-fx="${i}" style="background:${T(k)?T(k).c:"#fff"};color:${T(k)?"#fff":"#1f2d2b"}">${opts(k)}</select>`).join("")}</div>`}
-function bindFixed(){$("#sheet").querySelectorAll("[data-fx]").forEach(s=>s.onchange=()=>{S.fixed[+s.dataset.fx]=s.value||null;const t=T(s.value);s.style.background=t?t.c:"#fff";s.style.color=t?"#fff":"#1f2d2b"})}
+function fxHours(f){if(!f)return 0;if(typeof f==="object")return +f.wh||0;const t=T(f);return t&&!t.rest?hoursOf(t):0}
+function fixedEditor(){const opts=f=>`<option value="">－ なし</option><option value="@h" ${typeof f==="object"&&f?"selected":""}>⏱ 時間で入れる</option>`+S.types.map(t=>`<option value="${esc(t.k)}" ${f===t.k?"selected":""}>${esc(t.k)} ${esc(t.name)}</option>`).join("");
+ const col=f=>typeof f==="object"&&f?"#0891b2":T(f)?T(f).c:"#fff";
+ return`<div id="fxBox">${S.fixed.map((f,i)=>`<div style="display:grid;grid-template-columns:30px 1fr;gap:6px;align-items:start;margin-bottom:6px"><b style="padding-top:9px;text-align:center;color:${i===0?"#e0505e":i===6?"#3b82f6":"#1f2d2b"}">${W[i]}</b><div>
+  <select data-fx="${i}" style="padding:8px;font-size:15px;font-weight:800;background:${col(f)};color:${col(f)==="#fff"?"#1f2d2b":"#fff"}">${opts(f)}</select>
+  ${typeof f==="object"&&f?`<div style="display:grid;grid-template-columns:96px 1fr;gap:6px;margin-top:5px"><label style="font-size:10px;color:#777">時間<input type="number" step="0.5" inputmode="decimal" data-fh="${i}" value="${f.wh}" style="padding:7px"></label><label style="font-size:10px;color:#777">内容（なくてもOK）<input data-fn="${i}" value="${esc(f.n||"")}" placeholder="例：メッセージ対応" style="padding:7px"></label></div>`:""}</div></div>`).join("")}
+  <div id="fxTot" style="font-size:13px;font-weight:800;text-align:right;color:#0f9b8e">1週間の合計：${r1(S.fixed.reduce((a,f)=>a+fxHours(f),0))}時間</div></div>`}
+function bindFixed(){const box=$("#fxBox");if(!box)return;const redraw=()=>{box.outerHTML=fixedEditor();bindFixed()};
+ box.querySelectorAll("[data-fx]").forEach(s=>s.onchange=()=>{const i=+s.dataset.fx;S.fixed[i]=s.value==="@h"?{wh:1,n:""}:(s.value||null);redraw()});
+ box.querySelectorAll("[data-fh]").forEach(e=>e.oninput=()=>{S.fixed[+e.dataset.fh].wh=+e.value||0;$("#fxTot").textContent=`1週間の合計：${r1(S.fixed.reduce((a,f)=>a+fxHours(f),0))}時間`});
+ box.querySelectorAll("[data-fn]").forEach(e=>e.oninput=()=>{S.fixed[+e.dataset.fn].n=e.value.trim()})}
 $("#fixB").onclick=()=>{const y=cur.getFullYear(),m=cur.getMonth();
  $("#sheet").innerHTML=`<h2>🔁 固定シフト <span class="mm">ပုံသေဆိုင်း</span></h2>
   <p style="font-size:13px;color:#5d6e6b;margin:0 0 10px;line-height:1.6">毎週同じ曜日に同じシフトの人は、ここで決めておくと<b>1か月分をまとめて</b>入れられます。<br>例：月〜金は日勤、土日は休み</p>
@@ -321,8 +330,9 @@ $("#fixB").onclick=()=>{const y=cur.getFullYear(),m=cur.getMonth();
   <button class="btn sub" id="fxO">${m+1}月を全部この形にする（上書き）</button>
   <button class="btn sub" id="fxS" style="background:#f3f6f5;color:#5d6e6b">決めた形だけ保存する</button>
   <div style="font-size:11px;color:#8a9a97;margin-top:8px;line-height:1.6">入れたあとで、ちがう日だけタップして直せます。ミーティング・残業・メモは消えません。</div>`;open();bindFixed();
- const apply=over=>{if(!S.fixed.some(Boolean)){toast("曜日のシフトを選んでください");return}const dim=new Date(y,m+1,0).getDate();let n=0;
-  for(let d=1;d<=dim;d++){const k=key(y,m,d),f=S.fixed[new Date(y,m,d).getDay()];const v={...(S.d[k]||{})};if(v.k&&!over)continue;if(!f&&!over)continue;v.k=f||null;setDay(k,v);if(f)n++}
+ const apply=over=>{if(!S.fixed.some(f=>f&&(typeof f!=="object"||f.wh>0))){toast("曜日のシフトを選んでください");return}const dim=new Date(y,m+1,0).getDate();let n=0;
+  for(let d=1;d<=dim;d++){const k=key(y,m,d),f=S.fixed[new Date(y,m,d).getDay()];const v={...(S.d[k]||{})};if((v.k||v.wh||v.cs)&&!over)continue;if(!f&&!over)continue;delete v.cs;delete v.ce;delete v.cb;
+   if(f&&typeof f==="object"){v.k=null;v.wh=+f.wh||0;v.wn=f.n||""}else{v.k=f||null;v.wh=0;v.wn=""}setDay(k,v);if(f)n++}
   save();close();render();toast(`🔁 ${n}日分 入れました`)};
  $("#fxA").onclick=()=>apply(false);$("#fxO").onclick=()=>{if(confirm(`${m+1}月のシフトを全部、固定シフトで上書きしますか？`))apply(true)};
  $("#fxS").onclick=()=>{save();close();render();toast("保存しました ✓")}};
@@ -414,10 +424,15 @@ function whatsNew(){$("#sheet").innerHTML=`<div style="text-align:center;font-si
  <ul class="new" style="font-size:14px;padding-left:20px">
  <li><b>💼 正社員にも対応</b><br>⚙️ 設定で「アルバイト」か「正社員」を選べます。正社員は月給＋残業で計算します。</li>
  <li><b>🔁 固定シフト</b><br>毎週同じ曜日のシフトを決めて、1か月分をまとめて入れられます。</li>
+ <li><b>🔁 固定シフトに「時間」も</b><br>「平日1時間」「日曜 メッセージ対応 3時間」のように、時間と内容で固定にできます。</li>
  <li><b>⏱ アルバイトは時間をえらぶだけ</b><br>「1時間」「2時間」などのボタンで入れられます。給料は「時間×時給」で計算します（1.25倍になるのは、1日8時間をこえた分だけ）。</li>
  <li><b>👥 ミーティング</b><br>会議の予定を入れて、LINEでみんなにお知らせを送れます。</li></ul>
  <button class="btn" id="nOk">OK</button>`;open();$("#nOk").onclick=()=>{S.ver=VER;save();close()}}
-render();if(!S.name)welcome();else if(S.ver!==VER)whatsNew();
+function importFixed(){const m=location.hash.match(/#fx=([\w-]+)/);if(!m)return false;history.replaceState(null,"",location.pathname);
+ try{const f=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,"+").replace(/_/g,"/")))));if(!Array.isArray(f)||f.length!==7)throw 0;S.fixed=f;save();return true}catch(e){toast("リンクが読めませんでした");return false}}
+const gotFx=importFixed();
+addEventListener("hashchange",()=>{if(importFixed()){render();$("#fixB").click();toast("🔁 固定シフトを受け取りました")}});
+render();if(!S.name)welcome();else if(gotFx){S.ver=VER;save();$("#fixB").click();toast("🔁 固定シフトを受け取りました")}else if(S.ver!==VER)whatsNew();
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
 </body>

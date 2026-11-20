@@ -130,7 +130,7 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <div class="cal"><div class="wk"><div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div></div><div class="days" id="days"></div></div>
 <div class="card"><h3>👥 これからのミーティング <span class="mm">အစည်းအဝေး</span></h3><div id="mtl"></div></div>
 <div class="card"><h3>📊 今月のまとめ <span class="mm">ဒီလ အနှစ်ချုပ်</span></h3><div id="sum"></div></div>
-<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 2</div>
+<div class="foot">🔒 シフトは<b>このスマホの中だけ</b>に保存されます。ほかの人には見えません。<br><span class="mm">ဒီဖုန်းထဲမှာပဲ သိမ်းထားပါတယ်။ တခြားလူ မမြင်ရပါ။</span><br>ver 3</div>
 </div>
 
 <div class="paint" id="paint">
@@ -144,7 +144,7 @@ textarea,input,select{font:inherit;font-size:16px;width:100%;border:1.5px solid 
 <input type="file" id="impF" accept=".json,application/json,text/plain" style="display:none">
 
 <script>
-const VER=2;
+const VER=3;
 const $=s=>document.querySelector(s);
 const pad=n=>String(n).padStart(2,"0");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -159,13 +159,17 @@ const DEF_TYPES=[
  {k:"有",name:"有給",mm:"လစာရခွင့်",c:"#0ea5e9",s:"",e:"",br:0,night:false,h:8,rest:true}
 ];
 let S=JSON.parse(localStorage.getItem("myshift-v1")||"null")||{name:"",wage:1300,nightPay:5000,otRate:1.25,types:JSON.parse(JSON.stringify(DEF_TYPES)),d:{}};
-function migrate(){S.job=S.job||"part";S.salary=S.salary??220000;S.stdH=S.stdH||160;S.otUnit=S.otUnit??0;S.fixed=S.fixed||[null,null,null,null,null,null,null];S.d=S.d||{}}
+function migrate(){S.job=S.job||"part";S.salary=S.salary??220000;S.stdH=S.stdH||160;S.otUnit=S.otUnit??0;S.fixed=S.fixed||[null,null,null,null,null,null,null];S.recent=S.recent||[];S.limit28=!!S.limit28;S.d=S.d||{}}
 migrate();
 const save=()=>localStorage.setItem("myshift-v1",JSON.stringify(S));
 let cur=new Date();cur.setDate(1);
 let paint={on:false,k:"日"};
 function toast(t){const e=$("#toast");e.textContent=t;e.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display="none",1900)}
 const T=k=>S.types.find(t=>t.k===k);
+const CUSTOM={k:"バ",name:"バイト",mm:"အချိန်ပိုင်း",c:"#e67e22",s:"",e:"",br:0,night:false};
+function E(v){if(!v)return null;const b=T(v.k);if(v.cs&&v.ce)return{...(b&&isWork(b)?b:CUSTOM),s:v.cs,e:v.ce,br:+v.cb||0};return b||null}
+const sh=t=>t?t.replace(/^0/,"").replace(/:00$/,""):"";
+const preset=()=>(S.recent&&S.recent[0])||{s:"17:00",e:"22:00",b:0};
 const key=(y,m,d)=>`${y}-${pad(m+1)}-${pad(d)}`;
 const kd=k=>{const[a,b,c]=k.split("-").map(Number);return new Date(a,b-1,c)};
 const mins=s=>{if(!s)return null;const[a,b]=s.split(":").map(Number);return a*60+b};
@@ -177,25 +181,25 @@ const r1=n=>Math.round(n*10)/10;
 const yen=n=>"¥"+Math.round(n).toLocaleString();
 const otUnit=()=>S.job==="full"?(+S.otUnit||((+S.salary||0)/(+S.stdH||160))*(+S.otRate||1.25)):(+S.wage||0)*(+S.otRate||1.25);
 const dLabel=d=>`${d.getMonth()+1}/${d.getDate()}（${W[d.getDay()]}）`;
-function setDay(k,v){if(!v.k&&!v.ot&&!v.m&&!(v.mt&&v.mt.length))delete S.d[k];else S.d[k]=v}
+function setDay(k,v){if(!v.k&&!v.cs&&!v.ot&&!v.m&&!(v.mt&&v.mt.length))delete S.d[k];else S.d[k]=v}
 function render(){
  $("#ttl").innerHTML=`📅 ${esc(S.name||"わたし")}のシフト<small>${S.job==="full"?"💼 正社員":"⏰ アルバイト・パート"}</small>`;
  const y=cur.getFullYear(),m=cur.getMonth();$("#ym").textContent=`${y}年 ${m+1}月`;
  const first=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),t=new Date();
  let h="";for(let i=0;i<first;i++)h+=`<div class="day out"></div>`;
- for(let d=1;d<=dim;d++){const k=key(y,m,d),v=S.d[k]||{},ty=T(v.k),dw=(first+d-1)%7;
+ for(let d=1;d<=dim;d++){const k=key(y,m,d),v=S.d[k]||{},ty=E(v),dw=(first+d-1)%7;
   const tod=t.getFullYear()===y&&t.getMonth()===m&&t.getDate()===d;
   h+=`<button class="day${dw===0?" sun":dw===6?" sat":""}${tod?" today":""}" data-d="${d}"><span class="d">${d}</span>${v.ot?`<span class="ot">+${v.ot}h</span>`:""}
-   ${ty?`<span class="pill" style="background:${ty.c}">${esc(ty.k)}</span><span class="tm">${isWork(ty)?hm(ty.s):""}</span>`:""}${v.m?'<i class="memo-dot"></i>':""}${v.mt&&v.mt.length?'<span class="mtb">👥</span>':""}</button>`}
+   ${ty?`<span class="pill" style="background:${ty.c}">${esc(ty.k)}</span><span class="tm">${isWork(ty)?(v.cs?sh(ty.s)+"-"+sh(ty.e):hm(ty.s)):""}</span>`:""}${v.m?'<i class="memo-dot"></i>':""}${v.mt&&v.mt.length?'<span class="mtb">👥</span>':""}</button>`}
  $("#days").innerHTML=h;
  $("#days").querySelectorAll(".day[data-d]").forEach(b=>b.onclick=()=>tapDay(+b.dataset.d));
  $("#fixB").textContent=S.fixed.some(Boolean)?`🔁 固定シフトを${m+1}月に入れる`:"🔁 固定シフトを設定";
  renderNow();renderMeet();summary(y,m,dim);renderPaint()}
 function renderNow(){const t=new Date();t.setHours(0,0,0,0);
  const at=i=>{const d=new Date(t);d.setDate(d.getDate()+i);return{d,v:S.d[key(d.getFullYear(),d.getMonth(),d.getDate())]||{}}};
- const td=at(0),ty=T(td.v.k);let nx=null;
- for(let i=1;i<=60;i++){const a=at(i);if(isWork(T(a.v.k))){nx={...a,i};break}}
- const nxs=nx?`次の勤務 <span class="mm">နောက်အလုပ်</span>：${nx.i===1?"明日":dLabel(nx.d)} ${esc(T(nx.v.k).name)} ${tStr(T(nx.v.k))}`:"次の勤務はまだ入っていません";
+ const td=at(0),ty=E(td.v);let nx=null;
+ for(let i=1;i<=60;i++){const a=at(i);if(isWork(E(a.v))){nx={...a,i};break}}
+ const nxs=nx?`次の勤務 <span class="mm">နောက်အလုပ်</span>：${nx.i===1?"明日":dLabel(nx.d)} ${esc(E(nx.v).name)} ${tStr(E(nx.v))}`:"次の勤務はまだ入っていません";
  const mts=(td.v.mt||[]).slice().sort((a,b)=>(a.t||"").localeCompare(b.t||""));
  const bg=ty?ty.c:"#0f9b8e";
  $("#now").style.background=`linear-gradient(135deg,${bg},${bg}cc)`;
@@ -214,10 +218,16 @@ function renderMeet(){const u=upcoming(60).slice(0,6);
   :`<div style="font-size:13px;color:#8a9a97;line-height:1.7">まだありません。「👥 ミーティング追加」で入れると、ここに出ます。<br>LINEでみんなにお知らせも送れます。</div>`;
  $("#mtl").querySelectorAll("[data-sh]").forEach(b=>b.onclick=()=>shareText(meetText(u[+b.dataset.sh])))}
 function calc(y,m,dim){const cnt={};let hours=0,nights=0,ot=0,work=0,rest=0,mt=0;
- for(let d=1;d<=dim;d++){const v=S.d[key(y,m,d)];if(!v)continue;mt+=(v.mt||[]).length;ot+=+v.ot||0;const ty=T(v.k);if(!ty)continue;cnt[v.k]=(cnt[v.k]||0)+1;
+ for(let d=1;d<=dim;d++){const v=S.d[key(y,m,d)];if(!v)continue;mt+=(v.mt||[]).length;ot+=+v.ot||0;const ty=E(v);if(!ty)continue;cnt[ty.k]=(cnt[ty.k]||0)+1;
   hours+=hoursOf(ty);if(ty.night)nights++;if(isWork(ty))work++;if(ty.rest)rest++}
  const base=S.job==="full"?(+S.salary||0):hours*(+S.wage||0),otp=ot*otUnit(),np=nights*(+S.nightPay||0);
  return{cnt,hours,nights,ot,work,rest,mt,base,otp,np,pay:Math.round(base+otp+np)}}
+function weekly(y,m){const first=new Date(y,m,1),start=new Date(first);start.setDate(1-first.getDay());const last=new Date(y,m+1,0);let rows="";
+ for(let w=new Date(start);w<=last;w.setDate(w.getDate()+7)){let h=0;for(let i=0;i<7;i++){const d=new Date(w);d.setDate(w.getDate()+i);const v=S.d[key(d.getFullYear(),d.getMonth(),d.getDate())];h+=hoursOf(E(v))-((E(v)&&E(v).rest)?hoursOf(E(v)):0)+(v?+v.ot||0:0)}
+  const e=new Date(w);e.setDate(w.getDate()+6);const over=S.limit28&&h>28;const pct=Math.min(100,h/(S.limit28?28:40)*100);
+  rows+=`<div style="display:grid;grid-template-columns:86px 1fr 62px;gap:8px;align-items:center;font-size:12px;margin-top:6px"><span>${w.getMonth()+1}/${w.getDate()}〜${e.getMonth()+1}/${e.getDate()}</span><div style="background:#eef3f2;border-radius:6px;height:10px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${over?"#e0505e":"#0f9b8e"}"></div></div><b style="text-align:right;color:${over?"#e0505e":"inherit"}">${r1(h)}h${over?" ⚠️":""}</b></div>`}
+ return`<div style="margin-top:12px;border-top:1px solid #eef3f2;padding-top:10px"><div style="font-size:12px;font-weight:800">⏰ 週ごとの時間 <span class="mm">တစ်ပတ်ချင်း အချိန်</span>${S.limit28?` <span style="color:#e0505e">（上限 週28時間）</span>`:""}</div>${rows}
+ ${S.limit28?`<div style="font-size:10px;color:#8a9a97;margin-top:6px;line-height:1.5">留学生・家族滞在の資格外活動は、どの曜日から数えても週28時間以内です。くわしくは学校や入管で確認してください。</div>`:""}</div>`}
 function summary(y,m,dim){const c=calc(y,m,dim);
  $("#sum").innerHTML=`<div class="stats">
   <div class="st"><b>${c.work}</b><span>出勤日<br><span class="mm">အလုပ်ဆင်းရက်</span></span></div>
@@ -231,14 +241,22 @@ function summary(y,m,dim){const c=calc(y,m,dim);
   ${c.ot?`<div class="row"><span>残業（${r1(c.ot)}時間×${Math.round(otUnit()).toLocaleString()}円）</span><b>${yen(c.otp)}</b></div>`:""}
   ${c.nights?`<div class="row"><span>夜勤手当（${c.nights}回）</span><b>${yen(c.np)}</b></div>`:""}
   <div style="font-size:10px;color:#8a9a97;margin-top:6px">税金・保険などを引く前の目安です <span class="mm">အခွန်မနုတ်ခင်</span></div></div>
-  <div class="chips">${S.types.filter(t=>c.cnt[t.k]).map(t=>`<span class="chip" style="background:${t.c}">${esc(t.name)} ${c.cnt[t.k]}</span>`).join("")}</div>`}
+  ${S.job==="part"?weekly(y,m):""}
+  <div class="chips">${[...S.types,CUSTOM].filter(t=>c.cnt[t.k]).map(t=>`<span class="chip" style="background:${t.c}">${esc(t.name)} ${c.cnt[t.k]}</span>`).join("")}</div>`}
 function tapDay(d){const y=cur.getFullYear(),m=cur.getMonth(),k=key(y,m,d);
- if(paint.on){const v=S.d[k]||{};v.k=v.k===paint.k?null:paint.k;setDay(k,v);save();render();return}
+ if(paint.on){const v=S.d[k]||{};
+  if(paint.k==="@"){const p=preset();if(!v.k&&v.cs===p.s&&v.ce===p.e){delete v.cs;delete v.ce;delete v.cb}else{v.k=null;v.cs=p.s;v.ce=p.e;v.cb=p.b}}
+  else{v.k=v.k===paint.k&&!v.cs?null:paint.k;delete v.cs;delete v.ce;delete v.cb}
+  setDay(k,v);save();render();return}
  openDay(k,y,m,d)}
 function openDay(k,y,m,d,focusMeet){const v={...(S.d[k]||{})};v.ot=+v.ot||0;v.mt=(v.mt||[]).map(x=>({...x}));
  const draw=()=>{$("#sheet").innerHTML=`<h2>${m+1}月${d}日（${W[new Date(y,m,d).getDay()]}）</h2>
   <div class="types">${S.types.map(t=>`<button class="tbtn${v.k===t.k?" sel":""}" style="background:${t.c}" data-k="${esc(t.k)}">${esc(t.k)}<small>${esc(t.name)}</small></button>`).join("")}<button class="tbtn clear" data-k="">✕<small>消す</small></button></div>
-  ${v.k&&isWork(T(v.k))?`<div style="font-size:13px;color:#5d6e6b;margin-top:8px">🕘 ${tStr(T(v.k))}（休憩${T(v.k).br}分）→ ${r1(hoursOf(T(v.k)))}時間</div>`:""}
+  <div id="hinfo" style="font-size:13px;color:#5d6e6b;margin-top:8px"></div>
+  <div class="lab">⏰ 時間を自分で入れる ${S.job==="part"?'<span style="color:#e67e22">（アルバイト）</span>':'<span style="font-weight:600">（いつもと違う日だけ）</span>'} <span class="mm">အချိန်</span></div>
+  ${S.recent.length?`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px">${S.recent.map((r,i)=>`<button class="small" data-pr="${i}" style="border:0;border-radius:10px;padding:7px 10px;background:#fff1e3;color:#c0661a;font-weight:800;font-family:inherit">${sh(r.s)}〜${sh(r.e)}${r.b?` 休${r.b}`:""}</button>`).join("")}</div>`:""}
+  <div style="display:grid;grid-template-columns:1fr 1fr 74px;gap:6px;align-items:end"><label style="font-size:10px;color:#777">始まり<input type="time" id="cS" value="${v.cs||""}"></label><label style="font-size:10px;color:#777">終わり<input type="time" id="cE" value="${v.ce||""}"></label><label style="font-size:10px;color:#777">休憩(分)<input type="number" inputmode="numeric" id="cB" value="${v.cb||0}"></label></div>
+  ${v.cs||v.ce?`<button id="cX" style="border:0;background:none;color:#8a9a97;font-size:12px;margin-top:4px;font-family:inherit">✕ 時間を消す</button>`:""}
   <div class="lab">👥 ミーティング・会議 <span class="mm">အစည်းအဝေး</span></div>
   ${v.mt.map((x,i)=>`<div class="mi"><b>${hm(x.t)||"--:--"}</b><span>${esc(x.n)}${x.p?` <small style="color:#6b7c79">📍${esc(x.p)}</small>`:""}</span><button data-ms="${i}">📤</button><button data-mx="${i}">✕</button></div>`).join("")}
   <div class="madd"><input type="time" id="mT" value="14:00"><input id="mN" placeholder="例：全体ミーティング"></div>
@@ -247,24 +265,28 @@ function openDay(k,y,m,d,focusMeet){const v={...(S.d[k]||{})};v.ot=+v.ot||0;v.mt
   <div class="step"><button id="om">−</button><b id="ov">${v.ot}時間</b><button id="op">＋</button></div>
   <div class="lab">📝 メモ <span class="mm">မှတ်စု</span></div><textarea id="memo" rows="2" placeholder="例：研修、早く帰る">${esc(v.m||"")}</textarea>
   <button class="btn" id="ok">保存 <span class="mm" style="opacity:.9">သိမ်းမည်</span></button>`;
-  const keep=()=>{v.m=$("#memo").value};
-  $("#sheet").querySelectorAll(".tbtn").forEach(b=>b.onclick=()=>{keep();v.k=b.dataset.k||null;draw()});
+  const keep=()=>{v.m=$("#memo").value;v.cs=$("#cS").value;v.ce=$("#cE").value;v.cb=+$("#cB").value||0};
+  const info=()=>{const e=E(v);$("#hinfo").innerHTML=e&&isWork(e)?`🕘 ${tStr(e)}（休憩${e.br}分）→ <b>${r1(hoursOf(e))}時間</b>`:""};info();
+  ["#cS","#cE","#cB"].forEach(id=>{$(id).onchange=()=>{keep();info()};$(id).oninput=$(id).onchange});
+  $("#sheet").querySelectorAll("[data-pr]").forEach(b=>b.onclick=()=>{keep();const r=S.recent[+b.dataset.pr];v.cs=r.s;v.ce=r.e;v.cb=r.b;if(v.k&&!isWork(T(v.k)))v.k=null;draw()});
+  const cx=$("#cX");if(cx)cx.onclick=()=>{keep();v.cs="";v.ce="";v.cb=0;draw()};
+  $("#sheet").querySelectorAll(".tbtn").forEach(b=>b.onclick=()=>{keep();v.k=b.dataset.k||null;if(!v.k||!isWork(T(v.k))){v.cs="";v.ce="";v.cb=0}draw()});
   $("#om").onclick=()=>{v.ot=Math.max(0,v.ot-0.5);$("#ov").textContent=v.ot+"時間"};
   $("#op").onclick=()=>{v.ot=Math.min(12,v.ot+0.5);$("#ov").textContent=v.ot+"時間"};
   $("#mA").onclick=()=>{const n=$("#mN").value.trim()||"ミーティング";keep();v.mt.push({t:$("#mT").value,n,p:$("#mP").value.trim()});draw();toast("👥 追加しました（保存を押してね）")};
   $("#sheet").querySelectorAll("[data-mx]").forEach(b=>b.onclick=()=>{keep();v.mt.splice(+b.dataset.mx,1);draw()});
   $("#sheet").querySelectorAll("[data-ms]").forEach(b=>b.onclick=()=>shareText(meetText({d:new Date(y,m,d),x:v.mt[+b.dataset.ms]})));
-  $("#ok").onclick=()=>{v.m=$("#memo").value.trim();const n=$("#mN").value.trim();if(n)v.mt.push({t:$("#mT").value,n,p:$("#mP").value.trim()});setDay(k,v);save();close();render()};
+  $("#ok").onclick=()=>{keep();v.m=v.m.trim();if(!v.cs||!v.ce){delete v.cs;delete v.ce;delete v.cb}if(v.cs){const r={s:v.cs,e:v.ce,b:v.cb||0};S.recent=[r,...S.recent.filter(x=>!(x.s===r.s&&x.e===r.e&&x.b===r.b))].slice(0,4)}const n=$("#mN").value.trim();if(n)v.mt.push({t:$("#mT").value,n,p:$("#mP").value.trim()});setDay(k,v);save();close();render()};
   if(focusMeet)setTimeout(()=>$("#mN").focus(),250)};
  draw();open()}
 function open(){$("#bg").style.display="block";requestAnimationFrame(()=>$("#sheet").classList.add("on"))}
 function close(){$("#sheet").classList.remove("on");setTimeout(()=>$("#bg").style.display="none",200)}
 $("#bg").onclick=close;
-function renderPaint(){if(!T(paint.k))paint.k=S.types[0].k;
- $("#ptypes").innerHTML=S.types.map(t=>`<button class="${paint.on&&paint.k===t.k?"on":""}" style="background:${t.c}" data-k="${esc(t.k)}">${esc(t.name)}</button>`).join("");
+function renderPaint(){if(paint.k!=="@"&&!T(paint.k))paint.k=S.types[0].k;if(paint.k==="@"&&S.job!=="part")paint.k=S.types[0].k;const p=preset();
+ $("#ptypes").innerHTML=(S.job==="part"?`<button class="${paint.on&&paint.k==="@"?"on":""}" style="background:#e67e22" data-k="@">⏰ ${sh(p.s)}-${sh(p.e)}</button>`:"")+S.types.map(t=>`<button class="${paint.on&&paint.k===t.k?"on":""}" style="background:${t.c}" data-k="${esc(t.k)}">${esc(t.name)}</button>`).join("");
  $("#ptypes").querySelectorAll("button").forEach(b=>b.onclick=()=>{paint.k=b.dataset.k;paint.on=true;renderPaint()});
  $("#pmode").textContent=paint.on?"✏️ オン":"✏️ オフ";$("#pmode").classList.toggle("on",paint.on);
- $("#phint").innerHTML=paint.on?`「${esc(T(paint.k).name)}」→ 日付をタップ（もう一度で消す）`:`シフトを選んで、日付をタップするだけ <span class="mm">ရွေးပြီး ရက်ကိုနှိပ်ပါ</span>`}
+ $("#phint").innerHTML=paint.on?`「${paint.k==="@"?"バイト "+sh(p.s)+"-"+sh(p.e):esc(T(paint.k).name)}」→ 日付をタップ（もう一度で消す）`:`シフトを選んで、日付をタップするだけ <span class="mm">ရွေးပြီး ရက်ကိုနှိပ်ပါ</span>`}
 $("#pmode").onclick=()=>{paint.on=!paint.on;renderPaint()};
 $("#prev").onclick=()=>{cur.setMonth(cur.getMonth()-1);render()};
 $("#next").onclick=()=>{cur.setMonth(cur.getMonth()+1);render()};
@@ -310,7 +332,8 @@ $("#setB").onclick=()=>{const draw=()=>{const full=S.job==="full";$("#sheet").in
   :`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
    <div><div class="lab">時給（円）</div><input id="sWage" type="number" inputmode="numeric" value="${S.wage}"></div>
    <div><div class="lab">夜勤手当/回</div><input id="sNight" type="number" inputmode="numeric" value="${S.nightPay}"></div>
-   <div><div class="lab">残業の倍率</div><input id="sOt" type="number" step="0.05" inputmode="decimal" value="${S.otRate}"></div></div>`}
+   <div><div class="lab">残業の倍率</div><input id="sOt" type="number" step="0.05" inputmode="decimal" value="${S.otRate}"></div></div>
+   <label class="chk" style="font-size:13px;margin-top:10px"><input type="checkbox" id="sL28" ${S.limit28?"checked":""}>週28時間の上限をチェックする<br>（留学生・家族滞在の人）</label>`}
   <div class="lab" style="margin-top:16px">🔁 固定シフト（毎週同じ）</div>${fixedEditor()}
   <div class="lab" style="margin-top:16px">シフトの種類 <span class="mm">ဆိုင်းအမျိုးအစား</span></div>
   ${S.types.map((t,j)=>`<div class="trow"><div class="a"><input type="color" value="${t.c}" data-t="${j}" data-f="c"><input value="${esc(t.k)}" maxlength="1" data-t="${j}" data-f="k" ${j<DEF_TYPES.length?"disabled style='background:#f3f6f5'":""}><input value="${esc(t.name)}" data-t="${j}" data-f="name" placeholder="名前"><button class="x" data-del="${j}" ${j<DEF_TYPES.length?"style='visibility:hidden'":""}>✕</button></div>
@@ -323,7 +346,7 @@ $("#setB").onclick=()=>{const draw=()=>{const full=S.job==="full";$("#sheet").in
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button class="btn sub" id="bk" style="margin:0">書き出す</button><button class="btn sub" id="rsB" style="margin:0">読みこむ</button></div>`;
   bindFixed();
   const num=(id,f)=>{const e=$(id);if(e)S[f]=+e.value||0};
-  const apply=()=>{S.name=$("#sName").value.trim();num("#sWage","wage");num("#sNight","nightPay");num("#sSal","salary");num("#sStd","stdH");num("#sOtU","otUnit");const o=$("#sOt");if(o)S.otRate=+o.value||1.25;if(!S.stdH)S.stdH=160;
+  const apply=()=>{S.name=$("#sName").value.trim();num("#sWage","wage");num("#sNight","nightPay");num("#sSal","salary");num("#sStd","stdH");num("#sOtU","otUnit");const o=$("#sOt");if(o)S.otRate=+o.value||1.25;const l=$("#sL28");if(l)S.limit28=l.checked;if(!S.stdH)S.stdH=160;
    $("#sheet").querySelectorAll("[data-t]").forEach(e=>{const t=S.types[+e.dataset.t];const f=e.dataset.f;t[f]=e.type==="checkbox"?e.checked:e.type==="number"?+e.value:e.value})};
   $("#sheet").querySelectorAll("[data-job]").forEach(b=>b.onclick=()=>{apply();S.job=b.dataset.job;draw()});
   $("#addT").onclick=()=>{apply();const used=S.types.map(t=>t.k);const k=["研","会","A","B","C","D","E"].find(x=>!used.includes(x))||"?";S.types.push({k,name:"新しいシフト",mm:"",c:"#e67e22",s:"10:00",e:"15:00",br:0,night:false});draw()};
@@ -344,7 +367,7 @@ function drawImage(){const y=cur.getFullYear(),m=cur.getMonth(),dim=new Date(y,m
  g.fillStyle="#0f9b8e";g.font=F(900,56);g.fillText(`${y}年${m+1}月の勤務表`,30,90);
  g.fillStyle="#5d6e6b";g.font=F(700,34);g.fillText(S.name||"",30,140);
  for(let i=0;i<7;i++){g.fillStyle=i===0?"#e0505e":i===6?"#3b82f6":"#888";g.font=F(800,28);g.textAlign="center";g.fillText(W[i],30+cw*i+cw/2,205)}
- for(let d=1;d<=dim;d++){const p=first+d-1,c=p%7,r=Math.floor(p/7),x=30+c*cw,yy=top+r*ch;const v=S.d[key(y,m,d)]||{},ty=T(v.k);
+ for(let d=1;d<=dim;d++){const p=first+d-1,c=p%7,r=Math.floor(p/7),x=30+c*cw,yy=top+r*ch;const v=S.d[key(y,m,d)]||{},ty=E(v);
   g.fillStyle="#fff";rr(g,x+3,yy+3,cw-6,ch-6,16);g.fill();
   g.textAlign="left";g.fillStyle=c===0?"#e0505e":c===6?"#3b82f6":"#1f2d2b";g.font=F(800,26);g.fillText(d,x+14,yy+36);
   if(ty){g.fillStyle=ty.c;rr(g,x+12,yy+48,cw-24,54,12);g.fill();g.fillStyle="#fff";g.font=F(900,36);g.textAlign="center";g.fillText(ty.k,x+cw/2,yy+88);
@@ -359,7 +382,7 @@ function drawImage(){const y=cur.getFullYear(),m=cur.getMonth(),dim=new Date(y,m
  return cv}
 function rr(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
 function monthText(){const y=cur.getFullYear(),m=cur.getMonth(),dim=new Date(y,m+1,0).getDate();let s=`📅 ${m+1}月の勤務表${S.name?"（"+S.name+"）":""}\n`;
- for(let d=1;d<=dim;d++){const v=S.d[key(y,m,d)]||{},ty=T(v.k);const mt=(v.mt||[]).map(x=>` 👥${hm(x.t)} ${x.n}`).join("");if(!ty&&!mt)continue;
+ for(let d=1;d<=dim;d++){const v=S.d[key(y,m,d)]||{},ty=E(v);const mt=(v.mt||[]).map(x=>` 👥${hm(x.t)} ${x.n}`).join("");if(!ty&&!mt)continue;
   s+=`${m+1}/${d}(${W[new Date(y,m,d).getDay()]}) ${ty?ty.name+(isWork(ty)?" "+tStr(ty):""):""}${v.ot?` 残業${v.ot}h`:""}${mt}\n`}return s}
 $("#shareB").onclick=()=>{$("#sheet").innerHTML=`<h2>📤 ${cur.getMonth()+1}月のシフトを送る</h2><p style="font-size:13px;color:#5d6e6b;margin:0">家族などに見せたいときに使えます。<br><span class="mm">မိသားစုကို ပို့ချင်ရင် သုံးပါ</span></p>
  <button class="btn" id="shImg">🖼 画像で送る（LINEなど）</button><button class="btn sub" id="shTxt">📝 文字で送る・コピー</button>`;open();
@@ -383,6 +406,7 @@ function whatsNew(){$("#sheet").innerHTML=`<div style="text-align:center;font-si
  <ul class="new" style="font-size:14px;padding-left:20px">
  <li><b>💼 正社員にも対応</b><br>⚙️ 設定で「アルバイト」か「正社員」を選べます。正社員は月給＋残業で計算します。</li>
  <li><b>🔁 固定シフト</b><br>毎週同じ曜日のシフトを決めて、1か月分をまとめて入れられます。</li>
+ <li><b>⏰ アルバイトの時間</b><br>日ごとに「17:00〜22:00」のように時間を入れられます。よく使う時間はボタンで選べます。週ごとの時間も出ます。</li>
  <li><b>👥 ミーティング</b><br>会議の予定を入れて、LINEでみんなにお知らせを送れます。</li></ul>
  <button class="btn" id="nOk">OK</button>`;open();$("#nOk").onclick=()=>{S.ver=VER;save();close()}}
 render();if(!S.name)welcome();else if(S.ver!==VER)whatsNew();

@@ -756,7 +756,7 @@ function renderKK(){const G=window.KK_GROUPS||[],Q=window.KK||[];
    <div class="big">${ok} <small>/ ${Q.length} 問 正解</small></div><div class="bar"><i style="width:${Q.length?ok/Q.length*100:0}%"></i></div>
    <div style="font-size:12px;line-height:1.7;position:relative;z-index:1">2025年（第37回）の試験：125問・5つから1つ選ぶ<br>合格ライン：70点以上 ＋ 11の科目群すべてで1問以上正解<br>※第37回から実技試験はありません</div></div>
    <div class="acts"><button class="act" id="kkRand"><b>🎲</b><span>ランダム10問</span><small>いろいろな科目から</small></button>
-   <button class="act" id="kkAll"><b>📋</b><span>模擬テスト</span><small>全${Q.length}問・合格ライン56%</small></button>
+   <button class="act" id="kkAll"><b>📋</b><span>模擬テスト</span><small>本番と同じ${Q.length}問・合格ライン70点</small></button>
    <button class="act" id="kkMiss"><b>❗</b><span>まちがえた問題</span><small>${Object.values(kkRes).filter(v=>v===0).length}問</small></button>
    <button class="act" id="kkNew"><b>🆕</b><span>まだ解いていない</span><small>${Q.length-done}問</small></button></div>
    <div class="sec"><h2>📚 11の科目群</h2><span>正解 / 問題数</span></div>
@@ -770,8 +770,8 @@ function renderKK(){const G=window.KK_GROUPS||[],Q=window.KK||[];
   $("#kkNew").onclick=()=>{const m=idx.filter(i=>kkRes[i]===undefined);if(!m.length){toast("全部解きました 🎉");return}kkStart(shuffle(m).slice(0,10),"まだ解いていない問題")};
   document.querySelectorAll("[data-kkg]").forEach(b=>b.onclick=()=>{const g=+b.dataset.kkg;kkStart(idx.filter(i=>Q[i].g===g),G.find(x=>x.g===g).jp)});
   const rs=$("#kkReset");if(rs)rs.onclick=()=>{if(confirm("国家試験の記録をリセットしますか？")){kkRes={};saveKK();renderKK()}};return}
- if(kk.i>=kk.qs.length){const pct=Math.round(kk.score/kk.qs.length*100),pass=pct>=56;
-  $("#main").innerHTML=`<div class="result"><div style="font-size:13px;color:var(--sub)">${esc(kk.title)}</div><div class="big">${kk.score} / ${kk.qs.length}</div><p style="font-size:18px;font-weight:700">${pct}% ${pass?"🎉 合格ライン（約56%）こえ！":"💪 もう少し！合格ラインは約56%"}</p>
+ if(kk.i>=kk.qs.length){const pct=Math.round(kk.score/kk.qs.length*100),full=kk.qs.length===(window.KK||[]).length,gs=new Set(kk.qs.filter(i=>kkRes[i]===1&&!kk.miss.includes(i)).map(i=>Q[i].g)),pass=full?(kk.score>=70&&gs.size===G.length):pct>=56;
+  $("#main").innerHTML=`<div class="result"><div style="font-size:13px;color:var(--sub)">${esc(kk.title)}</div><div class="big">${kk.score} / ${kk.qs.length}</div><p style="font-size:18px;font-weight:700">${full?(pass?"🎉 合格ライン（70点＋全科目群で得点）クリア！":`💪 もう少し！（合格ライン70点・正解した科目群 ${gs.size}/${G.length}）`):`${pct}% ${pass?"🎉 合格ライン（約56%）こえ！":"💪 もう少し！合格ラインは約56%"}`}</p>
    ${kk.miss.length?`<div class="miss"><b style="font-size:13px;display:block;padding-top:6px">❗ まちがえた問題</b>${kk.miss.map(i=>{const x=Q[i];return`<div><span style="font-size:11px;color:var(--sub)">${G.find(g=>g.g===x.g).jp}</span><br>${esc(x.q)}<br><b style="color:var(--ok)">正解：${esc(x.o[x.a-1])}</b></div>`}).join("")}</div>`:""}
    <button class="btn primary" id="kkBack" style="width:100%">🎓 国家試験のトップへ</button></div>`;
   if(pass)confetti();$("#kkBack").onclick=()=>{kk=null;renderKK();scrollTo(0,0)};return}

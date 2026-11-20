@@ -805,7 +805,7 @@ document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)r
  else if(t.dataset.dir){cardDir=t.dataset.dir;renderCard()}
  else if(t.dataset.qdir){quizDir=t.dataset.qdir;startQuiz();renderQuiz()}
 });
-render();
+if(location.hash==="#kk")setMode("kk");else if(location.hash==="#card")setMode("card");else render();
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
 </body>

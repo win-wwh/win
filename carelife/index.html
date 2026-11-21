@@ -138,26 +138,53 @@ const DAY=[
  ["7:00","あさ","st","lead","#f3ece2","おつかれさま。申し送り、お願いします","လွှဲပြောင်းမှု ပြောပါ","夜勤が 終わり、次のスタッフへ 申し送り（ひきつぎ）です。",
   [["どう 伝える？",[["「田中さん、2時に トイレ介助。転倒なし。37.8℃の件は 看護師に報告済みです」",1,"いつ・だれが・何を・どうした を、事実で 正確に 伝えます。"],["「とくに 何も なかったです」",0,"小さなことも 大切な 情報です。正確に 伝えましょう。"],["「田中さん、たぶん 大丈夫だと 思います」",0,"「たぶん」「思う」ではなく、見たこと（事実）を 伝えます。"]]]]]
 ];
+const ALT=[
+ ["7:00","あさ","r2","suzuki","#dff0ff","まだ ねむいよ…","အိပ်ချင်သေးတယ်","起きる時間ですが、鈴木さんは まだ ねむそうです。",
+  [["どうする？",[["「もう少し 休みますか？ 10分したら また来ますね」",1,"本人の ペースを 大切に。時間を おいて もう一度 声をかけます。"],["ふとんを はがして 起こす",0,"むりやり 起こすと、気分が 悪くなり、信頼も なくなります。"],["「みんな もう 起きてますよ！」",0,"ほかの人と くらべる 言葉は、プレッシャーに なります。"]]]]],
+ ["7:30","あさ","wc","tanaka","#e4f1f3","トイレに すわりたいの","အိမ်သာပေါ် ထိုင်ချင်တယ်","田中さんは 車いすです。これから 便座に 移ります。",
+  [["移る前に まず 何をする？",[["車いすの ブレーキをかけて、足を フットサポートから おろす",1,"ブレーキと 足の位置は 安全の 基本。動くと 転んでしまいます。"],["ブレーキを かけないで すぐ立ってもらう",0,"車いすが 動いて 転倒する 危険が あります。"]]]]],
+ ["8:00","あさ","din","suzuki","#fff1c9","入れ歯が いたくて かめないんだ","သွားတု နာလို့ မဝါးနိုင်ဘူး","朝ごはんが ほとんど 進んでいません。",
+  [["どうする？",[["看護師に伝えて、やわらかい食事に できるか 相談する",1,"痛みは 報告。食事の形（やわらかさ）を 変えることも できます。"],["「がまんして 食べましょう」",0,"痛いまま 食べると、栄養不足や 口の けがに つながります。"],["入れ歯を はずして、そのまま 食べてもらう",0,"かめない まま 食べると、誤嚥の 危険が あります。"]]]]],
+ ["9:00","あさ","st","nurse","#f3ece2","佐藤さんの お薬、飲めました？","ဆာတိုစံ ဆေးသောက်ပြီးပြီလား","佐藤さんの テーブルの下に、白い 薬が 1つ 落ちていました。",
+  [["どうする？",[["拾って、看護師さんに すぐ 報告する",1,"飲めていない 薬が あるかも。自分で 判断しないで 報告します。"],["拾って、そのまま 佐藤さんに 飲ませる",0,"だれの 何の薬か わかりません。床に 落ちた 薬は 使いません。"],["捨てて、何も 言わない",0,"薬が 足りない かもしれません。必ず 報告します。"]]]]],
+ ["10:00","ひる","bath","sato","#d6eefc","はずかしいわ…","ရှက်တယ်","お風呂の 準備を しています。",
+  [["どうする？",[["タオルを かけて、からだが 見えないように する",1,"プライバシー（はずかしい気持ち）を 守ることは、尊厳を 守ることです。"],["「女同士だから 大丈夫ですよ」",0,"はずかしい 気持ちは 人それぞれ。気持ちを 大切に します。"],["早く 終わらせるため、急いで 洗う",0,"急ぐと 不安になり、すべって 危ないです。"]]]]],
+ ["12:00","ひる","din","sato","#fff1c9","お茶を ちょうだい","ရေနွေးကြမ်း ပေးပါ","佐藤さんは 飲みこむ力が 弱く、水分で むせやすいです。",
+  [["どんな お茶を 出す？",[["とろみを つけた お茶",1,"とろみを つけると、ゆっくり のどを 通るので むせにくく なります。"],["冷たい 水を コップ いっぱい",0,"さらさらした 水は 誤嚥しやすいです。"]]]]],
+ ["14:00","ひる","hall","suzuki","#dff5e8","いたた… ひざが いたい","ဒူးနာတယ်","ホールで 体操を しています。",
+  [["どうする？",[["休んでもらい、痛みの 様子を 看護師に 伝える",1,"無理は しない。いつ・どこが・どのくらい 痛いか を 伝えます。"],["「もう少し がんばりましょう！」",0,"痛いのに 続けると、けがに つながります。"],["何も 言わずに 続ける",0,"痛みの サインを 見のがさないように しましょう。"]]]]],
+ ["15:00","ひる","r3","sato","#efe3ff","今日、むすめが 来ないの…","ဒီနေ့ သမီး မလာဘူး","おやつの 時間。佐藤さんは さみしそうです。",
+  [["何て 声を かける？",[["「さみしいですね。むすめさんの お話、聞かせてください」",1,"気持ちに よりそって、話を 聞きます（傾聴）。"],["「お仕事で いそがしいんですよ」",0,"気持ちを 受けとめずに 話を 終わらせて しまいます。"],["「おやつ、食べましょう！」と 話を かえる",0,"気持ちを 聞かずに 話を かえると、さみしさが 残ります。"]]]]],
+ ["17:30","ゆうがた","r2","suzuki","#ffe1cf","（ベッドから 立とうとして ふらふら…）","(ကုတင်ပေါ်က ထဖို့ ကြိုးစားရင်း ယိမ်းယိုင်နေတယ်)","鈴木さんが 一人で 立とうとしています。",
+  [["どうする？",[["すぐ そばに 行って 体を 支え、座ってもらう",1,"まず 安全。そのあと「どこへ 行きたかったですか？」と 理由を 聞きます。"],["遠くから「立たないで！」と 大声で 言う",0,"びっくりして 転ぶ ことが あります。"],["ほかの 仕事が 終わってから 行く",0,"転倒は 一瞬です。すぐに 行きます。"]]]]],
+ ["21:00","よる","r1","tanaka","#2c3557","せなかが いたいの","ကျောနာတယ်","田中さんは ずっと 同じ 姿勢で ねています。",
+  [["どうする？",[["体の 向きを かえて、クッションで 楽な 姿勢に する",1,"同じ 姿勢が 続くと 床ずれ（褥瘡）が できます。体位変換は 大切。"],["朝まで そのままに する",0,"同じ所が 長く 圧迫されると、床ずれの 原因に なります。"]]]]],
+ ["2:00","しんや","r2","suzuki","#1f2640","ここは どこだ…？","ဒီနေရာ ဘယ်မှာလဲ","夜中に 鈴木さんが ろうかを 歩いています。",
+  [["どうする？",[["落ち着いて 名前を呼び、「一緒に お部屋に 行きましょう」",1,"やさしく 声をかけて 安心してもらいます。足元に 気をつけて 付きそいます。"],["「早く 寝てください！」と 腕を 引っぱる",0,"力で 引っぱると、こわく感じて 混乱が 大きくなります。"],["そのまま 歩かせて おく",0,"夜は 暗く、転倒の 危険が あります。"]]]]],
+ ["7:00","あさ","st","lead","#f3ece2","夜、鈴木さんが ベッドの横で 座ってたって？","ညက ဆူဇူကီးစံ ကုတင်ဘေးမှာ ထိုင်နေတယ်ဆို","夜中に 鈴木さんが ベッドから すべり落ちそうに なっていました。けがは ありません。",
+  [["どうする？",[["ヒヤリハット報告を 書いて、みんなで 共有する",1,"けがが なくても 報告。原因を 考えて、事故を 防ぎます。"],["けがが ないので 報告しない",0,"小さな「ヒヤリ」を 共有することで、大きな 事故を 防げます。"]]]]]
+];
+function makeDay(){const last=LS("carelife-last",[]);const pick=DAY.map((e,i)=>{let a=Math.random()<.5;if(rec.days===0)a=false;else if(last[i]!==undefined&&Math.random()<.7)a=!last[i];return a?1:0});localStorage.setItem("carelife-last",JSON.stringify(pick));return DAY.map((e,i)=>pick[i]?ALT[i]:e)}
 let S=null,me={x:180,y:157},scale=1;
 function fit(){const w=$("#mapw"),m=$("#map");scale=Math.min(w.clientWidth/360,w.clientHeight/480);m.style.transform=`translate(-50%,-50%) scale(${scale})`}
 addEventListener("resize",fit);
-function drawMap(){const ev=S&&DAY[S.i],tg=ev&&ev[2];
+function drawMap(){const ev=S&&S.day[S.i],tg=ev&&ev[2];
  $("#map").innerHTML=`<div class="hall">ろうか</div>`+Object.entries(ROOMS).map(([id,r])=>`<div class="rm${id===tg?" tg":""}" data-room="${id}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;background:${r.c}"><span class="ic">${r.ic}</span>${r.n}${r.p?`<span class="pp">${r.p}</span>`:""}${id===tg?`<span class="ex">❗</span>`:""}</div>`).join("")+`<div id="me" style="left:${me.x}px;top:${me.y}px">👩🏻‍⚕️</div>`;
  const night=ev&&["よる","しんや"].includes(ev[1]);$("#map").classList.toggle("night",!!night);
  document.querySelectorAll("[data-room]").forEach(el=>el.onclick=()=>go(el.dataset.room))}
-function hud(){const ev=DAY[S.i];$("#clk").innerHTML=`${ev[0]}<small>${ev[1]}</small>`;
+function hud(){const ev=S.day[S.i];$("#clk").innerHTML=`${ev[0]}<small>${S.n?S.n+"日目・":""}${ev[1]}</small>`;
  const r=ROOMS[ev[2]],who=P[ev[3]];$("#mis").innerHTML=`${who[0]} ${who[1]}のところへ（${r.n}）<small>❗の 部屋を タッチ</small>`;
- $("#prog").innerHTML=DAY.map((d,i)=>`<i class="${i<S.i?"d":i===S.i?"c":""}"></i>`).join("")}
+ $("#prog").innerHTML=S.day.map((d,i)=>`<i class="${i<S.i?"d":i===S.i?"c":""}"></i>`).join("")}
 function go(id){if(!S||S.busy)return;const r=ROOMS[id];const x=r.x+r.w/2,y=r.y+r.h/2;
  // walk: via hallway
  const el=$("#me");S.busy=true;el.classList.add("walk");
  const hy=157;const steps=[[me.x,hy],[x,hy],[x,y]];let k=0;
  const next=()=>{if(k>=steps.length){el.classList.remove("walk");me={x,y};S.busy=false;arrive(id);return}const [sx,sy]=steps[k++];
   const d=Math.hypot(sx-parseFloat(el.style.left),sy-parseFloat(el.style.top));el.style.transition=`left ${d/260}s linear,top ${d/260}s linear`;el.style.left=sx+"px";el.style.top=sy+"px";setTimeout(next,d/260*1000+20)};next()}
-function arrive(id){const ev=DAY[S.i];
+function arrive(id){const ev=S.day[S.i];
  if(id!==ev[2]){const t=document.createElement("div");t.className="think";t.textContent=["ここじゃないみたい🤔","❗の部屋へ行こう","だれも よんでないね"][Math.random()*3|0];t.style.left=me.x+"px";t.style.top=me.y+"px";$("#map").appendChild(t);setTimeout(()=>t.remove(),1300);return}
  scene()}
-function scene(){const ev=DAY[S.i],who=P[ev[3]];S.q=0;S.tries=0;say(ev[5]);
+function scene(){const ev=S.day[S.i],who=P[ev[3]];S.q=0;S.tries=0;say(ev[5]);
  const dark=ev[4].startsWith("#1")||ev[4].startsWith("#2");
  const draw=()=>{const [q,chs]=ev[8][S.q];if(!S.order)S.order=chs.map((c,i)=>i).sort(()=>Math.random()-.5);
   $("#sc").innerHTML=`<div class="stage" style="background:${ev[4]}"><div><div class="who">${who[0]}</div><div class="nm" style="color:${dark?"#fff":"#6b5646"}">${who[1]}</div></div>
@@ -174,31 +201,31 @@ function scene(){const ev=DAY[S.i],who=P[ev[3]];S.q=0;S.tries=0;say(ev[5]);
    else{b.classList.add("ng");b.disabled=true;$("#ex").innerHTML=`<div class="exp" style="background:#fde8e6"><b>🤔 うーん…</b><br>${c[2]}<br><small>もう一度 えらんでみよう</small></div>`}})};
  S.order=null;draw();$("#ov").className="ov";$("#ov").style.display="flex"}
 function hearts(el,e){const b=el.getBoundingClientRect();for(let k=0;k<5;k++){const h=document.createElement("div");h.className="heart";h.textContent=e;h.style.left=b.left+b.width*(.2+k*.15)+"px";h.style.top=b.top+"px";h.style.animationDelay=k*.08+"s";document.body.appendChild(h);setTimeout(()=>h.remove(),1500)}}
-function done(){$("#ov").style.display="none";S.i++;if(S.i>=DAY.length){finish();return}
- const prev=DAY[S.i-1][1],cur=DAY[S.i][1];
- if(prev!==cur){center(`<div style="font-size:60px">${{ひる:"☀️",ゆうがた:"🌇",よる:"🌙",しんや:"🌌",あさ:"🌅"}[cur]}</div><h1>${DAY[S.i][0]}</h1><p style="font-weight:800">${{ひる:"お昼の じかん",ゆうがた:"夕方に なりました",よる:"夜の じかん",しんや:"夜中の 見回り",あさ:"朝に なりました"}[cur]}</p><button class="btn" id="ok">つづける ▶</button>`);$("#ok").onclick=()=>{$("#ov").style.display="none";drawMap();hud()}}
+function done(){$("#ov").style.display="none";S.i++;if(S.i>=S.day.length){finish();return}
+ const prev=S.day[S.i-1][1],cur=S.day[S.i][1];
+ if(prev!==cur){center(`<div style="font-size:60px">${{ひる:"☀️",ゆうがた:"🌇",よる:"🌙",しんや:"🌌",あさ:"🌅"}[cur]}</div><h1>${S.day[S.i][0]}</h1><p style="font-weight:800">${{ひる:"お昼の じかん",ゆうがた:"夕方に なりました",よる:"夜の じかん",しんや:"夜中の 見回り",あさ:"朝に なりました"}[cur]}</p><button class="btn" id="ok">つづける ▶</button>`);$("#ok").onclick=()=>{$("#ov").style.display="none";drawMap();hud()}}
  else{drawMap();hud()}}
 function center(h){$("#sc").innerHTML=h;$("#ov").className="ov center";$("#ov").style.display="flex"}
 function finish(){const pct=S.pts/S.max,stars=pct>=.9?3:pct>=.65?2:1;rec.days++;if(S.pts>rec.best)rec.best=S.pts;localStorage.setItem("carelife-rec",JSON.stringify(rec));say("一日 おつかれさまでした",true);
- center(`<div style="font-size:54px">🎉</div><h1>一日 おつかれさま！</h1><div class="stars">${"⭐".repeat(stars)}${"☆".repeat(3-stars)}</div>
+ center(`<div style="font-size:54px">🎉</div><h1>${S.n}日目 おつかれさま！</h1><div class="stars">${"⭐".repeat(stars)}${"☆".repeat(3-stars)}</div>
  <p style="font-weight:800">笑顔ポイント ${S.pts} / ${S.max} ・ 1回で正解 ${S.good}問<br><span class="mm" style="font-weight:500">တစ်နေ့လုံး ပင်ပန်းခဲ့ပြီ</span></p>
  <p style="font-weight:900;color:#2fb39a">${stars===3?"🏅 すばらしい 介護福祉士！":stars===2?"🌳 たよれる スタッフ！":"🌱 明日も がんばろう！"}</p>
  ${S.log.length?`<div style="text-align:left;font-weight:900;margin-top:6px">📖 ふりかえり（まちがえた所）</div><div class="lst">${S.log.map(l=>`<div>❓ ${l[0]}<br><b style="color:#2fb39a">→ ${l[1]}</b></div>`).join("")}</div>`:""}
  <button class="btn o" id="again">🌅 もう一日 はたらく</button><button class="btn sub" id="share">📤 友だちに送る</button><button class="btn sub" id="home">🏠 タイトルへ</button>`);
  $("#again").onclick=start;$("#home").onclick=titleScr;
  $("#share").onclick=async()=>{const t=`「ケアの一日」で ${"⭐".repeat(stars)}！介護施設の一日を ゲームで体験しよう👇\nhttps://winlabjp.com/carelife/`;try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e.name==="AbortError")return}try{await navigator.clipboard.writeText(t);$("#share").textContent="コピーしました ✓"}catch(e){}}}
-function start(){say("おはようございます");S={i:0,pts:0,max:0,good:0,log:[],busy:false};me={x:180,y:157};$("#ov").style.display="none";drawMap();hud();fit()}
+function start(){say("おはようございます");S={i:0,pts:0,max:0,good:0,log:[],busy:false,day:makeDay(),n:rec.days+1};me={x:180,y:157};$("#ov").style.display="none";drawMap();hud();fit()}
 function titleScr(){S=null;
  center(`<div style="font-size:60px;line-height:1">🏠👩🏻‍⚕️👵</div><h1>ケアの一日</h1><p style="font-weight:800;margin-top:0">介護施設の 日常生活ゲーム<br><span class="mm" style="font-weight:500">သူနာပြုစောင့်ရှောက်ရေး ဌာနရဲ့ တစ်နေ့တာ</span></p>
  <div class="tl">🌅 7:00 おはよう・着がえ<br>🍚 8:00 朝ごはん　🌡️ 9:00 体温チェック<br>🛁 10:00 お風呂　🎵 14:00 レク<br>🌇 17:30 夕方　🌙 21:00 消灯　🌌 2:00 見回り</div>
- <p style="font-size:13px">❗の部屋を タッチして 行こう。<br>利用者さんに 何て 声を かける？ どうする？</p>
+ <p style="font-size:13px">毎日 ちがう できごとが おこるよ（全${DAY.length*2}場面）<br>❗の部屋を タッチして 行こう。<br>利用者さんに 何て 声を かける？ どうする？</p>
  <button class="btn o" id="go">🌅 一日を はじめる</button>
  <label class="tgl"><input type="checkbox" id="mmT" ${showMM?"checked":""}> ミャンマー語も 表示 <span class="mm">မြန်မာဘာသာ</span></label>
  ${rec.days?`<p style="font-size:12px;color:#8a7f72">はたらいた日：${rec.days}日 ・ ベスト ${rec.best}ポイント</p>`:""}`);
  $("#go").onclick=start;$("#mmT").onchange=e=>{showMM=e.target.checked;localStorage.setItem("carelife-mm",JSON.stringify(showMM))}}
 $("#snd").onclick=()=>{sound=!sound;localStorage.setItem("carelife-sound",JSON.stringify(sound));$("#snd").textContent=sound?"🔊":"🔇";if(sound)say("おんせい オン",true)};
 $("#snd").textContent=sound?"🔊":"🔇";
-S={i:0,pts:0,max:0,good:0,log:[]};drawMap();hud();fit();S=null;titleScr();
+S={i:0,pts:0,max:0,good:0,log:[],day:DAY};drawMap();hud();fit();S=null;titleScr();
 </script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>

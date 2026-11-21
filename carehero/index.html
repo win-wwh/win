@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>ケアヒーロー｜介護のおしごとゲーム</title>
+<meta name="description" content="利用者さんのお願いを聞いて、正しいお世話をしよう！介護の日本語がミャンマー語つきで楽しく覚えられるゲーム。無料。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ケアヒーロー｜介護のおしごとゲーム">
+<meta property="og:description" content="利用者さんのお願いを聞いて、正しいお世話をしよう！ミャンマー語つき。">
+<meta property="og:image" content="https://winlabjp.com/carehero/icon-512.png">
+<meta property="og:url" content="https://winlabjp.com/carehero/">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ケアヒーロー">
+<meta name="theme-color" content="#2fb39a">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+:root{--g:#2fb39a;--ink:#2b2622;--bg:#fff8ee}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:system-ui,"Hiragino Sans","Noto Sans JP","Noto Sans Myanmar",sans-serif}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Sangam MN","Myanmar Text",sans-serif}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 8px env(safe-area-inset-bottom);max-width:560px;margin:0 auto}
+.hud{display:flex;align-items:center;gap:8px;padding:8px 4px}
+.hud .sc{font-size:22px;font-weight:900;flex:1}
+.hud .sc small{font-size:12px;color:#8a7f72;font-weight:700;margin-left:6px}
+.hud .lv{background:var(--g);color:#fff;border-radius:12px;padding:4px 10px;font-weight:900;font-size:14px}
+.hud .hp{font-size:20px;letter-spacing:1px}
+.hud button{border:0;background:#fff;border-radius:10px;width:36px;height:36px;font-size:16px;box-shadow:0 1px 4px #0001}
+.combo{position:absolute;left:50%;top:58px;transform:translateX(-50%);background:#ffb703;color:#fff;font-weight:900;border-radius:20px;padding:3px 12px;font-size:14px;display:none;z-index:5}
+.rooms{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:8px;padding:4px;min-height:0}
+.room{position:relative;border-radius:20px;background:linear-gradient(180deg,#fff,#fdf3e4);box-shadow:0 3px 10px #0000000f;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:6px;overflow:hidden;border:3px solid transparent;transition:transform .1s}
+.room .face{font-size:min(13vw,56px);line-height:1;transition:transform .2s}
+.room .nm{font-size:12px;font-weight:800;color:#6b6157;margin-top:2px}
+.room.req{border-color:#ffd7a8}
+.room.sel{border-color:var(--g);box-shadow:0 0 0 4px #2fb39a33;transform:scale(1.02)}
+.room.urg .face{animation:wob .5s infinite}
+@keyframes wob{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.bub{position:absolute;left:6px;right:6px;top:6px;background:#fff;border-radius:14px;padding:6px 8px;box-shadow:0 2px 6px #00000014;text-align:center}
+.bub:after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-top-color:#fff;border-bottom:0}
+.bub .jp{font-size:clamp(13px,3.9vw,17px);font-weight:900;line-height:1.25}
+.bub .mm{font-size:clamp(10px,3vw,13px);color:#7a6f64;line-height:1.5}
+.bar{height:5px;border-radius:3px;background:#eee;margin-top:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--g);transition:width .2s linear}
+.tray{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 4px 10px}
+.tool{border:0;border-radius:14px;background:#fff;box-shadow:0 2px 6px #00000012;padding:6px 2px;font-family:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px;min-height:62px}
+.tool b{font-size:26px;line-height:1.1}
+.tool span{font-size:11px;font-weight:800;line-height:1.2}
+.tool small{font-size:9px;color:#8a7f72;line-height:1.3}
+.tool.new{animation:glow 1s 3}
+@keyframes glow{50%{box-shadow:0 0 0 4px #ffb703}}
+.tool.hint{outline:3px solid #ffb703}
+.pop{position:absolute;font-weight:900;font-size:22px;pointer-events:none;z-index:9;animation:up 1s forwards;text-shadow:0 2px 0 #fff}
+@keyframes up{to{transform:translateY(-60px);opacity:0}}
+.shake{animation:sh .35s}
+@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.ov{position:fixed;inset:0;background:#fff8eef5;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
+.card{width:100%;max-width:420px;text-align:center}
+.card h1{font-size:34px;margin:6px 0 2px;font-weight:900}
+.card h2{font-size:22px;margin:4px 0}
+.card p{color:#6b6157;line-height:1.7;margin:6px 0}
+.btn{display:block;width:100%;border:0;border-radius:18px;padding:15px;font-size:18px;font-weight:900;font-family:inherit;margin-top:10px;background:var(--g);color:#fff;box-shadow:0 6px 0 #1f8a76}
+.btn:active{transform:translateY(3px);box-shadow:0 3px 0 #1f8a76}
+.btn.sub{background:#fff;color:var(--ink);box-shadow:0 6px 0 #e8dccb}
+.btn small{display:block;font-size:12px;font-weight:700;opacity:.9}
+.words{text-align:left;background:#fff;border-radius:16px;padding:6px 12px;margin:12px 0;max-height:34vh;overflow:auto}
+.words div{display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid #f1e8dc}
+.words div:last-child{border:0}
+.words b{font-size:22px}
+.words .t{flex:1;font-size:14px;line-height:1.4}
+.words .t small{display:block;color:#8a7f72}
+.tg{display:inline-flex;gap:6px;align-items:center;font-size:13px;margin-top:8px;color:#6b6157}
+.tg input{width:20px;height:20px}
+.big{font-size:64px;font-weight:900;color:var(--g);line-height:1}
+.newt{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+.newt div{background:#fff;border-radius:14px;padding:8px 10px;box-shadow:0 2px 6px #0000000f;font-size:13px;font-weight:800}
+.newt div b{display:block;font-size:30px}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="hud"><div class="sc" id="sc">0<small id="best"></small></div><span class="lv" id="lv">Lv1</span><span class="hp" id="hp"></span><button id="pauseB">⏸</button></div>
+  <div class="combo" id="combo"></div>
+  <div class="rooms" id="rooms"></div>
+  <div class="tray" id="tray"></div>
+</div>
+<div class="ov" id="ov"></div>
+<script>
+const $=s=>document.querySelector(s);
+const TOOLS=[
+ {id:"tea",e:"🍵",jp:"お茶",mm:"ရေ",q:[["のどが かわいた","ရေငတ်တယ်"],["お茶が ほしい","ရေနွေးကြမ်း သောက်ချင်တယ်"]]},
+ {id:"wc",e:"🚽",jp:"トイレ",mm:"အိမ်သာ",q:[["トイレに 行きたい","အိမ်သာ သွားချင်တယ်"],["おしっこが したい","ဆီးသွားချင်တယ်"]]},
+ {id:"rice",e:"🍚",jp:"ごはん",mm:"ထမင်း",q:[["おなかが すいた","ဗိုက်ဆာတယ်"],["ごはんは まだ？","ထမင်း မရသေးဘူးလား"]]},
+ {id:"blanket",e:"🧣",jp:"もうふ",mm:"စောင်",q:[["さむい…","ချမ်းတယ်"],["足が つめたい","ခြေထောက် အေးနေတယ်"]]},
+ {id:"fan",e:"🪭",jp:"うちわ",mm:"ယပ်တောင်",q:[["あつい…","ပူတယ်"],["あせを かいた","ချွေးထွက်နေတယ်"]]},
+ {id:"med",e:"💊",jp:"おくすり",mm:"ဆေး",q:[["おくすりの 時間だね","ဆေးသောက်ချိန် ရောက်ပြီ"]]},
+ {id:"chair",e:"🦽",jp:"車いす",mm:"ဘီးတပ်ကုလားထိုင်",q:[["さんぽに 行きたい","လမ်းလျှောက် ထွက်ချင်တယ်"],["お庭が 見たい","ဥယျာဉ်ကို ကြည့်ချင်တယ်"]]},
+ {id:"glasses",e:"👓",jp:"めがね",mm:"မျက်မှန်",q:[["めがねが ない","မျက်မှန် ပျောက်နေတယ်"],["新聞が 読めない","သတင်းစာ မဖတ်နိုင်ဘူး"]]},
+ {id:"thermo",e:"🌡️",jp:"体温計",mm:"အပူချိန်တိုင်း",q:[["熱っぽい","ဖျားနေသလိုပဲ"],["からだが だるい","ကိုယ် နုံးနေတယ်"]]},
+ {id:"ear",e:"👂",jp:"話を聞く",mm:"စကားနားထောင်",q:[["さみしい…","အထီးကျန်တယ်"],["むかしの 話を しよう","ဟိုတုန်းက အကြောင်း ပြောရအောင်"]]},
+ {id:"turn",e:"🛏️",jp:"体の向き",mm:"ကိုယ်အနေအထားပြောင်း",q:[["せなかが いたい","ကျောနာတယ်"],["ずっと 同じ姿勢で つらい","တစ်နေရာထဲ အကြာကြီး နေရတာ ပင်ပန်းတယ်"]]},
+ {id:"phone",e:"📞",jp:"電話",mm:"ဖုန်း",q:[["家族に 会いたい","မိသားစုကို တွေ့ချင်တယ်"],["むすめの 声が 聞きたい","သမီးရဲ့ အသံ ကြားချင်တယ်"]]}
+];
+const PEOPLE=[["👵","田中さん"],["👴","鈴木さん"],["👵🏻","佐藤さん"],["🧓","高橋さん"],["👴🏻","山本さん"],["👵🏼","伊藤さん"]];
+const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+let best=LS("carehero-best",{chal:0,slow:0}),showMM=LS("carehero-mm",true);
+let G=null,raf=0,last=0;
+const toolsFor=lv=>Math.min(TOOLS.length,4+(lv-1)*2);
+function newGame(mode){
+ G={mode,score:0,lv:1,hp:3,helped:0,combo:0,sel:-1,rooms:PEOPLE.map(p=>({p,req:null,mt:0,mf:''})),spawn:1.2,paused:false,seen:{},miss:{},over:false};
+ $("#ov").style.display="none";drawTray(true);drawRooms();hud();last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+function patience(){const b=G.mode==="slow"?30:Math.max(7,15-(G.lv-1)*1.3);return b}
+function maxReq(){return G.mode==="slow"?Math.min(3,1+Math.floor(G.lv/2)):Math.min(6,1+G.lv)}
+function spawnReq(){
+ const free=G.rooms.map((r,i)=>r.req||r.mt>0?-1:i).filter(i=>i>=0);
+ if(!free.length||G.rooms.filter(r=>r.req).length>=maxReq())return;
+ const i=free[Math.random()*free.length|0],ts=TOOLS.slice(0,toolsFor(G.lv));
+ const t=ts[Math.random()*ts.length|0],q=t.q[Math.random()*t.q.length|0],p=patience();
+ G.rooms[i].req={t:t.id,jp:q[0],mm:q[1],left:p,max:p};
+ if(G.sel<0)G.sel=i;drawRooms()}
+function loop(now){
+ const dt=Math.min(.1,(now-last)/1000);last=now;
+ if(G&&!G.paused&&!G.over){
+  G.spawn-=dt;if(G.spawn<=0){spawnReq();G.spawn=G.mode==="slow"?4.5:Math.max(1.1,3.2-G.lv*.25)}
+  let ch=false;
+  G.rooms.forEach((r,i)=>{if(r.mt>0){r.mt-=dt;if(r.mt<=0){r.mt=0;ch=true}}
+   if(r.req){r.req.left-=dt;if(r.req.left<=0){fail(i);ch=true}}});
+  if(ch)drawRooms();else updBars()}
+ raf=requestAnimationFrame(loop)}
+function updBars(){G.rooms.forEach((r,i)=>{if(!r.req)return;const el=document.querySelector(`[data-r="${i}"]`);if(!el)return;const f=r.req.left/r.req.max;const b=el.querySelector(".bar i");b.style.width=f*100+"%";b.style.background=f<.3?"#e85d4a":f<.6?"#ffb703":"#2fb39a";el.classList.toggle("urg",f<.3)})}
+function fail(i){const r=G.rooms[i];G.miss[r.req.t]=(G.miss[r.req.t]||0)+1;G.seen[r.req.t]=r.req;r.req=null;r.mt=1.5;r.mf='😢';G.combo=0;
+ if(G.sel===i)G.sel=nextSel();
+ drawRooms();if(G.mode!=="slow"){G.hp--;hud();if(G.hp<=0){end();return}}
+ pop(i,G.mode==="slow"?"😢":"💔","#e85d4a")}
+function nextSel(){const c=G.rooms.map((r,i)=>r.req?i:-1).filter(i=>i>=0).sort((a,b)=>G.rooms[a].req.left-G.rooms[b].req.left);return c.length?c[0]:-1}
+function drawRooms(){
+ $("#rooms").innerHTML=G.rooms.map((r,i)=>{const face=r.mt>0?r.mf:r.p[0];
+  return`<div class="room${r.req?" req":""}${G.sel===i&&r.req?" sel":""}" data-r="${i}">${r.req?`<div class="bub"><div class="jp">${r.req.jp}</div>${showMM?`<div class="mm">${r.req.mm}</div>`:""}<div class="bar"><i style="width:${r.req.left/r.req.max*100}%"></i></div></div>`:""}<div class="face">${face}</div><div class="nm">${r.p[1]}</div></div>`}).join("");
+ document.querySelectorAll("[data-r]").forEach(el=>el.onpointerdown=()=>{const i=+el.dataset.r;if(G.rooms[i].req){G.sel=i;drawRooms()}});updBars()}
+function drawTray(fresh,newIds=[]){const ts=TOOLS.slice(0,toolsFor(G.lv));
+ $("#tray").innerHTML=ts.map(t=>`<button class="tool${newIds.includes(t.id)?" new":""}" data-t="${t.id}"><b>${t.e}</b><span>${t.jp}</span>${showMM?`<small class="mm">${t.mm}</small>`:""}</button>`).join("");
+ document.querySelectorAll("[data-t]").forEach(b=>b.onpointerdown=e=>{e.preventDefault();use(b.dataset.t,b)})}
+function use(tid,btn){if(!G||G.paused||G.over)return;
+ if(G.sel<0||!G.rooms[G.sel].req)G.sel=nextSel();if(G.sel<0)return;
+ const i=G.sel,r=G.rooms[i];
+ if(r.req.t===tid){const bonus=Math.round(r.req.left/r.req.max*10);G.combo++;const pts=10+bonus+Math.min(G.combo-1,10)*2;G.score+=pts;G.helped++;G.seen[tid]=r.req;
+  r.req=null;r.mt=1.4;r.mf='😊';pop(i,"+"+pts+" ❤️","#2fb39a");if(G.combo>=3){const c=$("#combo");c.textContent=`🔥 ${G.combo} コンボ！`;c.style.display="block";clearTimeout(c.h);c.h=setTimeout(()=>c.style.display="none",900)}
+  G.sel=nextSel();drawRooms();hud();
+  if(G.helped%8===0)levelUp()}
+ else{G.combo=0;r.req.left=Math.max(.5,r.req.left-2);btn.classList.add("shake");setTimeout(()=>btn.classList.remove("shake"),350);
+  const ok=document.querySelector(`[data-t="${r.req.t}"]`);if(ok){ok.classList.add("hint");setTimeout(()=>ok.classList.remove("hint"),900)}
+  G.miss[r.req.t]=(G.miss[r.req.t]||0)+1;try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}}
+function pop(i,txt,col){const el=document.querySelector(`[data-r="${i}"]`);if(!el)return;const b=el.getBoundingClientRect();const p=document.createElement("div");p.className="pop";p.textContent=txt;p.style.color=col;p.style.left=b.left+b.width/2-30+"px";p.style.top=b.top+b.height/2+"px";document.body.appendChild(p);setTimeout(()=>p.remove(),1000)}
+function hud(){$("#sc").innerHTML=`${G.score}<small>ベスト ${best[G.mode]}</small>`;$("#lv").textContent="Lv"+G.lv;$("#hp").textContent=G.mode==="slow"?"🌱":"❤️".repeat(G.hp)+"🤍".repeat(3-G.hp)}
+function levelUp(){const before=toolsFor(G.lv);G.lv++;const after=toolsFor(G.lv);hud();
+ if(after>before){G.paused=true;const nt=TOOLS.slice(before,after);
+  ov(`<div style="font-size:50px">🎉</div><h2>レベル ${G.lv}！</h2><p>新しいおしごとが ふえたよ<br><span class="mm">အလုပ်အသစ် တိုးလာပြီ</span></p>
+  <div class="newt">${nt.map(t=>`<div><b>${t.e}</b>${t.jp}<br><span class="mm" style="font-weight:500;color:#8a7f72">${t.mm}</span><br><span style="font-weight:600;color:#8a7f72;font-size:11px">「${t.q[0][0]}」</span></div>`).join("")}</div>
+  <button class="btn" id="go">つづける ▶</button>`);$("#go").onclick=()=>{$("#ov").style.display="none";drawTray(false,nt.map(t=>t.id));G.paused=false;last=performance.now()}}
+ else confettiLite()}
+function confettiLite(){for(let k=0;k<12;k++){const p=document.createElement("div");p.className="pop";p.textContent=["⭐","✨","💖"][k%3];p.style.left=Math.random()*innerWidth+"px";p.style.top=innerHeight*.4+Math.random()*100+"px";document.body.appendChild(p);setTimeout(()=>p.remove(),1000)}}
+function ov(h){$("#ov").innerHTML=`<div class="card">${h}</div>`;$("#ov").style.display="flex"}
+function end(){G.over=true;const nb=G.score>best[G.mode];if(nb){best[G.mode]=G.score;localStorage.setItem("carehero-best",JSON.stringify(best))}
+ const used=TOOLS.filter(t=>G.seen[t.id]),miss=TOOLS.filter(t=>G.miss[t.id]);
+ ov(`<div style="font-size:46px">${G.helped>=24?"🏆":G.helped>=12?"🥈":"💪"}</div><h2>${nb?"ベスト更新！🎉":"おつかれさま！"}</h2>
+ <div class="big">${G.score}</div><p>${G.helped}人を 笑顔にしたよ 😊 ・ レベル ${G.lv}<br><span class="mm">လူ ${G.helped} ယောက်ကို ပြုံးစေခဲ့တယ်</span></p>
+ ${used.length?`<div style="font-weight:900;text-align:left;margin-top:10px">📖 今日のことば ${miss.length?`<span style="color:#e85d4a;font-size:12px">（❗＝まちがえた）</span>`:""}</div><div class="words">${used.map(t=>`<div><b>${t.e}</b><div class="t"><b style="font-size:14px">${G.miss[t.id]?"❗ ":""}「${G.seen[t.id].jp}」→ ${t.jp}</b><small class="mm">${G.seen[t.id].mm} → ${t.mm}</small></div></div>`).join("")}</div>`:""}
+ <button class="btn" id="again">もう一回 ▶</button><button class="btn sub" id="share">📤 友だちに送る</button><button class="btn sub" id="home">🏠 タイトルへ</button>`);
+ $("#again").onclick=()=>newGame(G.mode);$("#home").onclick=title;
+ $("#share").onclick=async()=>{const t=`ケアヒーローで ${G.score}点！${G.helped}人を笑顔にしたよ😊\n介護の日本語をゲームで覚えよう👇\nhttps://winlabjp.com/carehero/`;try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e.name==="AbortError")return}try{await navigator.clipboard.writeText(t);$("#share").textContent="コピーしました ✓"}catch(e){}}}
+function title(){G=null;$("#rooms").innerHTML="";$("#tray").innerHTML="";
+ ov(`<div style="font-size:64px;line-height:1">🦸‍♀️👵</div><h1>ケアヒーロー</h1><p style="font-weight:800;margin-top:0">介護の おしごと ゲーム<br><span class="mm">ပြုစုစောင့်ရှောက်ရေး ဂိမ်း</span></p>
+ <p style="font-size:14px;background:#fff;border-radius:16px;padding:10px 12px;text-align:left">👵 利用者さんの お願いを 読んで<br>👇 下から 正しい お世話を タッチ！<br>⏱ 早く 助けるほど 高得点。コンボも ねらおう<br><span class="mm" style="font-size:12px">တောင်းဆိုချက်ကို ဖတ်ပြီး မှန်တဲ့ ပစ္စည်းကို နှိပ်ပါ</span></p>
+ <button class="btn" id="ch">🎮 チャレンジ<small>❤️3つ・どんどん はやくなる</small></button>
+ <button class="btn sub" id="sl">🌱 ゆっくり モード<small>時間たっぷり・ハートが へらない</small></button>
+ <label class="tg"><input type="checkbox" id="mmT" ${showMM?"checked":""}> ミャンマー語も 表示する <span class="mm">မြန်မာဘာသာ</span></label>
+ <p style="font-size:12px">ベスト：チャレンジ ${best.chal}点 ・ ゆっくり ${best.slow}点</p>`);
+ $("#ch").onclick=()=>newGame("chal");$("#sl").onclick=()=>newGame("slow");
+ $("#mmT").onchange=e=>{showMM=e.target.checked;localStorage.setItem("carehero-mm",JSON.stringify(showMM))}}
+$("#pauseB").onclick=()=>{if(!G||G.over)return;G.paused=true;ov(`<div style="font-size:50px">⏸</div><h2>ひとやすみ</h2><button class="btn" id="res">つづける ▶</button><button class="btn sub" id="quit">🏠 タイトルへ</button>`);
+ $("#res").onclick=()=>{$("#ov").style.display="none";G.paused=false;last=performance.now()};$("#quit").onclick=title};
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&G&&!G.over&&!G.paused)$("#pauseB").click()});
+title();
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
+</body>
+</html>

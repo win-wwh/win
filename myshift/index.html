@@ -8,8 +8,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="わたしのシフト（個人用勤務表）">
 <meta property="og:description" content="アルバイトも正社員も。固定シフト・ミーティング・給料の目安。ミャンマー語つき。">
-<meta property="og:image" content="https://win-wwh.github.io/win/myshift/icon-512.png">
-<meta property="og:url" content="https://win-wwh.github.io/win/myshift/">
+<meta property="og:image" content="https://winlabjp.com/myshift/icon-512.png">
+<meta property="og:url" content="https://winlabjp.com/myshift/">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
@@ -355,7 +355,7 @@ $("#fixB").onclick=()=>{const y=cur.getFullYear(),m=cur.getMonth();
   save();close();render();toast(`🔁 ${n}日分 入れました`)};
  $("#fxA").onclick=()=>apply(false);
  $("#fxPaste").onclick=()=>{$("#sheet").innerHTML=`<h2>📋 リンクから入れる</h2><p style="font-size:13px;color:#5d6e6b;line-height:1.6;margin:0 0 8px">もらったリンクを長押しして「コピー」→ ここに貼りつけて、「入れる」を押してください。</p>
-  <textarea id="pTx" rows="4" placeholder="https://win-wwh.github.io/win/myshift/#fx=..."></textarea><button class="btn" id="pOk">入れる</button>`;
+  <textarea id="pTx" rows="4" placeholder="https://winlabjp.com/myshift/#fx=..."></textarea><button class="btn" id="pOk">入れる</button>`;
   $("#pOk").onclick=()=>{const t=$("#pTx").value.trim();if(!/#fx=|[#&]pay=/.test(t)){toast("リンクが見つかりません");return}if(importFixed(t)||/pay=/.test(t)){render();$("#fixB").click();toast("✓ 入れました")}}};
  $("#fxAuto").onchange=e=>{S.autoFix=e.target.checked;if(S.autoFix){const t=new Date();S.fixFrom=key(t.getFullYear(),t.getMonth(),1);S.filled=[];save();render();toast("📅 毎月 自動で入れます")}else{save();render()}};$("#fxO").onclick=()=>{if(confirm(`${m+1}月のシフトを全部、固定シフトで上書きしますか？`))apply(true)};
  $("#fxS").onclick=()=>{save();close();render();toast("保存しました ✓")}};

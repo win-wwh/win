@@ -187,6 +187,6 @@ footer .mm{color:#bfb5aa}
 (function(){const t=new Date(),e=new Date(2027,0,31);t.setHours(0,0,0,0);const d=Math.round((e-t)/864e5);
  document.getElementById("days").innerHTML=d>0?`${d}<small> 日</small>`:d===0?"今日！":"<small>次の試験日を確認してください</small>"})();
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

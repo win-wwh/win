@@ -211,6 +211,6 @@ document.getElementById("page").addEventListener("touchstart",e=>{sx=e.touches[0
 document.getElementById("page").addEventListener("touchend",e=>{if(sx===null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)<50)return;if(dx<0&&idx<PAGES.length-1)idx++;else if(dx>0&&idx>0)idx--;else return;render();turned()});
 render();refreshSoundChips();
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

@@ -236,6 +236,6 @@ $("#bg").onclick=closeSheet;
 // ---------- start
 tx("meta","readonly",s=>s.get("albums")).then(v=>{ALBUMS=Array.isArray(v)?v:[];home()});
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

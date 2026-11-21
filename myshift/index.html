@@ -464,6 +464,6 @@ const gotFx=importFixed();
 addEventListener("hashchange",()=>{if(importFixed()){render();$("#fixB").click();toast("🔁 固定シフトを受け取りました")}});
 render();if(!S.name)welcome();else if(gotFx){S.ver=VER;save();$("#fixB").click();toast("🔁 固定シフトを受け取りました")}else if(S.ver!==VER)whatsNew();
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

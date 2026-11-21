@@ -165,6 +165,6 @@ function closeSheet(){$("#sheet").classList.remove("on");setTimeout(()=>$("#bg")
 $("#bg").onclick=closeSheet;
 render();lockNow();
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

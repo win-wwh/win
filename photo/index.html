@@ -227,6 +227,6 @@ $("saveb").onclick=()=>{render(true);cv.toBlob(async blob=>{render();
   const a=document.createElement("a");a.href=url;a.download=file.name;a.click();toast("保存しました ✓");},"image/jpeg",.92)};
 $("closeimg").onclick=()=>$("saveimg").style.display="none";
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

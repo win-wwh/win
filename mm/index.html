@@ -661,6 +661,6 @@ const setEn=v=>{localStorage.setItem('mm-en',v?'1':'0');document.body.classList.
 setEn(localStorage.getItem('mm-en')!=='0');$('#entg').onclick=()=>setEn(document.body.classList.contains('hide-en'));
 home();
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

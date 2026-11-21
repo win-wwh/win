@@ -180,6 +180,6 @@ setInterval(()=>{if(!$("#sheet").classList.contains("on"))render()},60000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)render()});
 render();
 </script>
-<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/win/sw.js").catch(()=>{})</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

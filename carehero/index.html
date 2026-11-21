@@ -44,11 +44,14 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 .bub .mm{font-size:clamp(10px,3vw,13px);color:#7a6f64;line-height:1.5}
 .bar{height:5px;border-radius:3px;background:#eee;margin-top:4px;overflow:hidden}
 .bar i{display:block;height:100%;background:var(--g);transition:width .2s linear}
-.tray{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 4px 10px}
+.tray{display:grid;grid-template-columns:repeat(var(--c,4),1fr);gap:6px;padding:8px 4px 10px}
 .tool{border:0;border-radius:14px;background:#fff;box-shadow:0 2px 6px #00000012;padding:6px 2px;font-family:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:1px;min-height:62px}
 .tool b{font-size:26px;line-height:1.1}
 .tool span{font-size:11px;font-weight:800;line-height:1.2}
 .tool small{font-size:9px;color:#8a7f72;line-height:1.3}
+.tray.many .tool{min-height:52px;padding:4px 1px}.tray.many .tool b{font-size:22px}.tray.many .tool span{font-size:10px}.tray.many .tool small{display:none}
+.rush{position:absolute;left:50%;top:58px;transform:translateX(-50%);background:#e85d4a;color:#fff;font-weight:900;border-radius:20px;padding:3px 12px;font-size:13px;z-index:5;animation:glow 1s infinite}
+.lvchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}.lvchips button{border:0;border-radius:12px;padding:8px 12px;font-weight:900;font-family:inherit;background:#fff;box-shadow:0 2px 0 #e8dccb;font-size:13px}.lvchips button.on{background:var(--g);color:#fff}
 .tool.new{animation:glow 1s 3}
 @keyframes glow{50%{box-shadow:0 0 0 4px #ffb703}}
 .tool.hint{outline:3px solid #ffb703}
@@ -82,7 +85,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 <body>
 <div id="app">
   <div class="hud"><div class="sc" id="sc">0<small id="best"></small></div><span class="lv" id="lv">Lv1</span><span class="hp" id="hp"></span><button id="pauseB">⏸</button></div>
-  <div class="combo" id="combo"></div>
+  <div class="combo" id="combo"></div><div class="rush" id="rushB" style="display:none">⚡ ラッシュタイム！点数2倍</div>
   <div class="rooms" id="rooms"></div>
   <div class="tray" id="tray"></div>
 </div>
@@ -101,17 +104,27 @@ const TOOLS=[
  {id:"thermo",e:"🌡️",jp:"体温計",mm:"အပူချိန်တိုင်း",q:[["熱っぽい","ဖျားနေသလိုပဲ"],["からだが だるい","ကိုယ် နုံးနေတယ်"]]},
  {id:"ear",e:"👂",jp:"話を聞く",mm:"စကားနားထောင်",q:[["さみしい…","အထီးကျန်တယ်"],["むかしの 話を しよう","ဟိုတုန်းက အကြောင်း ပြောရအောင်"]]},
  {id:"turn",e:"🛏️",jp:"体の向き",mm:"ကိုယ်အနေအထားပြောင်း",q:[["せなかが いたい","ကျောနာတယ်"],["ずっと 同じ姿勢で つらい","တစ်နေရာထဲ အကြာကြီး နေရတာ ပင်ပန်းတယ်"]]},
- {id:"phone",e:"📞",jp:"電話",mm:"ဖုန်း",q:[["家族に 会いたい","မိသားစုကို တွေ့ချင်တယ်"],["むすめの 声が 聞きたい","သမီးရဲ့ အသံ ကြားချင်တယ်"]]}
+ {id:"phone",e:"📞",jp:"電話",mm:"ဖုန်း",q:[["家族に 会いたい","မိသားစုကို တွေ့ချင်တယ်"],["むすめの 声が 聞きたい","သမီးရဲ့ အသံ ကြားချင်တယ်"]]},
+ {id:"denture",e:"🦷",jp:"入れ歯",mm:"သွားတု",q:[["入れ歯が 合わない","သွားတု မကိုက်ဘူး"],["ごはんが かめない","ထမင်း မဝါးနိုင်ဘူး"]]},
+ {id:"bath",e:"🛁",jp:"お風呂",mm:"ရေချိုး",q:[["お風呂に 入りたい","ရေချိုးချင်တယ်"],["汗で べたべた","ချွေးတွေ စေးကပ်နေတယ်"]]},
+ {id:"cream",e:"🧴",jp:"クリーム",mm:"လိမ်းဆေး",q:[["手が かさかさ","လက် ခြောက်နေတယ်"],["からだが かゆい","ကိုယ် ယားတယ်"]]},
+ {id:"diaper",e:"🩲",jp:"おむつ交換",mm:"သေးခံ လဲ",q:[["おしりが 気持ち悪い","တင်ပါး မသက်မသာ ဖြစ်နေတယ်"],["もらしちゃった…","မထိန်းနိုင်ဘဲ ထွက်သွားတယ်"]]},
+ {id:"tv",e:"📺",jp:"テレビ",mm:"တီဗီ",q:[["ニュースが 見たい","သတင်း ကြည့်ချင်တယ်"],["すもうが 見たい","ဆူမို ကြည့်ချင်တယ်"]]},
+ {id:"walk",e:"🚶",jp:"歩く見守り",mm:"လမ်းလျှောက် စောင့်ကြည့်",q:[["ひとりで 歩くのが こわい","တစ်ယောက်တည်း လမ်းလျှောက်ရမှာ ကြောက်တယ်"],["ろうかを 歩きたい","စင်္ကြံမှာ လမ်းလျှောက်ချင်တယ်"]]},
+ {id:"bed",e:"🛌",jp:"ベッドで休む",mm:"အိပ်ယာ",q:[["ねむい…","အိပ်ချင်တယ်"],["つかれた","ပင်ပန်းတယ်"]]},
+ {id:"song",e:"🎵",jp:"うた・レク",mm:"သီချင်း",q:[["たいくつだなあ","ပျင်းတယ်"],["うたを うたいたい","သီချင်း ဆိုချင်တယ်"]]}
 ];
+const TITLES=[[1,"🌱 新人さん"],[3,"🌿 がんばりヘルパー"],[5,"🌳 たよれるスタッフ"],[7,"⭐ ベテラン"],[9,"🌟 リーダー"],[12,"🏅 ケアの名人"],[15,"👑 ケアマスター"],[20,"🦸 伝説のケアヒーロー"]];
+const titleOf=lv=>TITLES.filter(t=>lv>=t[0]).pop()[1];
 const PEOPLE=[["👵","田中さん"],["👴","鈴木さん"],["👵🏻","佐藤さん"],["🧓","高橋さん"],["👴🏻","山本さん"],["👵🏼","伊藤さん"]];
 const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
-let best=LS("carehero-best",{chal:0,slow:0}),showMM=LS("carehero-mm",true);
+let best=LS("carehero-best",{chal:0,slow:0}),maxLv=LS("carehero-maxlv",{chal:1,slow:1}),showMM=LS("carehero-mm",true);
 let G=null,raf=0,last=0;
 const toolsFor=lv=>Math.min(TOOLS.length,4+(lv-1)*2);
-function newGame(mode){
- G={mode,score:0,lv:1,hp:3,helped:0,combo:0,sel:-1,rooms:PEOPLE.map(p=>({p,req:null,mt:0,mf:''})),spawn:1.2,paused:false,seen:{},miss:{},over:false};
+function newGame(mode,start=1){
+ G={mode,score:0,lv:start,hp:3,helped:(start-1)*8,rush:0,combo:0,sel:-1,rooms:PEOPLE.map(p=>({p,req:null,mt:0,mf:''})),spawn:1.2,paused:false,seen:{},miss:{},over:false};
  $("#ov").style.display="none";drawTray(true);drawRooms();hud();last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
-function patience(){const b=G.mode==="slow"?30:Math.max(7,15-(G.lv-1)*1.3);return b}
+function patience(){const b=G.mode==="slow"?30:Math.max(5.5,15-(G.lv-1)*.75);return G.rush>0?Math.max(b,8):b}
 function maxReq(){return G.mode==="slow"?Math.min(3,1+Math.floor(G.lv/2)):Math.min(6,1+G.lv)}
 function spawnReq(){
  const free=G.rooms.map((r,i)=>r.req||r.mt>0?-1:i).filter(i=>i>=0);
@@ -123,7 +136,8 @@ function spawnReq(){
 function loop(now){
  const dt=Math.min(.1,(now-last)/1000);last=now;
  if(G&&!G.paused&&!G.over){
-  G.spawn-=dt;if(G.spawn<=0){spawnReq();G.spawn=G.mode==="slow"?4.5:Math.max(1.1,3.2-G.lv*.25)}
+  if(G.rush>0){G.rush-=dt;if(G.rush<=0){G.rush=0;hud()}}
+  G.spawn-=dt;if(G.spawn<=0){spawnReq();G.spawn=(G.mode==="slow"?4.5:Math.max(.9,3.2-G.lv*.22))*(G.rush>0?.45:1)}
   let ch=false;
   G.rooms.forEach((r,i)=>{if(r.mt>0){r.mt-=dt;if(r.mt<=0){r.mt=0;ch=true}}
    if(r.req){r.req.left-=dt;if(r.req.left<=0){fail(i);ch=true}}});
@@ -139,13 +153,13 @@ function drawRooms(){
  $("#rooms").innerHTML=G.rooms.map((r,i)=>{const face=r.mt>0?r.mf:r.p[0];
   return`<div class="room${r.req?" req":""}${G.sel===i&&r.req?" sel":""}" data-r="${i}">${r.req?`<div class="bub"><div class="jp">${r.req.jp}</div>${showMM?`<div class="mm">${r.req.mm}</div>`:""}<div class="bar"><i style="width:${r.req.left/r.req.max*100}%"></i></div></div>`:""}<div class="face">${face}</div><div class="nm">${r.p[1]}</div></div>`}).join("");
  document.querySelectorAll("[data-r]").forEach(el=>el.onpointerdown=()=>{const i=+el.dataset.r;if(G.rooms[i].req){G.sel=i;drawRooms()}});updBars()}
-function drawTray(fresh,newIds=[]){const ts=TOOLS.slice(0,toolsFor(G.lv));
+function drawTray(fresh,newIds=[]){const ts=TOOLS.slice(0,toolsFor(G.lv));const tr=$("#tray");tr.style.setProperty("--c",ts.length>12?5:4);tr.classList.toggle("many",ts.length>12);
  $("#tray").innerHTML=ts.map(t=>`<button class="tool${newIds.includes(t.id)?" new":""}" data-t="${t.id}"><b>${t.e}</b><span>${t.jp}</span>${showMM?`<small class="mm">${t.mm}</small>`:""}</button>`).join("");
  document.querySelectorAll("[data-t]").forEach(b=>b.onpointerdown=e=>{e.preventDefault();use(b.dataset.t,b)})}
 function use(tid,btn){if(!G||G.paused||G.over)return;
  if(G.sel<0||!G.rooms[G.sel].req)G.sel=nextSel();if(G.sel<0)return;
  const i=G.sel,r=G.rooms[i];
- if(r.req.t===tid){const bonus=Math.round(r.req.left/r.req.max*10);G.combo++;const pts=10+bonus+Math.min(G.combo-1,10)*2;G.score+=pts;G.helped++;G.seen[tid]=r.req;
+ if(r.req.t===tid){const bonus=Math.round(r.req.left/r.req.max*10);G.combo++;const pts=(10+bonus+Math.min(G.combo-1,10)*2)*(G.rush>0?2:1);G.score+=pts;G.helped++;G.seen[tid]=r.req;
   r.req=null;r.mt=1.4;r.mf='😊';pop(i,"+"+pts+" ❤️","#2fb39a");if(G.combo>=3){const c=$("#combo");c.textContent=`🔥 ${G.combo} コンボ！`;c.style.display="block";clearTimeout(c.h);c.h=setTimeout(()=>c.style.display="none",900)}
   G.sel=nextSel();drawRooms();hud();
   if(G.helped%8===0)levelUp()}
@@ -153,19 +167,25 @@ function use(tid,btn){if(!G||G.paused||G.over)return;
   const ok=document.querySelector(`[data-t="${r.req.t}"]`);if(ok){ok.classList.add("hint");setTimeout(()=>ok.classList.remove("hint"),900)}
   G.miss[r.req.t]=(G.miss[r.req.t]||0)+1;try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}}
 function pop(i,txt,col){const el=document.querySelector(`[data-r="${i}"]`);if(!el)return;const b=el.getBoundingClientRect();const p=document.createElement("div");p.className="pop";p.textContent=txt;p.style.color=col;p.style.left=b.left+b.width/2-30+"px";p.style.top=b.top+b.height/2+"px";document.body.appendChild(p);setTimeout(()=>p.remove(),1000)}
-function hud(){$("#sc").innerHTML=`${G.score}<small>ベスト ${best[G.mode]}</small>`;$("#lv").textContent="Lv"+G.lv;$("#hp").textContent=G.mode==="slow"?"🌱":"❤️".repeat(G.hp)+"🤍".repeat(3-G.hp)}
-function levelUp(){const before=toolsFor(G.lv);G.lv++;const after=toolsFor(G.lv);hud();
- if(after>before){G.paused=true;const nt=TOOLS.slice(before,after);
-  ov(`<div style="font-size:50px">🎉</div><h2>レベル ${G.lv}！</h2><p>新しいおしごとが ふえたよ<br><span class="mm">အလုပ်အသစ် တိုးလာပြီ</span></p>
-  <div class="newt">${nt.map(t=>`<div><b>${t.e}</b>${t.jp}<br><span class="mm" style="font-weight:500;color:#8a7f72">${t.mm}</span><br><span style="font-weight:600;color:#8a7f72;font-size:11px">「${t.q[0][0]}」</span></div>`).join("")}</div>
-  <button class="btn" id="go">つづける ▶</button>`);$("#go").onclick=()=>{$("#ov").style.display="none";drawTray(false,nt.map(t=>t.id));G.paused=false;last=performance.now()}}
+function hud(){$("#sc").innerHTML=`${G.score}<small>ベスト ${best[G.mode]}</small>`;$("#lv").textContent="Lv"+G.lv;$("#rushB").style.display=G.rush>0?"block":"none";$("#hp").textContent=G.mode==="slow"?"🌱":"❤️".repeat(G.hp)+"🤍".repeat(3-G.hp)}
+function levelUp(){const before=toolsFor(G.lv),oldT=titleOf(G.lv);G.lv++;const after=toolsFor(G.lv),newT=titleOf(G.lv);
+ if(G.lv>maxLv[G.mode]){maxLv[G.mode]=G.lv;localStorage.setItem("carehero-maxlv",JSON.stringify(maxLv))}
+ if(G.mode!=="slow"&&G.lv%3===0&&G.hp<3)G.hp++;
+ const rush=G.lv%5===0;hud();
+ if(after>before||oldT!==newT||rush){G.paused=true;const nt=TOOLS.slice(before,after);
+  ov(`<div style="font-size:50px">🎉</div><h2>レベル ${G.lv}！</h2>${oldT!==newT?`<p style="font-size:18px;font-weight:900;color:#2fb39a;margin:2px 0">${newT} に なったよ！</p>`:""}
+  ${G.mode!=="slow"&&G.lv%3===0?`<p>❤️ ハートが 1つ もどった！</p>`:""}
+  ${nt.length?`<p>新しいおしごとが ふえたよ<br><span class="mm">အလုပ်အသစ် တိုးလာပြီ</span></p>
+  <div class="newt">${nt.map(t=>`<div><b>${t.e}</b>${t.jp}<br><span class="mm" style="font-weight:500;color:#8a7f72">${t.mm}</span><br><span style="font-weight:600;color:#8a7f72;font-size:11px">「${t.q[0][0]}」</span></div>`).join("")}</div>`:""}
+  ${rush?`<p style="background:#fde2df;border-radius:14px;padding:10px;font-weight:900;color:#c0392b">⚡ ラッシュタイム！<br><span style="font-weight:600">20びょう、お願いが どんどん来る！ 点数2倍</span></p>`:""}
+  <button class="btn" id="go">つづける ▶</button>`);$("#go").onclick=()=>{$("#ov").style.display="none";drawTray(false,nt.map(t=>t.id));if(rush)G.rush=20;hud();G.paused=false;last=performance.now()}}
  else confettiLite()}
 function confettiLite(){for(let k=0;k<12;k++){const p=document.createElement("div");p.className="pop";p.textContent=["⭐","✨","💖"][k%3];p.style.left=Math.random()*innerWidth+"px";p.style.top=innerHeight*.4+Math.random()*100+"px";document.body.appendChild(p);setTimeout(()=>p.remove(),1000)}}
 function ov(h){$("#ov").innerHTML=`<div class="card">${h}</div>`;$("#ov").style.display="flex"}
 function end(){G.over=true;const nb=G.score>best[G.mode];if(nb){best[G.mode]=G.score;localStorage.setItem("carehero-best",JSON.stringify(best))}
  const used=TOOLS.filter(t=>G.seen[t.id]),miss=TOOLS.filter(t=>G.miss[t.id]);
  ov(`<div style="font-size:46px">${G.helped>=24?"🏆":G.helped>=12?"🥈":"💪"}</div><h2>${nb?"ベスト更新！🎉":"おつかれさま！"}</h2>
- <div class="big">${G.score}</div><p>${G.helped}人を 笑顔にしたよ 😊 ・ レベル ${G.lv}<br><span class="mm">လူ ${G.helped} ယောက်ကို ပြုံးစေခဲ့တယ်</span></p>
+ <div class="big">${G.score}</div><p style="font-weight:900;color:#2fb39a;margin:2px 0">${titleOf(G.lv)}</p><p>${G.helped}人を 笑顔にしたよ 😊 ・ レベル ${G.lv}<br><span class="mm">လူ ${G.helped} ယောက်ကို ပြုံးစေခဲ့တယ်</span></p>
  ${used.length?`<div style="font-weight:900;text-align:left;margin-top:10px">📖 今日のことば ${miss.length?`<span style="color:#e85d4a;font-size:12px">（❗＝まちがえた）</span>`:""}</div><div class="words">${used.map(t=>`<div><b>${t.e}</b><div class="t"><b style="font-size:14px">${G.miss[t.id]?"❗ ":""}「${G.seen[t.id].jp}」→ ${t.jp}</b><small class="mm">${G.seen[t.id].mm} → ${t.mm}</small></div></div>`).join("")}</div>`:""}
  <button class="btn" id="again">もう一回 ▶</button><button class="btn sub" id="share">📤 友だちに送る</button><button class="btn sub" id="home">🏠 タイトルへ</button>`);
  $("#again").onclick=()=>newGame(G.mode);$("#home").onclick=title;
@@ -173,11 +193,13 @@ function end(){G.over=true;const nb=G.score>best[G.mode];if(nb){best[G.mode]=G.s
 function title(){G=null;$("#rooms").innerHTML="";$("#tray").innerHTML="";
  ov(`<div style="font-size:64px;line-height:1">🦸‍♀️👵</div><h1>ケアヒーロー</h1><p style="font-weight:800;margin-top:0">介護の おしごと ゲーム<br><span class="mm">ပြုစုစောင့်ရှောက်ရေး ဂိမ်း</span></p>
  <p style="font-size:14px;background:#fff;border-radius:16px;padding:10px 12px;text-align:left">👵 利用者さんの お願いを 読んで<br>👇 下から 正しい お世話を タッチ！<br>⏱ 早く 助けるほど 高得点。コンボも ねらおう<br><span class="mm" style="font-size:12px">တောင်းဆိုချက်ကို ဖတ်ပြီး မှန်တဲ့ ပစ္စည်းကို နှိပ်ပါ</span></p>
- <button class="btn" id="ch">🎮 チャレンジ<small>❤️3つ・どんどん はやくなる</small></button>
+ <button class="btn" id="ch">🎮 チャレンジ<small>❤️3つ・どんどん はやくなる・全${TOOLS.length}種類のおしごと</small></button>
  <button class="btn sub" id="sl">🌱 ゆっくり モード<small>時間たっぷり・ハートが へらない</small></button>
+ ${maxLv.chal>2||maxLv.slow>2?`<p style="font-size:13px;font-weight:800;margin:14px 0 0">📍 レベルを えらんで 始める</p><div class="lvchips">${[...new Set([1,3,5,7,9,12,15,20].filter(n=>n<=Math.max(maxLv.chal,maxLv.slow)))].map(n=>`<button data-lv="${n}" class="${n===1?"on":""}">Lv${n}</button>`).join("")}</div>`:""}
  <label class="tg"><input type="checkbox" id="mmT" ${showMM?"checked":""}> ミャンマー語も 表示する <span class="mm">မြန်မာဘာသာ</span></label>
- <p style="font-size:12px">ベスト：チャレンジ ${best.chal}点 ・ ゆっくり ${best.slow}点</p>`);
- $("#ch").onclick=()=>newGame("chal");$("#sl").onclick=()=>newGame("slow");
+ <p style="font-size:12px">ベスト：チャレンジ ${best.chal}点（Lv${maxLv.chal}）・ ゆっくり ${best.slow}点（Lv${maxLv.slow}）</p>`);
+ let st=1;document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{st=+b.dataset.lv;document.querySelectorAll("[data-lv]").forEach(x=>x.classList.toggle("on",x===b))});
+ $("#ch").onclick=()=>newGame("chal",Math.min(st,maxLv.chal));$("#sl").onclick=()=>newGame("slow",Math.min(st,maxLv.slow));
  $("#mmT").onchange=e=>{showMM=e.target.checked;localStorage.setItem("carehero-mm",JSON.stringify(showMM))}}
 $("#pauseB").onclick=()=>{if(!G||G.over)return;G.paused=true;ov(`<div style="font-size:50px">⏸</div><h2>ひとやすみ</h2><button class="btn" id="res">つづける ▶</button><button class="btn sub" id="quit">🏠 タイトルへ</button>`);
  $("#res").onclick=()=>{$("#ov").style.display="none";G.paused=false;last=performance.now()};$("#quit").onclick=title};

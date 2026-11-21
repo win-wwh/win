@@ -141,6 +141,15 @@ body.t-よる .stars-bg,body.t-しんや .stars-bg{opacity:1}
 .tl{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:none;padding:0}
 .tl div{background:#fff;border-radius:12px;padding:6px 8px;font-size:12px;font-weight:800;box-shadow:0 1px 4px #0001;text-align:left}
 .tl div b{color:#e07a2f;margin-right:4px}
+.tower{display:flex;flex-direction:column-reverse;gap:4px;margin:10px 0;text-align:left}
+.fl{display:flex;align-items:center;gap:8px;background:#ffffffcc;border-radius:12px;padding:5px 10px;font-size:12px;font-weight:800;color:#8a7f72}
+.fl b{width:34px;text-align:center;color:#5b4636}
+.fl.done{background:#e3f6f0;color:#1f8a76}.fl.now{background:#fff;box-shadow:0 0 0 3px #ffb703;color:#2b2622}.fl.boss{background:#fde2df}
+.qbox{background:#fff;border-radius:20px;padding:14px;text-align:left;box-shadow:0 2px 10px #0000000f}
+.qbox .grp{font-size:12px;font-weight:800;color:#8a7f72}
+.qbox .qt{font-size:16px;font-weight:800;line-height:1.75;margin-top:4px}
+.tbar{height:8px;border-radius:4px;background:#eee;overflow:hidden;margin:10px 0 4px}.tbar i{display:block;height:100%;background:#3b5bdb;transition:width .25s linear}
+.qhud{display:flex;justify-content:space-between;align-items:center;font-weight:900;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -150,6 +159,7 @@ body.t-よる .stars-bg,body.t-しんや .stars-bg{opacity:1}
  <div class="mapw" id="mapw"><div id="map"></div></div>
 </div>
 <div class="ov" id="ov"><div class="sc" id="sc"></div></div>
+<script src="../kaigo/kokushi.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
@@ -168,7 +178,7 @@ const ROOMS={
  st:{x:245,y:340,w:105,h:130,n:"スタッフ室",ic:"📋",f:"f-office",d:[["💻",12,40],["📋",64,40],["☕",18,88],["🗂️",62,88]],door:"t"}
 };
 const SKY={あさ:"🌅",ひる:"☀️",ゆうがた:"🌇",よる:"🌙",しんや:"🌌"};
-const P={tanaka:["👵","田中さん"],suzuki:["👴","鈴木さん"],sato:["👵🏻","佐藤さん"],nurse:["👩🏻‍⚕️","看護師さん"],lead:["🧑🏻‍💼","リーダー"]};
+const P={family:["👩🏻","ご家族"],tanaka:["👵","田中さん"],suzuki:["👴","鈴木さん"],sato:["👵🏻","佐藤さん"],nurse:["👩🏻‍⚕️","看護師さん"],lead:["🧑🏻‍💼","リーダー"]};
 // [time,label,room,who,bg,line,mm,situation,[[question,[[choice,ok,explain],...]],...]]
 const DAY=[
  ["7:00","あさ","r1","tanaka","#ffe3d1","……すう、すう（ねている）","(အိပ်နေတယ်)","起きる時間です。右手と右足に まひ（片麻痺）が あります。",
@@ -225,7 +235,33 @@ const ALT=[
  ["7:00","あさ","st","lead","#f3ece2","夜、鈴木さんが ベッドの横で 座ってたって？","ညက ဆူဇူကီးစံ ကုတင်ဘေးမှာ ထိုင်နေတယ်ဆို","夜中に 鈴木さんが ベッドから すべり落ちそうに なっていました。けがは ありません。",
   [["どうする？",[["ヒヤリハット報告を 書いて、みんなで 共有する",1,"けがが なくても 報告。原因を 考えて、事故を 防ぎます。"],["けがが ないので 報告しない",0,"小さな「ヒヤリ」を 共有することで、大きな 事故を 防げます。"]]]]]
 ];
-function makeDay(){const last=LS("carelife-last",[]);const pick=DAY.map((e,i)=>{let a=Math.random()<.5;if(rec.days===0)a=false;else if(last[i]!==undefined&&Math.random()<.7)a=!last[i];return a?1:0});localStorage.setItem("carelife-last",JSON.stringify(pick));return DAY.map((e,i)=>pick[i]?ALT[i]:e)}
+const ALT2=[
+ ["7:00","あさ","r3","sato","#efe3ff","おはよう。今日は 何曜日 だったかしら","ဒီနေ့ ဘာနေ့လဲ","佐藤さんは、日にちが わからなくなる ことが あります。",
+  [["何て 答える？",[["「おはようございます。今日は 月曜日ですよ。いい お天気ですね」",1,"やさしく 何度でも 答えます。季節や天気の話も 安心に つながります。"],["「さっきも 言いましたよ」",0,"何度も聞くのは 不安だから。責めると 傷つきます。"],["答えないで 着がえを 始める",0,"質問に 答えないと、無視された 気持ちに なります。"]]]]],
+ ["7:30","あさ","wc","sato","#e4f1f3","終わったわ","ပြီးပြီ","佐藤さん（女性）の トイレ介助です。",
+  [["陰部を ふく 方向は？",[["前から 後ろへ",1,"尿路感染を 防ぐため、前から 後ろへ ふきます。"],["後ろから 前へ",0,"便の菌が 尿道に つくと、感染の 原因に なります。"]]]]],
+ ["8:00","あさ","din","tanaka","#fff1c9","スプーンで 食べさせて","ဇွန်းနဲ့ ခွံ့ပေးပါ","田中さんは 右側に まひ（右片麻痺）が あります。",
+  [["食べ物は 口の どちらから 入れる？",[["左（よく動く方）から、少しずつ",1,"健側から 入れると、かんで 飲みこみやすく なります。"],["右（まひのある方）から",0,"まひ側は 感覚が 弱く、食べ物が 残りやすいです。"],["大きな スプーンで 早く",0,"一口が 多いと、誤嚥の 危険が 高くなります。"]]]]],
+ ["9:00","あさ","st","nurse","#f3ece2","鈴木さんの つめ、のびてますね","ဆူဇူကီးစံ လက်သည်း ရှည်နေတယ်","鈴木さんの 足の つめが 割れていて、まわりが 赤く はれています。",
+  [["どうする？",[["切らないで、看護師さんに 報告する",1,"つめの 周りに 異常が ある時は、介護職は 切りません。看護師に 伝えます。"],["自分で きれいに 切る",0,"はれている所を 切ると、けがや 感染の 原因に なります。"]]]]],
+ ["10:00","ひる","bath","tanaka","#d6eefc","お風呂に 入ろうかね","ရေချိုးကန်ထဲ ဝင်မယ်","田中さんは 右片麻痺です。浴槽（湯ぶね）に 入ります。",
+  [["どちらの 足から 入る？",[["左（よく動く方）の 足から",1,"健側から 入ると、お湯の 温度も わかって 安全です。"],["右（まひのある方）の 足から",0,"まひ側は 温度を 感じにくく、バランスも くずれやすいです。"]]]]],
+ ["12:00","ひる","din","suzuki","#fff1c9","もっと 食べたいなあ。おかわり！","ပိုစားချင်တယ်","鈴木さんは 糖尿病で、食事の量が 決まっています。",
+  [["どうする？",[["気持ちを 受けとめて、決まりを やさしく 説明し、看護師に 相談する",1,"気持ちに よりそいながら、病気の ための 決まりを 守ります。"],["ないしょで おかわりを あげる",0,"糖尿病が 悪くなる 危険が あります。"],["「だめです！」とだけ 言う",0,"理由を 言わないと、いやな 気持ちだけが 残ります。"]]]]],
+ ["14:00","ひる","hall","tanaka","#dff5e8","ちょっと 歩いて みようかね","လမ်းလျှောက်ကြည့်မယ်","田中さん（右片麻痺）が 杖を 使って 歩きます。",
+  [["杖は どちらの 手で 持つ？",[["左手（よく動く方）",1,"杖は 健側の 手で 持ちます。介護者は まひ側の 少し 後ろに 立ちます。"],["右手（まひのある方）",0,"まひのある手では 杖を しっかり 持てません。"]]]]],
+ ["15:00","ひる","r1","tanaka","#ffe3d1","入れ歯、どうするの？","သွားတု ဘယ်လိုလုပ်ရမလဲ","おやつの あとの 口腔ケア（口の そうじ）です。",
+  [["入れ歯は どうする？",[["はずして 水で 洗い、水を 入れた 容器に 入れる",1,"入れ歯は かわくと 変形します。水の中で 保管します。"],["熱湯で 消毒する",0,"熱いお湯は 入れ歯を 変形させます。"],["ティッシュに 包んで おく",0,"かわくし、まちがえて 捨てられる ことも あります。"]]]]],
+ ["17:30","ゆうがた","st","family","#f3ece2","母の 様子は どうですか？","အမေ ဘယ်လိုနေလဲ","田中さんの むすめさんが 面会に 来ました。",
+  [["どう 答える？",[["今日の 様子を 事実で ていねいに 伝え、医療の ことは 看護師から 伝える",1,"見たことを 正確に。体の 病気の 説明は 看護師や 医師の 役割です。"],["「元気ですよ」とだけ 言う",0,"家族は くわしく 知りたいです。具体的に 伝えましょう。"],["ほかの 利用者さんの 話も する",0,"ほかの人の 話は 個人情報。話しては いけません。"]]]]],
+ ["21:00","よる","r2","suzuki","#2c3557","さむくて ねむれないよ","ချမ်းလို့ အိပ်မပျော်ဘူး","消灯の 時間です。",
+  [["どうする？",[["毛布を かけて、部屋の 温度を 確かめる",1,"高齢者は 体温調節が 苦手。寝具や 室温を 調整します。"],["「がまん してください」",0,"寒いままだと 眠れず、体調も 悪くなります。"]]]]],
+ ["2:00","しんや","r3","sato","#1f2640","（グー…… …… グー）","(ဟောက်နေတယ်)","見回りで、佐藤さんの いびきが 大きく、ときどき 息が 止まって いるようです。",
+  [["どうする？",[["よく 様子を 見て、すぐ 看護師に 連絡する",1,"呼吸の 変化は 危険な サインかも。すぐに 連絡します。"],["起こさないように、そのまま 部屋を 出る",0,"呼吸が 止まるのは 心配な 状態です。見のがさない。"]]]]],
+ ["7:00","あさ","st","lead","#f3ece2","夜の 記録、書いた？","ညက မှတ်တမ်း ရေးပြီးပြီလား","夜勤の 記録を 書きます。",
+  [["どの 書き方が いい？",[["「2:00 佐藤さん いびき大、10秒ほど 呼吸停止あり。看護師に報告」",1,"いつ・だれが・何が・どうした を、事実で 具体的に 書きます。"],["「夜は ふつう でした」",0,"何も わからない 記録は、次の人の 役に 立ちません。"],["「佐藤さんが 心配で こわかった」",0,"記録は 感想ではなく、事実を 書きます。"]]]]]
+];
+function makeDay(){const last=LS("carelife-last",[]);const pick=DAY.map((e,i)=>{if(rec.days===0)return 0;let c=[0,1,2].filter(x=>x!==last[i]);return c[Math.random()*c.length|0]});localStorage.setItem("carelife-last",JSON.stringify(pick));return DAY.map((e,i)=>[e,ALT[i],ALT2[i]][pick[i]])}
 let S=null,me={x:180,y:157},scale=1;
 function fit(){const w=$("#mapw"),m=$("#map");scale=Math.min(w.clientWidth/360,w.clientHeight/480);m.style.transform=`translate(-50%,-50%) scale(${scale})`}
 addEventListener("resize",fit);
@@ -278,14 +314,59 @@ function finish(){const pct=S.pts/S.max,stars=pct>=.9?3:pct>=.65?2:1;rec.days++;
  $("#again").onclick=start;$("#home").onclick=titleScr;
  $("#share").onclick=async()=>{const t=`「ケアの一日」で ${"⭐".repeat(stars)}！介護施設の一日を ゲームで体験しよう👇\nhttps://winlabjp.com/carelife/`;try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e.name==="AbortError")return}try{await navigator.clipboard.writeText(t);$("#share").textContent="コピーしました ✓"}catch(e){}}}
 function start(){say("おはようございます");S={i:0,pts:0,max:0,good:0,log:[],busy:false,day:makeDay(),n:rec.days+1};me={x:180,y:157};$("#ov").style.display="none";drawMap();hud();fit()}
-function titleScr(){S=null;
+
+// ===== 国家試験クエスト =====
+let QZ=null,qt=0;
+const QB=LS("carelife-quest",{best:0,clear:0});
+function questTitle(){const G=window.KK_GROUPS||[];
+ center(`<div style="font-size:56px">🏯🎓</div><h1>国家試験クエスト</h1><p style="font-weight:800;margin:0">介護福祉士の 試験の塔を のぼろう！</p>
+ <div class="tower">${G.map(g=>`<div class="fl${g.g===11?" boss":""}${QB.best>=g.g?" done":""}"><b>${g.g}F</b>${g.e} ${g.jp}${g.g===11?" 👹ボス":""}${QB.best>=g.g?" ✅":""}</div>`).join("")}</div>
+ <div class="tl" style="display:block;padding:10px 12px;background:#fff;font-size:13px;line-height:1.8">❤️ ライフ 3つ ・ 1フロア 3問（ボスは 5問）<br>⏱ 1問 45秒 ・ 早く 答えると ボーナス<br>📖 まちがえても 解説で 覚えよう</div>
+ <button class="btn" id="qs" style="background:#3b5bdb;box-shadow:0 5px 0 #2a44a8">🏯 1Fから のぼる</button>
+ ${QB.best>=1&&QB.best<11?`<button class="btn sub" id="qc">▶ ${QB.best+1}Fから つづき</button>`:""}
+ <button class="btn sub" id="qb">🏠 もどる</button>
+ <p style="font-size:11px;color:#8a7f72">いちばん上：${QB.best}F ・ クリア ${QB.clear}回<br>※ 2025年の出題範囲に 合わせた オリジナル問題です</p>`);
+ $("#qs").onclick=()=>questStart(1);const c=$("#qc");if(c)c.onclick=()=>questStart(QB.best+1);$("#qb").onclick=titleScr}
+function questStart(f){const K=window.KK;if(!K){alert("問題を 読みこめませんでした");return}
+ QZ={f,hp:3,score:0,i:0,qs:[],ok:0,ng:[]};floorIntro()}
+function floorIntro(){const g=KK_GROUPS[QZ.f-1],n=QZ.f===11?5:3;
+ const idx=KK.map((x,i)=>i).filter(i=>KK[i].g===g.g).sort(()=>Math.random()-.5).slice(0,n);QZ.qs=idx;QZ.i=0;
+ center(`<div style="font-size:60px">${QZ.f===11?"👹":g.e}</div><h1>${QZ.f}F${QZ.f===11?" ボス！":""}</h1><p style="font-weight:900;font-size:18px">${g.jp}</p><p class="mm">${g.mm}</p>
+ <p>${"❤️".repeat(QZ.hp)}${"🤍".repeat(3-QZ.hp)} ・ ${n}問 ・ スコア ${QZ.score}</p><button class="btn" id="fg" style="background:#3b5bdb;box-shadow:0 5px 0 #2a44a8">はじめる ▶</button>`);
+ say(QZ.f===11?"ボス フロア":QZ.f+"かい");$("#fg").onclick=qShow}
+function qShow(){const x=KK[QZ.qs[QZ.i]],g=KK_GROUPS[x.g-1];const perm=[0,1,2,3,4].sort(()=>Math.random()-.5);const ca=perm.indexOf(x.a-1);
+ let left=45;QZ.ans=false;
+ center(`<div class="qhud"><span>${QZ.f}F ・ ${QZ.i+1}/${QZ.qs.length}</span><span>${"❤️".repeat(QZ.hp)}${"🤍".repeat(3-QZ.hp)}</span><span>⭐${QZ.score}</span></div>
+ <div class="qbox"><div class="grp">${g.e} ${g.jp}</div><div class="qt">${x.q}</div><div class="tbar"><i id="tb" style="width:100%"></i></div></div>
+ <div style="margin-top:10px">${perm.map((k,j)=>`<button class="ch" data-k="${j}"><span class="ab">${j+1}</span><span>${x.o[k]}</span></button>`).join("")}</div><div id="qx"></div>`);
+ $("#ov").scrollTop=0;
+ const fin=(j)=>{if(QZ.ans)return;QZ.ans=true;clearInterval(qt);const ok=j===ca;
+  document.querySelectorAll("[data-k]").forEach(b=>{b.disabled=true;if(+b.dataset.k===ca)b.classList.add("ok");else if(+b.dataset.k===j)b.classList.add("ng")});
+  if(ok){const pts=10+Math.round(left/45*10);QZ.score+=pts;QZ.ok++;say("せいかい",true);hearts(document.querySelector(`[data-k="${ca}"]`),"⭐")}else{QZ.hp--;QZ.ng.push(QZ.qs[QZ.i]);say("ざんねん",true)}
+  $("#qx").innerHTML=`<div class="exp" style="background:${ok?"#e3f6f0":"#fde8e6"}"><span class="bi">${ok?"💯":j<0?"⏰":"📖"}</span><span><b>${ok?"正解！":j<0?"時間切れ…":"ざんねん…"} 正解は ${ca+1}</b><br>${x.e}</span></div><button class="btn" id="qn" style="background:#3b5bdb;box-shadow:0 5px 0 #2a44a8">つぎへ ▶</button>`;
+  $("#qn").onclick=qNext;$("#qx").scrollIntoView({behavior:"smooth",block:"nearest"})};
+ document.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>fin(+b.dataset.k));
+ clearInterval(qt);qt=setInterval(()=>{left-=.25;const t=$("#tb");if(t){t.style.width=Math.max(0,left/45*100)+"%";t.style.background=left<10?"#e85d4a":"#3b5bdb"}if(left<=0)fin(-1)},250)}
+function qNext(){if(QZ.hp<=0){questEnd(false);return}QZ.i++;if(QZ.i<QZ.qs.length){qShow();return}
+ if(QZ.f>QB.best){QB.best=QZ.f;localStorage.setItem("carelife-quest",JSON.stringify(QB))}
+ if(QZ.f===11){QB.clear++;localStorage.setItem("carelife-quest",JSON.stringify(QB));questEnd(true);return}
+ QZ.f++;if(QZ.f%4===0&&QZ.hp<3){QZ.hp++;toastQ("❤️ ライフが 1つ もどった！")}floorIntro()}
+function toastQ(t){setTimeout(()=>{const p=document.createElement("div");p.className="heart";p.style.left="50%";p.style.top="40%";p.style.transform="translateX(-50%)";p.style.fontSize="18px";p.style.background="#fff";p.style.padding="6px 12px";p.style.borderRadius="12px";p.style.fontWeight="900";p.textContent=t;document.body.appendChild(p);setTimeout(()=>p.remove(),1300)},200)}
+function questEnd(win){clearInterval(qt);say(win?"クリア おめでとう":"また ちょうせん しよう",true);
+ center(`<div style="font-size:60px">${win?"🏆":"💪"}</div><h1>${win?"塔を クリア！":QZ.f+"Fで ゲームオーバー"}</h1><p style="font-weight:800">スコア ⭐${QZ.score} ・ 正解 ${QZ.ok}問</p>
+ ${win?`<p style="font-weight:900;color:#2fb39a">🎓 未来の 介護福祉士！</p>`:""}
+ ${QZ.ng.length?`<div style="text-align:left;font-weight:900">📖 まちがえた 問題</div><div class="lst">${QZ.ng.map(i=>`<div>${KK[i].q}<br><b style="color:#2fb39a">→ ${KK[i].o[KK[i].a-1]}</b></div>`).join("")}</div>`:""}
+ <button class="btn" id="qr" style="background:#3b5bdb;box-shadow:0 5px 0 #2a44a8">${win?"もう一回 のぼる":QZ.f+"Fから やりなおす"}</button><button class="btn sub" id="qh">🏯 クエストの トップ</button><button class="btn sub" id="qhome">🏠 タイトルへ</button>`);
+ $("#qr").onclick=()=>questStart(win?1:QZ.f);$("#qh").onclick=questTitle;$("#qhome").onclick=titleScr}
+function titleScr(){clearInterval(qt);S=null;
  document.body.className="t-あさ";center(`<div class="titlecard"><span class="sun"></span><svg width="260" height="130" viewBox="0 0 260 130"><rect x="0" y="112" width="260" height="18" fill="#9fd98a"/><path d="M40 60 L130 10 L220 60 Z" fill="#e85d4a" stroke="#2b2622" stroke-width="4" stroke-linejoin="round"/><rect x="55" y="58" width="150" height="56" fill="#fff8ee" stroke="#2b2622" stroke-width="4"/><rect x="117" y="78" width="26" height="36" rx="3" fill="#f4a261" stroke="#2b2622" stroke-width="3"/><rect x="70" y="70" width="30" height="24" rx="3" fill="#bfe6ff" stroke="#2b2622" stroke-width="3"/><rect x="160" y="70" width="30" height="24" rx="3" fill="#bfe6ff" stroke="#2b2622" stroke-width="3"/><path d="M100 30 h60" stroke="#2b2622" stroke-width="0"/><text x="130" y="50" text-anchor="middle" font-size="16" font-weight="900" fill="#fff">ケアホーム</text><text x="20" y="112" font-size="26">🌳</text><text x="212" y="112" font-size="26">🌷</text></svg><div style="font-size:44px;line-height:1;margin-top:-6px">👩🏻‍⚕️👵👴</div></div><h1>ケアの一日</h1><p style="font-weight:800;margin-top:0">介護施設の 日常生活ゲーム<br><span class="mm" style="font-weight:500">သူနာပြုစောင့်ရှောက်ရေး ဌာနရဲ့ တစ်နေ့တာ</span></p>
  <div class="tl"><div><b>7:00</b>🌅 おはよう</div><div><b>8:00</b>🍚 朝ごはん</div><div><b>10:00</b>🛁 お風呂</div><div><b>14:00</b>🎵 レク</div><div><b>17:30</b>🌇 夕方</div><div><b>2:00</b>🌌 見回り</div></div>
- <p style="font-size:13px">毎日 ちがう できごとが おこるよ（全${DAY.length*2}場面）<br>❗の部屋を タッチして 行こう。<br>利用者さんに 何て 声を かける？ どうする？</p>
+ <p style="font-size:13px">毎日 ちがう できごとが おこるよ（全${DAY.length*3}場面）<br>❗の部屋を タッチして 行こう。<br>利用者さんに 何て 声を かける？ どうする？</p>
  <button class="btn o" id="go">🌅 一日を はじめる</button>
+ <button class="btn" id="qq" style="background:#3b5bdb;box-shadow:0 5px 0 #2a44a8">🏯 国家試験クエスト<small>介護福祉士の 試験の塔を のぼろう</small></button>
  <label class="tgl"><input type="checkbox" id="mmT" ${showMM?"checked":""}> ミャンマー語も 表示 <span class="mm">မြန်မာဘာသာ</span></label>
  ${rec.days?`<p style="font-size:12px;color:#8a7f72">はたらいた日：${rec.days}日 ・ ベスト ${rec.best}ポイント</p>`:""}`);
- $("#go").onclick=start;$("#mmT").onchange=e=>{showMM=e.target.checked;localStorage.setItem("carelife-mm",JSON.stringify(showMM))}}
+ $("#go").onclick=start;$("#qq").onclick=()=>{say("こっかしけん クエスト");questTitle()};$("#mmT").onchange=e=>{showMM=e.target.checked;localStorage.setItem("carelife-mm",JSON.stringify(showMM))}}
 $("#snd").onclick=()=>{sound=!sound;localStorage.setItem("carelife-sound",JSON.stringify(sound));$("#snd").textContent=sound?"🔊":"🔇";if(sound)say("おんせい オン",true)};
 $("#snd").textContent=sound?"🔊":"🔇";
 S={i:0,pts:0,max:0,good:0,log:[],day:DAY};drawMap();hud();fit();S=null;titleScr();

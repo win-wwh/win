@@ -57,7 +57,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#fdf6ec;color:var(--in
 .stage .nm{font-size:12px;font-weight:800;color:#6b5646;text-align:center}
 .say{flex:1;background:#fff;border-radius:16px;padding:10px 12px;position:relative;box-shadow:0 2px 6px #00000014;margin-bottom:22px}
 .say:before{content:"";position:absolute;left:-10px;bottom:14px;border:8px solid transparent;border-right-color:#fff;border-left:0}
-.say .jp{font-size:19px;font-weight:900;line-height:1.4}
+.say .jp{font-size:19px;font-weight:900;line-height:1.4;padding-right:30px}
 .say .mm{font-size:13px;color:#7a6f64;margin-top:2px;line-height:1.7}
 .say button{position:absolute;right:6px;top:6px;border:0;background:#f3ece2;border-radius:10px;font-size:14px;padding:4px 7px}
 .sit{font-size:13px;color:#6b5646;font-weight:700;margin:10px 2px 0;line-height:1.6}
@@ -81,10 +81,70 @@ h1{font-size:30px;margin:6px 0 2px;font-weight:900}
 .tgl input{width:20px;height:20px}
 .heart{position:fixed;font-size:28px;z-index:40;pointer-events:none;animation:hu 1.2s forwards}
 @keyframes hu{to{transform:translateY(-120px) scale(1.4);opacity:0}}
+
+/* ===== design v2 ===== */
+body{background:var(--sky,linear-gradient(180deg,#ffd9a0,#fff3dd));transition:background 1s}
+body.t-あさ{--sky:linear-gradient(180deg,#ffcf99 0%,#ffe9c9 45%,#fff6e8 100%)}
+body.t-ひる{--sky:linear-gradient(180deg,#9fd8ff 0%,#d8f0ff 45%,#f4fbff 100%)}
+body.t-ゆうがた{--sky:linear-gradient(180deg,#ff9f7a 0%,#e7a6d9 50%,#f9e3f0 100%)}
+body.t-よる,body.t-しんや{--sky:linear-gradient(180deg,#141b38 0%,#26315c 55%,#3a4677 100%)}
+body.t-よる .hud .mis,body.t-しんや .hud .mis{background:#ffffffe6}
+.stars-bg{position:fixed;inset:0;pointer-events:none;opacity:0;transition:opacity 1s;background-image:radial-gradient(2px 2px at 20% 12%,#fff,transparent),radial-gradient(1.5px 1.5px at 70% 8%,#fff,transparent),radial-gradient(2px 2px at 85% 22%,#fff,transparent),radial-gradient(1.5px 1.5px at 40% 5%,#fff,transparent),radial-gradient(1.5px 1.5px at 10% 30%,#fff,transparent),radial-gradient(2px 2px at 55% 18%,#fff,transparent)}
+body.t-よる .stars-bg,body.t-しんや .stars-bg{opacity:1}
+.clock{background:#ffffffe6;color:var(--ink);box-shadow:0 2px 8px #0002;display:flex;align-items:center;gap:6px;padding:6px 10px 6px 8px;text-align:left}
+.clock .sky{font-size:26px;line-height:1}
+.clock b{display:block;font-size:19px;line-height:1.05}
+.clock small{font-size:10px;color:#8a7f72;opacity:1}
+.mis{box-shadow:0 2px 8px #0002;display:flex;align-items:center;gap:8px}
+.mis .who{font-size:28px;line-height:1}
+.prog i{height:7px;background:#ffffff99}
+.prog i.d{background:#2fb39a}.prog i.c{background:#ffb703;box-shadow:0 0 0 2px #fff}
+#map{background:#cdb38f;border-radius:26px;box-shadow:0 12px 30px #0003,inset 0 0 0 7px #b89a72;padding:0}
+#map.night{filter:none}
+#map.night:after{content:"";position:absolute;inset:0;border-radius:26px;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),transparent 60px,#0b1030b3 150px);pointer-events:none;z-index:7;transition:background .7s}
+.rm{border:6px solid #f7efe2;border-radius:12px;justify-content:flex-start;padding-top:4px;overflow:visible;box-shadow:inset 0 0 0 2px #00000010,0 4px 0 #a88d68}
+.rm .lbl{background:#fff;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:900;color:#5b4636;box-shadow:0 1px 3px #0002;z-index:2;white-space:nowrap}
+.rm .ic{display:none}
+.rm .dec{position:absolute;font-size:22px;line-height:1;opacity:.95;pointer-events:none}
+.rm .pp{font-size:30px;bottom:6px;right:8px;filter:drop-shadow(0 2px 1px #0003);z-index:2}
+.rm .door{position:absolute;width:34px;height:8px;background:#e9dcc5;border-radius:3px;left:50%;margin-left:-17px}
+.rm.tg{box-shadow:0 0 0 4px #ffb703,0 0 24px #ffb703aa,0 4px 0 #a88d68}
+.ex{top:-30px;font-size:22px;background:#ffb703;color:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #d48f00;z-index:3}
+.hall{left:10px;right:10px;top:131px;height:52px;border-radius:8px;background:repeating-linear-gradient(90deg,#e9d4b2 0 30px,#e2c9a3 30px 32px);color:#9a8160;letter-spacing:6px;box-shadow:inset 0 2px 4px #0002}
+.f-bed{background:repeating-linear-gradient(45deg,var(--c1) 0 10px,var(--c2) 10px 20px)}
+.f-tile{background-color:#e6f3f6;background-image:linear-gradient(#ffffff99 2px,transparent 2px),linear-gradient(90deg,#ffffff99 2px,transparent 2px);background-size:22px 22px}
+.f-wood{background:repeating-linear-gradient(0deg,#f6e2b8 0 18px,#efd6a6 18px 20px)}
+.f-green{background:radial-gradient(#d6f0dd 1.5px,transparent 1.5px) 0 0/14px 14px,#c8ead2}
+.f-office{background:repeating-linear-gradient(90deg,#efe6d8 0 24px,#e8ddcc 24px 26px)}
+#me{font-size:40px;z-index:8}
+#me:after{content:"";position:absolute;left:8px;right:8px;bottom:-2px;height:7px;border-radius:50%;background:#0003;z-index:-1}
+.sc{border-radius:28px 28px 0 0;box-shadow:0 -10px 30px #0003}
+.stage{min-height:150px;border-radius:20px;overflow:hidden;align-items:flex-end;padding:12px 12px 0}
+.stage:after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:#0000000d}
+.stage .who{font-size:74px;position:relative;z-index:1;filter:drop-shadow(0 3px 2px #0003)}
+.stage .nm{background:#ffffffd9;border-radius:10px;padding:1px 6px;margin-bottom:8px;position:relative;z-index:1}
+.stage .deco{position:absolute;font-size:26px;opacity:.5}
+.say{position:relative;z-index:1;margin-bottom:46px;border-radius:18px}
+.q{display:flex;align-items:center;gap:8px;font-size:16px}
+.q:before{content:"?";background:#ffb703;color:#fff;border-radius:50%;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex:none}
+.ch{display:flex;gap:10px;align-items:flex-start;border:0;box-shadow:0 2px 0 #eadfce,0 0 0 2px #eadfce;border-radius:16px;transition:transform .08s}
+.ch:active{transform:scale(.98)}
+.ch .ab{flex:none;width:26px;height:26px;border-radius:8px;background:#f3ece2;color:#8a7f72;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:14px}
+.ch.ok{box-shadow:0 0 0 3px #2fb39a;background:#e3f6f0}.ch.ok .ab{background:#2fb39a;color:#fff}
+.ch.ng{box-shadow:0 0 0 3px #e85d4a;background:#fde8e6}.ch.ng .ab{background:#e85d4a;color:#fff}
+.exp{display:flex;gap:10px;align-items:flex-start;border-radius:16px}
+.exp .bi{font-size:30px;line-height:1}
+.ov.center{background:var(--sky,#fdf6ec)}
+.titlecard{background:linear-gradient(180deg,#ffcf99,#ffe9c9);border-radius:28px;padding:18px 10px 10px;position:relative;overflow:hidden;box-shadow:0 10px 30px #0002}
+.titlecard .sun{position:absolute;right:26px;top:14px;width:54px;height:54px;border-radius:50%;background:#ffd34d;box-shadow:0 0 0 10px #ffd34d55}
+.titlecard svg{display:block;margin:0 auto}
+.tl{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:none;padding:0}
+.tl div{background:#fff;border-radius:12px;padding:6px 8px;font-size:12px;font-weight:800;box-shadow:0 1px 4px #0001;text-align:left}
+.tl div b{color:#e07a2f;margin-right:4px}
 </style>
 </head>
 <body>
-<div id="app">
+<div class="stars-bg"></div><div id="app">
  <div class="hud"><div class="clock" id="clk">7:00<small>あさ</small></div><div class="mis" id="mis"></div><button id="snd">🔊</button></div>
  <div class="prog" id="prog"></div>
  <div class="mapw" id="mapw"><div id="map"></div></div>
@@ -98,15 +158,16 @@ let jaV=null;function pickV(){try{const v=speechSynthesis.getVoices();jaV=v.find
 try{pickV();speechSynthesis.onvoiceschanged=pickV}catch(e){}
 function say(t,f){if(!sound&&!f)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/[…\s]/g,""));u.lang="ja-JP";u.rate=.9;if(jaV)u.voice=jaV;speechSynthesis.speak(u)}catch(e){}}
 const ROOMS={
- r1:{x:10,y:10,w:105,h:115,n:"101号室",ic:"🛏️",c:"#ffe3d1",p:"👵"},
- r2:{x:127,y:10,w:106,h:115,n:"102号室",ic:"🛏️",c:"#dff0ff",p:"👴"},
- r3:{x:245,y:10,w:105,h:115,n:"103号室",ic:"🛏️",c:"#efe3ff",p:"👵🏻"},
- din:{x:10,y:190,w:165,h:140,n:"食堂",ic:"🍽️",c:"#fff1c9"},
- hall:{x:185,y:190,w:165,h:140,n:"ホール",ic:"🎵",c:"#dff5e8"},
- wc:{x:10,y:340,w:105,h:130,n:"トイレ",ic:"🚽",c:"#e4f1f3"},
- bath:{x:127,y:340,w:106,h:130,n:"お風呂",ic:"🛁",c:"#d6eefc"},
- st:{x:245,y:340,w:105,h:130,n:"スタッフ室",ic:"📋",c:"#f3ece2"}
+ r1:{x:10,y:10,w:105,h:115,n:"101号室",ic:"🛏️",f:"f-bed",v:"--c1:#ffe8d9;--c2:#ffdfcb",p:"👵",d:[["🛏️",8,30],["🪴",72,30],["🖼️",40,58]],door:"b"},
+ r2:{x:127,y:10,w:106,h:115,n:"102号室",ic:"🛏️",f:"f-bed",v:"--c1:#e3f1ff;--c2:#d6eaff",p:"👴",d:[["🛏️",8,30],["📻",72,30],["🧸",40,60]],door:"b"},
+ r3:{x:245,y:10,w:105,h:115,n:"103号室",ic:"🛏️",f:"f-bed",v:"--c1:#f1e8ff;--c2:#e9ddff",p:"👵🏻",d:[["🛏️",8,30],["💐",72,30],["🧶",40,60]],door:"b"},
+ din:{x:10,y:190,w:165,h:140,n:"食堂",ic:"🍽️",f:"f-wood",d:[["🍽️",20,34],["🪑",56,34],["🍽️",96,34],["🪑",130,34],["🍵",30,80],["🪑",66,80],["🍙",104,80]],door:"t"},
+ hall:{x:185,y:190,w:165,h:140,n:"ホール",ic:"🎵",f:"f-green",d:[["📺",14,30],["🎹",112,30],["🪴",132,94],["🎵",60,60],["🪑",20,92]],door:"t"},
+ wc:{x:10,y:340,w:105,h:130,n:"トイレ",ic:"🚽",f:"f-tile",d:[["🚽",14,40],["🧻",64,44],["🧼",40,86]],door:"t"},
+ bath:{x:127,y:340,w:106,h:130,n:"お風呂",ic:"🛁",f:"f-tile",v:"background-color:#d6ecfb",d:[["🛁",12,40],["🚿",68,36],["🧴",64,86],["🫧",22,88]],door:"t"},
+ st:{x:245,y:340,w:105,h:130,n:"スタッフ室",ic:"📋",f:"f-office",d:[["💻",12,40],["📋",64,40],["☕",18,88],["🗂️",62,88]],door:"t"}
 };
+const SKY={あさ:"🌅",ひる:"☀️",ゆうがた:"🌇",よる:"🌙",しんや:"🌌"};
 const P={tanaka:["👵","田中さん"],suzuki:["👴","鈴木さん"],sato:["👵🏻","佐藤さん"],nurse:["👩🏻‍⚕️","看護師さん"],lead:["🧑🏻‍💼","リーダー"]};
 // [time,label,room,who,bg,line,mm,situation,[[question,[[choice,ok,explain],...]],...]]
 const DAY=[
@@ -169,36 +230,38 @@ let S=null,me={x:180,y:157},scale=1;
 function fit(){const w=$("#mapw"),m=$("#map");scale=Math.min(w.clientWidth/360,w.clientHeight/480);m.style.transform=`translate(-50%,-50%) scale(${scale})`}
 addEventListener("resize",fit);
 function drawMap(){const ev=S&&S.day[S.i],tg=ev&&ev[2];
- $("#map").innerHTML=`<div class="hall">ろうか</div>`+Object.entries(ROOMS).map(([id,r])=>`<div class="rm${id===tg?" tg":""}" data-room="${id}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;background:${r.c}"><span class="ic">${r.ic}</span>${r.n}${r.p?`<span class="pp">${r.p}</span>`:""}${id===tg?`<span class="ex">❗</span>`:""}</div>`).join("")+`<div id="me" style="left:${me.x}px;top:${me.y}px">👩🏻‍⚕️</div>`;
- const night=ev&&["よる","しんや"].includes(ev[1]);$("#map").classList.toggle("night",!!night);
+ $("#map").innerHTML=`<div class="hall">ろうか</div>`+Object.entries(ROOMS).map(([id,r])=>`<div class="rm ${r.f}${id===tg?" tg":""}" data-room="${id}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${r.v||""}"><span class="lbl">${r.n}</span>${r.d.map(d=>`<span class="dec" style="left:${d[1]}px;top:${d[2]}px">${d[0]}</span>`).join("")}<span class="door" style="${r.door==="b"?"bottom:-8px":"top:-8px"}"></span>${r.p?`<span class="pp">${r.p}</span>`:""}${id===tg?`<span class="ex">!</span>`:""}</div>`).join("")+`<div id="me" style="left:${me.x}px;top:${me.y}px">👩🏻‍⚕️</div>`;
+ const night=ev&&["よる","しんや"].includes(ev[1]);$("#map").classList.toggle("night",!!night);setLight();
+ document.body.className=ev?"t-"+ev[1]:"t-あさ";
  document.querySelectorAll("[data-room]").forEach(el=>el.onclick=()=>go(el.dataset.room))}
-function hud(){const ev=S.day[S.i];$("#clk").innerHTML=`${ev[0]}<small>${S.n?S.n+"日目・":""}${ev[1]}</small>`;
- const r=ROOMS[ev[2]],who=P[ev[3]];$("#mis").innerHTML=`${who[0]} ${who[1]}のところへ（${r.n}）<small>❗の 部屋を タッチ</small>`;
+function setLight(){const m=$("#map");m.style.setProperty("--mx",me.x/360*100+"%");m.style.setProperty("--my",me.y/480*100+"%")}
+function hud(){const ev=S.day[S.i];$("#clk").innerHTML=`<span class="sky">${SKY[ev[1]]}</span><span><b>${ev[0]}</b><small>${S.n?S.n+"日目・":""}${ev[1]}</small></span>`;
+ const r=ROOMS[ev[2]],who=P[ev[3]];$("#mis").innerHTML=`<span class="who">${who[0]}</span><span>${who[1]}のところへ<small>${r.n} ・ 光っている部屋を タッチ</small></span>`;
  $("#prog").innerHTML=S.day.map((d,i)=>`<i class="${i<S.i?"d":i===S.i?"c":""}"></i>`).join("")}
 function go(id){if(!S||S.busy)return;const r=ROOMS[id];const x=r.x+r.w/2,y=r.y+r.h/2;
  // walk: via hallway
  const el=$("#me");S.busy=true;el.classList.add("walk");
  const hy=157;const steps=[[me.x,hy],[x,hy],[x,y]];let k=0;
  const next=()=>{if(k>=steps.length){el.classList.remove("walk");me={x,y};S.busy=false;arrive(id);return}const [sx,sy]=steps[k++];
-  const d=Math.hypot(sx-parseFloat(el.style.left),sy-parseFloat(el.style.top));el.style.transition=`left ${d/260}s linear,top ${d/260}s linear`;el.style.left=sx+"px";el.style.top=sy+"px";setTimeout(next,d/260*1000+20)};next()}
+  const d=Math.hypot(sx-parseFloat(el.style.left),sy-parseFloat(el.style.top));el.style.transition=`left ${d/260}s linear,top ${d/260}s linear`;el.style.left=sx+"px";el.style.top=sy+"px";me={x:sx,y:sy};setLight();setTimeout(next,d/260*1000+20)};next()}
 function arrive(id){const ev=S.day[S.i];
  if(id!==ev[2]){const t=document.createElement("div");t.className="think";t.textContent=["ここじゃないみたい🤔","❗の部屋へ行こう","だれも よんでないね"][Math.random()*3|0];t.style.left=me.x+"px";t.style.top=me.y+"px";$("#map").appendChild(t);setTimeout(()=>t.remove(),1300);return}
  scene()}
 function scene(){const ev=S.day[S.i],who=P[ev[3]];S.q=0;S.tries=0;say(ev[5]);
  const dark=ev[4].startsWith("#1")||ev[4].startsWith("#2");
  const draw=()=>{const [q,chs]=ev[8][S.q];if(!S.order)S.order=chs.map((c,i)=>i).sort(()=>Math.random()-.5);
-  $("#sc").innerHTML=`<div class="stage" style="background:${ev[4]}"><div><div class="who">${who[0]}</div><div class="nm" style="color:${dark?"#fff":"#6b5646"}">${who[1]}</div></div>
+  const rm=ROOMS[ev[2]];$("#sc").innerHTML=`<div class="stage" style="background:${ev[4]}">${rm.d.slice(0,3).map((d,k)=>`<span class="deco" style="right:${10+k*36}px;bottom:${6+(k%2)*8}px">${d[0]}</span>`).join("")}<div style="position:relative;z-index:1"><div class="who">${who[0]}</div><div class="nm" style="color:${dark?"#fff":"#6b5646"}">${who[1]}</div></div>
    <div class="say"><div class="jp">${ev[5]}</div>${showMM&&ev[6]?`<div class="mm">${ev[6]}</div>`:""}<button id="rp">🔊</button></div></div>
-   ${S.q===0?`<div class="sit">📝 ${ev[7]}</div>`:""}<div class="q">❓ ${q}</div>
-   ${S.order.map(i=>`<button class="ch" data-c="${i}">${chs[i][0]}</button>`).join("")}<div id="ex"></div>`;
+   ${S.q===0?`<div class="sit">📝 ${ev[7]}</div>`:""}<div class="q">${q}</div>
+   ${S.order.map((i,k)=>`<button class="ch" data-c="${i}"><span class="ab">${"ABC"[k]}</span><span>${chs[i][0]}</span></button>`).join("")}<div id="ex"></div>`;
   $("#rp").onclick=()=>say(ev[5],true);
   document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{const c=chs[+b.dataset.c];S.tries++;
    if(c[1]){b.classList.add("ok");document.querySelectorAll("[data-c]").forEach(x=>x.disabled=true);
     const pts=S.tries===1?2:1;S.pts+=pts;S.max+=2;if(S.tries===1)S.good++;else S.log.push([q,chs.find(x=>x[1])[0]]);
     hearts(b,S.tries===1?"💖":"💛");say(S.tries===1?"いいですね":"そうですね");
-    $("#ex").innerHTML=`<div class="exp" style="background:#e3f6f0"><b>${S.tries===1?"⭕ すばらしい！":"⭕ 正解！"}</b><br>💡 ${c[2]}</div><button class="btn" id="nx">${S.q<ev[8].length-1?"つぎへ ▶":"おわり ▶"}</button>`;
+    $("#ex").innerHTML=`<div class="exp" style="background:#e3f6f0"><span class="bi">${S.tries===1?"💯":"⭕"}</span><span><b>${S.tries===1?"すばらしい！":"正解！"}</b><br>${c[2]}</span></div><button class="btn" id="nx">${S.q<ev[8].length-1?"つぎへ ▶":"おわり ▶"}</button>`;
     $("#nx").onclick=()=>{S.order=null;S.tries=0;if(S.q<ev[8].length-1){S.q++;draw()}else done()};$("#ex").scrollIntoView({behavior:"smooth",block:"nearest"})}
-   else{b.classList.add("ng");b.disabled=true;$("#ex").innerHTML=`<div class="exp" style="background:#fde8e6"><b>🤔 うーん…</b><br>${c[2]}<br><small>もう一度 えらんでみよう</small></div>`}})};
+   else{b.classList.add("ng");b.disabled=true;$("#ex").innerHTML=`<div class="exp" style="background:#fde8e6"><span class="bi">🤔</span><span><b>うーん…</b><br>${c[2]}<br><small>もう一度 えらんでみよう</small></span></div>`}})};
  S.order=null;draw();$("#ov").className="ov";$("#ov").style.display="flex"}
 function hearts(el,e){const b=el.getBoundingClientRect();for(let k=0;k<5;k++){const h=document.createElement("div");h.className="heart";h.textContent=e;h.style.left=b.left+b.width*(.2+k*.15)+"px";h.style.top=b.top+"px";h.style.animationDelay=k*.08+"s";document.body.appendChild(h);setTimeout(()=>h.remove(),1500)}}
 function done(){$("#ov").style.display="none";S.i++;if(S.i>=S.day.length){finish();return}
@@ -216,8 +279,8 @@ function finish(){const pct=S.pts/S.max,stars=pct>=.9?3:pct>=.65?2:1;rec.days++;
  $("#share").onclick=async()=>{const t=`「ケアの一日」で ${"⭐".repeat(stars)}！介護施設の一日を ゲームで体験しよう👇\nhttps://winlabjp.com/carelife/`;try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e.name==="AbortError")return}try{await navigator.clipboard.writeText(t);$("#share").textContent="コピーしました ✓"}catch(e){}}}
 function start(){say("おはようございます");S={i:0,pts:0,max:0,good:0,log:[],busy:false,day:makeDay(),n:rec.days+1};me={x:180,y:157};$("#ov").style.display="none";drawMap();hud();fit()}
 function titleScr(){S=null;
- center(`<div style="font-size:60px;line-height:1">🏠👩🏻‍⚕️👵</div><h1>ケアの一日</h1><p style="font-weight:800;margin-top:0">介護施設の 日常生活ゲーム<br><span class="mm" style="font-weight:500">သူနာပြုစောင့်ရှောက်ရေး ဌာနရဲ့ တစ်နေ့တာ</span></p>
- <div class="tl">🌅 7:00 おはよう・着がえ<br>🍚 8:00 朝ごはん　🌡️ 9:00 体温チェック<br>🛁 10:00 お風呂　🎵 14:00 レク<br>🌇 17:30 夕方　🌙 21:00 消灯　🌌 2:00 見回り</div>
+ document.body.className="t-あさ";center(`<div class="titlecard"><span class="sun"></span><svg width="260" height="130" viewBox="0 0 260 130"><rect x="0" y="112" width="260" height="18" fill="#9fd98a"/><path d="M40 60 L130 10 L220 60 Z" fill="#e85d4a" stroke="#2b2622" stroke-width="4" stroke-linejoin="round"/><rect x="55" y="58" width="150" height="56" fill="#fff8ee" stroke="#2b2622" stroke-width="4"/><rect x="117" y="78" width="26" height="36" rx="3" fill="#f4a261" stroke="#2b2622" stroke-width="3"/><rect x="70" y="70" width="30" height="24" rx="3" fill="#bfe6ff" stroke="#2b2622" stroke-width="3"/><rect x="160" y="70" width="30" height="24" rx="3" fill="#bfe6ff" stroke="#2b2622" stroke-width="3"/><path d="M100 30 h60" stroke="#2b2622" stroke-width="0"/><text x="130" y="50" text-anchor="middle" font-size="16" font-weight="900" fill="#fff">ケアホーム</text><text x="20" y="112" font-size="26">🌳</text><text x="212" y="112" font-size="26">🌷</text></svg><div style="font-size:44px;line-height:1;margin-top:-6px">👩🏻‍⚕️👵👴</div></div><h1>ケアの一日</h1><p style="font-weight:800;margin-top:0">介護施設の 日常生活ゲーム<br><span class="mm" style="font-weight:500">သူနာပြုစောင့်ရှောက်ရေး ဌာနရဲ့ တစ်နေ့တာ</span></p>
+ <div class="tl"><div><b>7:00</b>🌅 おはよう</div><div><b>8:00</b>🍚 朝ごはん</div><div><b>10:00</b>🛁 お風呂</div><div><b>14:00</b>🎵 レク</div><div><b>17:30</b>🌇 夕方</div><div><b>2:00</b>🌌 見回り</div></div>
  <p style="font-size:13px">毎日 ちがう できごとが おこるよ（全${DAY.length*2}場面）<br>❗の部屋を タッチして 行こう。<br>利用者さんに 何て 声を かける？ どうする？</p>
  <button class="btn o" id="go">🌅 一日を はじめる</button>
  <label class="tgl"><input type="checkbox" id="mmT" ${showMM?"checked":""}> ミャンマー語も 表示 <span class="mm">မြန်မာဘာသာ</span></label>

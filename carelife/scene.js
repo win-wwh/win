@@ -55,6 +55,10 @@ const st=document.createElement("style");st.textContent=`
 .talk{animation:talk .22s 6 alternate}
 @keyframes talk{to{transform:translateY(-4px) rotate(-1deg)}}
 .act{transform-box:fill-box;transform-origin:50% 100%}
+.wob{animation:wob 1s ease-in-out infinite}
+@keyframes wob{25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.sway{animation:sway 1s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes sway{25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
 .joy{animation:joy .45s 3}
 @keyframes joy{40%{transform:translateY(-16px)}}
 .shk{animation:shk .4s}
@@ -92,14 +96,79 @@ try{
 
 // ---------- scene ----------
 let res="plain";
-function stageHTML(ev,who,dark){const look=LOOK[ev[3]]||LOOK.tanaka;const sleepy=/すう|グー/.test(ev[5]);res=sleepy?"sleep":/ない|いたい|こわい|さむい|どこ|ねむれない|いらない|はずかしい|来ないの|帰らなきゃ|とられた|にがて/.test(ev[5])?"sad":"plain";
- const rm=ROOMS[ev[2]];
+// ---------- 本物の場面（小道具＋正解アニメ） ----------
+const KIND=new Map();
+try{[["wake"],["toilet"],["meal","🍚"],["report","🌡️"],["bath"],["meal","🍙"],["rec","sing"],["wallet"],["talk","🏠"],["sleep","tea"],["night","call"],["hand","📋"]].forEach((k,i)=>KIND.set(DAY[i],k));
+ [["rest"],["toilet","wheel"],["meal","🦷"],["report","💊"],["bath","towel"],["meal","🍵"],["rec","knee"],["talk","🖼️"],["fall"],["sleep","turn"],["night","walk"],["hand","⚠️"]].forEach((k,i)=>KIND.set(ALT[i],k));
+ [["talk","📅"],["toilet"],["meal","🥄"],["report","💅"],["bath"],["meal","⚖️"],["rec","cane"],["cup"],["talk","👩🏻"],["sleep","blanket"],["night","snore"],["hand","📝"]].forEach((k,i)=>KIND.set(ALT2[i],k))}catch(e){}
+const E=(t,x,y,s=28,id="",st="")=>`<text ${id?`id="${id}"`:""} x="${x}" y="${y}" font-size="${s}" style="${st}">${t}</text>`;
+const BED=(blk="#a7c8f0")=>`<rect x="20" y="128" width="210" height="44" rx="8" fill="#c89b6d" stroke="${K}" stroke-width="4"/><rect x="26" y="112" width="198" height="26" rx="8" fill="#fff" stroke="${K}" stroke-width="4"/><rect x="30" y="104" width="54" height="26" rx="10" fill="#fff" stroke="${K}" stroke-width="4"/>`;
+const BLANKET=(c="#a7c8f0")=>`<rect id="blk" x="92" y="98" width="134" height="40" rx="10" fill="${c}" stroke="${K}" stroke-width="4" style="transition:transform .9s,fill .9s"/>`;
+const LIE=(who,m)=>`<g id="lie" style="transition:opacity .7s"><g transform="translate(66,104) rotate(-80) scale(.36)">${(LOOK[who]||LOOK.tanaka)(m)}</g>${BLANKET()}</g>`;
+const WINDOW=`<rect x="150" y="14" width="86" height="64" rx="6" fill="#bfe6ff" stroke="${K}" stroke-width="4"/><circle id="sun" cx="214" cy="34" r="12" fill="#ffd34d" style="opacity:0;transition:opacity 1s"/><rect id="cL" x="150" y="14" width="44" height="64" fill="#f4a261" stroke="${K}" stroke-width="3" style="transition:transform 1s"/><rect id="cR" x="192" y="14" width="44" height="64" fill="#f4a261" stroke="${K}" stroke-width="3" style="transition:transform 1s"/>`;
+const TABLE=f=>`<rect x="20" y="140" width="170" height="14" rx="5" fill="#c89b6d" stroke="${K}" stroke-width="4"/><rect x="40" y="152" width="10" height="40" fill="#a57b52"/><rect x="160" y="152" width="10" height="40" fill="#a57b52"/><rect x="56" y="128" width="80" height="14" rx="6" fill="#f3ece2" stroke="${K}" stroke-width="3"/>${E(f,72,132,26,"food")}`;
+const TUBF=`<rect x="20" y="132" width="200" height="58" rx="18" fill="#fff" stroke="${K}" stroke-width="5"/><rect x="28" y="124" width="184" height="14" rx="7" fill="#8fd3ff" opacity=".85"/>`;
+const DESK=`<rect x="10" y="138" width="180" height="16" rx="5" fill="#c89b6d" stroke="${K}" stroke-width="4"/><rect x="18" y="152" width="164" height="40" fill="#b08a60"/>${E("💻",130,136,26)}`;
+const WHEEL=`<g><circle cx="60" cy="166" r="22" fill="none" stroke="${K}" stroke-width="5"/><circle cx="128" cy="166" r="22" fill="none" stroke="${K}" stroke-width="5"/><path d="M50 108 v42 h86" fill="none" stroke="${K}" stroke-width="6"/></g>`;
+const DRAWER=`<rect x="130" y="110" width="90" height="80" rx="6" fill="#d9b48a" stroke="${K}" stroke-width="4"/><rect id="drw" x="138" y="122" width="74" height="26" rx="4" fill="#ecd1ad" stroke="${K}" stroke-width="3" style="transition:transform .8s"/><circle cx="175" cy="135" r="3" fill="${K}"/><rect x="138" y="156" width="74" height="26" rx="4" fill="#ecd1ad" stroke="${K}" stroke-width="3"/>`;
+const TOILET=E("🚽",170,150,48,"wc");
+function setup(ev){const k=KIND.get(ev)||["none"],w=ev[3];let back="",front="",lie=false,res={x:92,y:104},extra="";
+ switch(k[0]){
+  case"wake":case"rest":back=WINDOW+BED();lie=true;break;
+  case"sleep":back=BED();lie=true;if(k[1]==="tea")extra=E("☕",200,150,28,"cup");break;
+  case"night":if(k[1]==="walk"){back=`<path id="beam" d="M240 110 L40 60 L40 170 Z" fill="#fff6c9" opacity=".22"/>`}else{back=BED();lie=true}break;
+  case"toilet":back=TOILET;if(k[1]==="wheel")front=WHEEL;break;
+  case"meal":front=TABLE(k[1]);break;
+  case"report":case"hand":front=DESK;break;
+  case"bath":back=`<rect x="20" y="96" width="200" height="40" rx="14" fill="#eaf6ff" stroke="${K}" stroke-width="4"/>`+E("🚿",226,60,30);front=TUBF;res={x:262-170,y:104};break;
+  case"rec":back=E("🎹",250,70,34)+(k[1]==="cane"?"":E("🎵",170,40,22));break;
+  case"wallet":back=DRAWER;res={x:70,y:104};break;
+  case"talk":back=E(k[1],160,60,30,"prop","opacity:.0;transition:opacity .8s");break;
+  case"fall":back=BED();break;
+  case"cup":back=`<rect x="150" y="140" width="70" height="12" rx="4" fill="#c89b6d" stroke="${K}" stroke-width="3"/>`+E("🥛",168,138,30,"cup");break;
+ }
+ return {k,back,front,lie,res,extra}}
+function stageHTML(ev,who,dark){const look=LOOK[ev[3]]||LOOK.tanaka;const sleepy=/すう|グー/.test(ev[5]);res=sleepy?"sleep":/ない|いたい|こわい|さむい|どこ|ねむれない|いらない|はずかしい|来ないの|帰らなきゃ|とられた|にがて|ふらふら/.test(ev[5])?"sad":"plain";
+ const L=setup(ev);S.kind=L.k;
  return `<div class="stage2" style="background:${ev[4]}"><div class="floor"></div>
- ${rm.d.slice(0,3).map((d,k)=>`<span style="position:absolute;font-size:28px;opacity:.55;left:${150+k*46}px;bottom:${50+(k%2)*24}px">${d[0]}</span>`).join("")}
- <svg viewBox="0 0 340 190"><g transform="translate(92,104) scale(.56)"><g class="act"><g id="resG" class="idle">${look(res)}</g></g></g>
- <g transform="translate(262,108) scale(.52)"><g class="enter"><g id="hlpG" class="idle">${helperSVG("plain")}</g></g></g>
- <g id="fxG">${sleepy?`<text class="zz" x="120" y="50" font-size="22">💤</text><text class="zz" style="animation-delay:1.1s" x="132" y="40" font-size="16">💤</text>`:""}${dark?`<text x="16" y="30" font-size="22">🌙</text><text x="300" y="26" font-size="14">✨</text>`:""}</g></svg></div>
+ <svg viewBox="0 0 340 190"><g id="back">${L.back}</g>
+ <g id="rP" style="transition:transform 1s ease-in-out;${L.lie?"opacity:0":""}"><g transform="translate(${L.res.x},${L.res.y}) scale(.56)"><g class="act${L.k[0]==="fall"?" wob":""}"><g id="resG" class="idle">${look(res)}</g></g></g></g>
+ ${L.lie?LIE(ev[3],res):""}
+ <g id="hP" style="transition:transform 1s ease-in-out"><g transform="translate(262,108) scale(.52)"><g class="enter"><g id="hlpG" class="idle">${helperSVG("plain")}</g></g></g></g>
+ <g id="front">${L.front}${L.extra}</g>
+ <g id="fxG">${sleepy?`<text class="zz" x="${L.lie?60:120}" y="${L.lie?84:50}" font-size="22">💤</text><text class="zz" style="animation-delay:1.1s" x="${L.lie?72:132}" y="${L.lie?74:40}" font-size="16">💤</text>`:""}${dark?`<text x="16" y="30" font-size="22">🌙</text><text x="300" y="26" font-size="14">✨</text>`:""}</g>
+ <rect id="dim" x="0" y="0" width="340" height="190" fill="#0b1030" opacity="0" style="transition:opacity 1.5s;pointer-events:none"/></svg></div>
  <div class="say2"><div class="nm">${who[1]}</div><div class="jp">${ev[5]}</div>${showMM&&ev[6]?`<div class="mm">${ev[6]}</div>`:""}<button id="rp">🔊</button></div>`}
+const $i=id=>document.getElementById(id);
+function T(id,tf,ms=900){const e=$i(id);if(!e)return;e.style.transition=`transform ${ms}ms ease-in-out,opacity ${ms}ms`;e.style.transform=tf}
+function O(id,v){const e=$i(id);if(e)e.style.opacity=v}
+function seq(a){a.forEach(([t,f])=>setTimeout(()=>{if($i("hP"))f()},t))}
+function sitUp(m="happy"){document.querySelectorAll(".zz").forEach(z=>z.remove());O("lie",0);O("rP",1);setRes(m,"joy")}
+function play(){const [k,p]=S.kind||["none"];
+ const walkBoth=(dx)=>{T("rP",`translate(${dx}px,0)`,1400);T("hP",`translate(${dx-20}px,0)`,1400);[$i("rP"),$i("hP")].forEach(e=>e&&e.firstElementChild.firstElementChild.classList.add("walkin"))};
+ switch(k){
+  case"wake":seq([[0,()=>{T("cL","translateX(-40px)");T("cR","translateX(40px)");O("sun",1)}],[600,()=>fx("☀️",206,40)],[900,()=>sitUp()],[1400,()=>fx("おはよう！",60,40)]]);break;
+  case"rest":seq([[0,()=>T("blk","translateY(-6px)")],[300,()=>fx("👋 また 来ますね",190,40)],[700,()=>T("hP","translateX(40px)",1200)],[900,()=>fx("💤",70,80)]]);break;
+  case"sleep":if(p==="tea")seq([[0,()=>T("hP","translateX(-60px)")],[700,()=>fx("☕♨️",200,110)],[1200,()=>sitUp("happy")],[2200,()=>O("dim",.45)],[2400,()=>fx("💤",110,50)]]);
+   else if(p==="turn")seq([[0,()=>T("hP","translateX(-50px)")],[700,()=>{const g=$i("lie");if(g){g.style.transition="transform 1s";g.style.transformOrigin="120px 120px";g.style.transform="rotate(-6deg)"}}],[1100,()=>fx("🛏️✨ らくになった",120,60)],[1800,()=>O("dim",.4)],[2000,()=>fx("💤",80,70)]]);
+   else seq([[0,()=>T("hP","translateX(-50px)")],[600,()=>{const b=$i("blk");if(b){b.style.fill="#f4a261";b.style.transform="translateY(-6px)"}}],[1000,()=>fx("🧣 ぽかぽか",120,70)],[1800,()=>O("dim",.4)],[2000,()=>fx("💤",80,70)]]);break;
+  case"night":if(p==="walk")seq([[0,()=>T("hP","translateX(-70px)")],[800,()=>fx("💡",160,60)],[1000,()=>setRes("happy","joy")],[1300,()=>walkBoth(120)],[1600,()=>fx("そっと お部屋へ",110,40)]]);
+   else if(p==="snore")seq([[0,()=>fx("👀",80,70)],[500,()=>fx("📞 看護師さん！",190,40)],[1200,()=>T("hP","translateX(30px)")]]);
+   else seq([[0,()=>fx("💡",120,60)],[400,()=>T("hP","translateX(-60px)")],[1200,()=>sitUp()],[1600,()=>walkBoth(110)],[1800,()=>fx("足元 よし",100,40)]]);break;
+  case"toilet":if(p==="wheel")seq([[0,()=>fx("カチッ",50,150)],[300,()=>fx("カチッ",120,150)],[800,()=>{T("rP","translate(60px,-6px)",1200)}],[1400,()=>fx("🚽✨",190,80)]]);
+   else seq([[0,()=>walkBoth(60)],[1500,()=>fx("🚽✨ すっきり",160,60)]]);break;
+  case"meal":seq([[0,()=>fx(p==="🍵"?"とろみ✓":p==="🦷"?"やわらか🍮":p==="⚖️"?"いつもの量":"🥄",70,120)],[500,()=>fx("もぐもぐ",110,60)],[1000,()=>fx("😋",120,40)],[1500,()=>fx("おいしい！",60,30)]]);break;
+  case"report":seq([[0,()=>T("hP","translateX(-60px)")],[600,()=>fx("📋",170,80)],[1000,()=>fx("報告します",200,40)],[1600,()=>fx("ありがとう👍",60,30)]]);break;
+  case"hand":seq([[0,()=>fx("✏️",120,120)],[400,()=>fx("📒",100,128)],[900,()=>fx("事実を 正確に",150,40)],[1500,()=>fx("👍",60,40)]]);break;
+  case"bath":seq([[0,()=>T("rP","translate(0px,26px)",1200)],[700,()=>fx("🫧",60,120)],[900,()=>fx("🫧",140,118)],[p==="towel"?300:1200,()=>fx(p==="towel"?"🧺 タオル":"♨️",p==="towel"?40:100,p==="towel"?90:80)],[1500,()=>fx("いい 気持ち",50,40)]]);break;
+  case"rec":if(p==="knee")seq([[0,()=>fx("🪑",70,170)],[400,()=>T("rP","translate(0,14px)")],[900,()=>fx("ふう…",60,40)]]);
+   else if(p==="cane")seq([[0,()=>fx("🦯",130,150)],[200,()=>walkBoth(70)],[1500,()=>fx("ゆっくり 一歩ずつ",120,40)]]);
+   else {const g=$i("rP");if(g)g.firstElementChild.firstElementChild.classList.add("sway");seq([[0,()=>fx("👏",140,90)],[400,()=>fx("🎵",170,40)],[800,()=>fx("👏",60,90)],[1200,()=>fx("🎶",200,30)],[1600,()=>fx("たのしいね",60,30)]])}break;
+  case"wallet":seq([[0,()=>T("drw","translateX(36px)")],[700,()=>fx("👛",190,120)],[1200,()=>fx("あった！",50,40)]]);break;
+  case"talk":seq([[0,()=>O("prop",1)],[300,()=>T("hP","translateX(-50px)")],[900,()=>fx("うんうん",200,40)],[1400,()=>fx("💞",150,60)]]);break;
+  case"fall":seq([[0,()=>T("hP","translateX(-110px)",400)],[400,()=>{document.querySelectorAll(".wob").forEach(e=>e.classList.remove("wob"))}],[500,()=>fx("✋ ささえる",150,50)],[1000,()=>T("rP","translate(0,10px)")],[1400,()=>fx("大丈夫ですよ",160,30)]]);break;
+  case"cup":seq([[0,()=>fx("🦷",150,100)],[500,()=>fx("💧",180,120)],[1000,()=>fx("ピカピカ✨",160,60)]]);break;
+ }}
 function setRes(m,cls){const g=document.getElementById("resG");if(!g)return;const ev=S.day[S.i];g.innerHTML=(LOOK[ev[3]]||LOOK.tanaka)(m);if(cls){g.parentNode.classList.remove("joy","shk");void g.parentNode.getBBox;g.parentNode.classList.add(cls);setTimeout(()=>g.parentNode.classList.remove(cls),1500)}}
 function setHlp(m){const g=document.getElementById("hlpG");if(g)g.innerHTML=helperSVG(m)}
 function fx(t,x=92,y=40){const g=document.getElementById("fxG");if(!g)return;const e=document.createElementNS("http://www.w3.org/2000/svg","text");e.setAttribute("x",x);e.setAttribute("y",y);e.setAttribute("font-size","26");e.setAttribute("class","fx");e.textContent=t;g.appendChild(e);setTimeout(()=>e.remove(),1700)}
@@ -119,7 +188,7 @@ window.scene=function(){const ev=S.day[S.i],who=P[ev[3]];S.q=0;S.tries=0;say(ev[
    else{b.classList.add("ng");b.disabled=true;setRes("sad","shk");setHlp("sad");fx("💦",120,46);
     $("#ex").innerHTML=`<div class="exp" style="background:#fde8e6"><span class="bi">🤔</span><span><b>うーん…</b><br>${c[2]}<br><small>もう一度 えらんでみよう</small></span></div>`}})};
  const result=(first,ok,label,ans,exp)=>{const key=S.i+"_"+S.q;if(S.res===key)return;S.res=key;document.querySelectorAll(".mg button").forEach(b=>b.disabled=true);const pts=first?2:ok?1:0;S.pts+=pts;S.max+=2;if(first)S.good++;else S.log.push([label,ans]);
-  if(ok){setRes("happy","joy");setHlp("plain");fx("💖",70,40);setTimeout(()=>fx("✨",130,30),250);setTimeout(()=>fx("❤️",240,36),400);say(first?"ありがとう":"ありがとうね")}
+  if(ok){const lying=$i("lie")&&+getComputedStyle($i("rP")).opacity===0;if(!lying)setRes("happy","joy");setHlp("plain");play();setTimeout(()=>fx("💖",240,36),200);say(first?"ありがとう":"ありがとうね")}
   $("#ex").innerHTML=`<div class="exp" style="background:${ok?"#e3f6f0":"#fff3d6"}"><span class="bi">${first?"💯":ok?"⭕":"📖"}</span><span><b>${first?"すばらしい！":ok?"できた！":"おぼえよう"}</b><br>${exp}</span></div><button class="btn" id="nx">${S.q<ev[8].length-1?"つぎへ ▶":"おわり ▶"}</button>`;
   $("#nx").onclick=()=>{S.order=null;S.tries=0;if(S.q<ev[8].length-1){S.q++;draw()}else done()};setTimeout(()=>$("#ex").scrollIntoView({behavior:"smooth",block:"nearest"}),100)};
  S.order=null;draw();$("#ov").className="ov";$("#ov").style.display="flex"};

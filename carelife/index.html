@@ -337,10 +337,10 @@ function floorIntro(){const g=KK_GROUPS[QZ.f-1],n=QZ.f===11?5:3;
 function qShow(){const x=KK[QZ.qs[QZ.i]],g=KK_GROUPS[x.g-1];const perm=[0,1,2,3,4].sort(()=>Math.random()-.5);const ca=perm.indexOf(x.a-1);
  let left=45;QZ.ans=false;
  center(`<div class="qhud"><span>${QZ.f}F ・ ${QZ.i+1}/${QZ.qs.length}</span><span>${"❤️".repeat(QZ.hp)}${"🤍".repeat(3-QZ.hp)}</span><span>⭐${QZ.score}</span></div>
- <div class="qbox"><div class="grp">${g.e} ${g.jp}</div><div class="qt">${x.q}</div><div class="tbar"><i id="tb" style="width:100%"></i></div></div>
+ <div class="qbox">${window.kkPic?kkPic(x):""}<div class="grp">${g.e} ${g.jp}</div><div class="qt">${x.q}</div><div class="tbar"><i id="tb" style="width:100%"></i></div></div>
  <div style="margin-top:10px">${perm.map((k,j)=>`<button class="ch" data-k="${j}"><span class="ab">${j+1}</span><span>${x.o[k]}</span></button>`).join("")}</div><div id="qx"></div>`);
  $("#ov").scrollTop=0;
- const fin=(j)=>{if(QZ.ans)return;QZ.ans=true;clearInterval(qt);const ok=j===ca;
+ const fin=(j)=>{if(QZ.ans)return;QZ.ans=true;clearInterval(qt);const ok=j===ca;if(window.kkReact)kkReact(ok);
   document.querySelectorAll("[data-k]").forEach(b=>{b.disabled=true;if(+b.dataset.k===ca)b.classList.add("ok");else if(+b.dataset.k===j)b.classList.add("ng")});
   if(ok){const pts=10+Math.round(left/45*10);QZ.score+=pts;QZ.ok++;say("せいかい",true);hearts(document.querySelector(`[data-k="${ca}"]`),"⭐")}else{QZ.hp--;QZ.ng.push(QZ.qs[QZ.i]);say("ざんねん",true)}
   $("#qx").innerHTML=`<div class="exp" style="background:${ok?"#e3f6f0":"#fde8e6"}"><span class="bi">${ok?"💯":j<0?"⏰":"📖"}</span><span><b>${ok?"正解！":j<0?"時間切れ…":"ざんねん…"} 正解は ${ca+1}</b><br>${x.e}</span></div><button class="btn" id="qn" style="background:#3b5bdb;box-shadow:0 5px 0 #2a44a8">つぎへ ▶</button>`;
@@ -372,6 +372,7 @@ $("#snd").textContent=sound?"🔊":"🔇";
 S={i:0,pts:0,max:0,good:0,log:[],day:DAY};drawMap();hud();fit();S=null;titleScr();
 </script>
 <script src="scene.js"></script>
+<script src="kkpic.js"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

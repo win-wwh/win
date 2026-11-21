@@ -305,4 +305,5 @@ MG.spoon=(ev,cb)=>{let tries=0;
  document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{const L=b.dataset.m==="L";$("#sp").style.transform=`translate(${L?30:-40}px,78px)`;
   if(L){b.classList.add("done");setTimeout(()=>{fx("もぐもぐ😋",150,30);cb(tries===0,true,"片麻痺の 人の 食事介助","よく動く方（健側）の 口から 少しずつ","健側から 入れると、かんで 飲みこみやすく なります。まひ側には 食べ物が 残りやすいので 気をつけます。")},600)}
   else{tries++;setTimeout(()=>{fx("こぼれちゃう…",80,60);setRes("sad","shk");$("#sp").style.transform=""},650)}})};
+window.CL_LOOK=LOOK;window.CL_HELPER=helperSVG;
 })();

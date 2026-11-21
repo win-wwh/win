@@ -364,15 +364,17 @@ function titleScr(){clearInterval(qt);S=null;
  <p style="font-size:13px">毎日 ちがう できごとが おこるよ（全${DAY.length*3}場面）<br>❗の部屋を タッチして 行こう。<br>利用者さんに 何て 声を かける？ どうする？</p>
  <button class="btn o" id="go">🌅 一日を はじめる</button>
  <button class="btn" id="qq" style="background:#3b5bdb;box-shadow:0 5px 0 #2a44a8">🏯 国家試験クエスト<small>介護福祉士の 試験の塔を のぼろう</small></button>
+ <button class="btn" id="wbk0" style="background:#2fb39a;box-shadow:0 5px 0 #1f8a76">📚 介護の ことばずかん<small>場面の ことばを 覚えよう ・ クイズも</small></button>
  <label class="tgl"><input type="checkbox" id="mmT" ${showMM?"checked":""}> ミャンマー語も 表示 <span class="mm">မြန်မာဘာသာ</span></label>
  ${rec.days?`<p style="font-size:12px;color:#8a7f72">はたらいた日：${rec.days}日 ・ ベスト ${rec.best}ポイント</p>`:""}`);
- $("#go").onclick=start;$("#qq").onclick=()=>{say("こっかしけん クエスト");questTitle()};$("#mmT").onchange=e=>{showMM=e.target.checked;localStorage.setItem("carelife-mm",JSON.stringify(showMM))}}
+ $("#go").onclick=start;$("#qq").onclick=()=>{say("こっかしけん クエスト");questTitle()};{const wb=$("#wbk0");if(wb)wb.onclick=()=>{say("かいごの ことば",true);window.wordBook&&wordBook()}};$("#mmT").onchange=e=>{showMM=e.target.checked;localStorage.setItem("carelife-mm",JSON.stringify(showMM))}}
 $("#snd").onclick=()=>{sound=!sound;localStorage.setItem("carelife-sound",JSON.stringify(sound));$("#snd").textContent=sound?"🔊":"🔇";if(sound)say("おんせい オン",true)};
 $("#snd").textContent=sound?"🔊":"🔇";
 S={i:0,pts:0,max:0,good:0,log:[],day:DAY};drawMap();hud();fit();S=null;titleScr();
 </script>
 <script src="scene.js"></script>
 <script src="kkpic.js"></script>
+<script src="words.js"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{})</script>
 </body>
 </html>

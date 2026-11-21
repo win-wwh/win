@@ -30,15 +30,50 @@ function staff(m,o){const face=m==="wow"?`<g class="blink"><circle cx="-18" cy="
  ${o.short?"":`<path d="M56 -30 q30 6 24 40" fill="none" stroke="${o.hair}" stroke-width="16" stroke-linecap="round"/><circle cx="50" cy="-40" r="9" fill="${o.pin||"#ff7aa2"}" stroke="${K}" stroke-width="4"/>`}
  ${o.cap?`<path d="M-40 -52 q40 -26 80 0 l-6 14 q-34 -14 -68 0z" fill="#fff" stroke="${K}" stroke-width="5"/><path d="M-6 -52 h12 M0 -58 v12" stroke="#e85d4a" stroke-width="4"/>`:""}
  ${face}${cheeks}`}
+// ---------- 大人の漫画スタイル キャラクター ----------
+const SK="#f6d3b8",SKS="#e8b896",LN="#4a3328";
+function aEyes(m,o){const ir=o.iris||"#3b2a20";
+ if(m==="happy")return `<path d="M-27 -1 Q-17 -9 -7 -1 M7 -1 Q17 -9 27 -1" stroke="${LN}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+ if(m==="sleep")return `<path d="M-27 0 Q-17 6 -7 0 M7 0 Q17 6 27 0" stroke="${LN}" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M-26 3 l-3 3 M26 3 l3 3" stroke="${LN}" stroke-width="1.5"/>`;
+ const big=m==="wow"?1.15:1;
+ const one=x=>`<path d="M${x-10*big} -2 Q${x} ${-10*big} ${x+10*big} -2 Q${x} ${5*big} ${x-10*big} -2Z" fill="#fff"/><circle cx="${x}" cy="-2.5" r="${4.6*big}" fill="${ir}"/><circle cx="${x}" cy="-2.5" r="${2*big}" fill="#1a120d"/><circle cx="${x+1.6}" cy="-4.5" r="1.5" fill="#fff"/><path d="M${x-11*big} -1.5 Q${x} ${-11*big} ${x+11*big} -2.5" stroke="${LN}" stroke-width="2.8" fill="none" stroke-linecap="round"/>${o.lash?`<path d="M${x+10*big} -3 l3 -2" stroke="${LN}" stroke-width="2" stroke-linecap="round"/>`:""}`;
+ return `<g class="blink">${one(-17)}${one(17)}</g>`}
+function aBrows(m,c){return m==="sad"?`<path d="M-29 -13 Q-19 -15 -9 -21 M29 -13 Q19 -15 9 -21" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>`
+ :m==="wow"?`<path d="M-29 -20 Q-18 -26 -8 -20 M29 -20 Q18 -26 8 -20" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>`
+ :`<path d="M-29 -16 Q-18 -21 -8 -16 M29 -16 Q18 -21 8 -16" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>`}
+function aMouth(m){return m==="happy"?`<path d="M-12 27 Q0 40 12 27 Q0 32 -12 27Z" fill="#b5544a" stroke="${LN}" stroke-width="1.8" stroke-linejoin="round"/><path d="M-9 28.5 Q0 31 9 28.5" stroke="#fff" stroke-width="2"/>`
+ :m==="sad"?`<path d="M-9 33 Q0 27 9 33" stroke="#9a4a42" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
+ :m==="wow"?`<ellipse cx="0" cy="31" rx="5" ry="7" fill="#9a4a42" stroke="${LN}" stroke-width="1.8"/>`
+ :m==="sleep"?`<path d="M-5 31 Q0 33 5 31" stroke="#9a4a42" stroke-width="2.2" fill="none"/>`
+ :`<path class="mo" d="M-9 29 Q0 33 9 29" stroke="#a0524a" stroke-width="2.6" fill="none" stroke-linecap="round"/>`}
+const aNose=`<path d="M-1 4 Q-5 15 1 17 Q4 17 5 15" stroke="${SKS}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`;
+const aFace=(o)=>`<path d="M-42 -8 Q-42 36 -8 52 Q0 56 8 52 Q42 36 42 -8 Q42 -56 0 -57 Q-42 -56 -42 -8Z" fill="${SK}" stroke="${LN}" stroke-width="2.6"/>
+ <ellipse cx="-42" cy="4" rx="7" ry="11" fill="${SK}" stroke="${LN}" stroke-width="2.4"/><ellipse cx="42" cy="4" rx="7" ry="11" fill="${SK}" stroke="${LN}" stroke-width="2.4"/>
+ <ellipse cx="-26" cy="16" rx="8" ry="4" fill="#f2a3a0" opacity="${o.elder?.25:.4}"/><ellipse cx="26" cy="16" rx="8" ry="4" fill="#f2a3a0" opacity="${o.elder?.25:.4}"/>`;
+const aBody=(top,collar)=>`<path d="M-14 36 h28 v34 h-28z" fill="${SKS}"/><path d="M-86 165 Q-84 84 -34 70 Q0 82 34 70 Q84 84 86 165Z" fill="${top}" stroke="${LN}" stroke-width="2.8"/>${collar}`;
+function elderA(m,o){const wr=`<path d="M-16 -36 Q0 -40 16 -36 M-12 -30 Q0 -33 12 -30" stroke="#c99f82" stroke-width="1.6" fill="none"/><path d="M-13 15 Q-19 24 -14 34 M13 15 Q19 24 14 34" stroke="#d9ab8c" stroke-width="1.8" fill="none"/><path d="M-31 6 q4 3 8 1 M31 6 q-4 3 -8 1" stroke="#d9ab8c" stroke-width="1.4" fill="none"/>`;
+ const glasses=`<rect x="-31" y="-12" width="26" height="19" rx="7" fill="#ffffff22" stroke="#6b4a2f" stroke-width="2.4"/><rect x="5" y="-12" width="26" height="19" rx="7" fill="#ffffff22" stroke="#6b4a2f" stroke-width="2.4"/><path d="M-5 -4 h10 M-31 -4 l-11 -3 M31 -4 l11 -3" stroke="#6b4a2f" stroke-width="2.2"/>`;
+ const hairBack=o.male?"":`<path d="M-50 10 Q-60 -58 0 -64 Q60 -58 50 10 Q46 28 36 30 Q44 -10 30 -30 Q0 -40 -30 -30 Q-44 -10 -36 30 Q-46 28 -50 10Z" fill="${o.hair}" stroke="${LN}" stroke-width="2.4"/>`;
+ const hairTop=o.male?`<path d="M-44 -2 Q-48 -26 -36 -34 Q-38 -14 -40 6Z M44 -2 Q48 -26 36 -34 Q38 -14 40 6Z" fill="${o.hair}" stroke="${LN}" stroke-width="2"/><path d="M-30 -44 Q0 -60 30 -44" stroke="${o.hair}" stroke-width="5" fill="none" stroke-linecap="round"/>`
+  :`<path d="M-44 -10 Q-46 -62 0 -62 Q46 -62 44 -10 Q40 -30 30 -36 Q34 -44 18 -46 Q14 -36 -2 -40 Q-10 -46 -22 -40 Q-36 -38 -44 -10Z" fill="${o.hair}" stroke="${LN}" stroke-width="2.4"/><path d="M-20 -50 q6 -6 12 0 M4 -52 q6 -6 12 0 M-36 -36 q4 -6 10 -2" stroke="#ffffffaa" stroke-width="2" fill="none"/>${o.bun?`<ellipse cx="0" cy="-66" rx="20" ry="14" fill="${o.hair}" stroke="${LN}" stroke-width="2.4"/>`:""}`;
+ return `${aBody(o.top,`<path d="M-30 72 L0 98 L30 72" fill="#fff" stroke="${LN}" stroke-width="2.2"/><path d="M-6 112 v40 M6 112 v40" stroke="#ffffff99" stroke-width="3"/><circle cx="-12" cy="126" r="3" fill="#fff"/><circle cx="-12" cy="146" r="3" fill="#fff"/>`)}
+ ${hairBack}${aFace({elder:1})}${wr}${hairTop}${aBrows(m,o.brow||"#9a9a9a")}${aEyes(m,{})}${glasses}${aNose}${aMouth(m)}${o.must?`<path d="M-16 22 Q-8 18 0 21 Q8 18 16 22 Q8 26 0 24 Q-8 26 -16 22Z" fill="${o.hair}" stroke="${LN}" stroke-width="1.4"/>`:""}`}
+function staffA(m,o){const hb=o.short?"":o.long?`<path d="M-52 0 Q-58 -60 0 -64 Q58 -60 52 0 L56 64 Q40 72 30 60 L34 0 Q-0 -20 -34 0 L-30 60 Q-40 72 -56 64Z" fill="${o.hair}" stroke="${LN}" stroke-width="2.4"/>`
+  :`<path d="M40 -30 Q78 -20 70 30 Q64 52 52 56 Q60 20 46 -6Z" fill="${o.hair}" stroke="${LN}" stroke-width="2.4"/><circle cx="44" cy="-30" r="6" fill="${o.pin||"#ff7aa2"}" stroke="${LN}" stroke-width="2"/>`;
+ const bang=o.short?`<path d="M-44 -6 Q-48 -60 0 -62 Q46 -60 44 -8 Q40 -34 22 -40 Q4 -32 -18 -42 Q-36 -36 -44 -6Z" fill="${o.hair}" stroke="${LN}" stroke-width="2.4"/>`
+  :`<path d="M-45 4 Q-50 -62 0 -62 Q48 -62 45 -6 Q36 -36 14 -44 Q-6 -26 -38 -20 Q-42 -6 -45 4Z" fill="${o.hair}" stroke="${LN}" stroke-width="2.4"/><path d="M-10 -54 q10 -4 20 2" stroke="#ffffff66" stroke-width="2.5" fill="none"/>`;
+ return `${hb}${aBody(o.uni,`<path d="M-26 70 L0 92 L26 70 L18 66 L0 80 L-18 66Z" fill="#fff" stroke="${LN}" stroke-width="2"/><rect x="24" y="104" width="34" height="18" rx="3" fill="#fff" stroke="${LN}" stroke-width="2"/><path d="M28 113 h22" stroke="${o.uni}" stroke-width="3"/>`)}
+ ${aFace({})}${bang}${o.cap?`<path d="M-34 -50 Q0 -74 34 -50 L30 -40 Q0 -54 -30 -40Z" fill="#fff" stroke="${LN}" stroke-width="2.4"/><path d="M-5 -58 h10 M0 -63 v10" stroke="#e85d4a" stroke-width="3"/>`:""}
+ ${aBrows(m,o.brow||"#3a2a22")}${aEyes(m,{lash:!o.short,iris:o.iris})}${aNose}${aMouth(m)}${m==="sad"?`<path d="M46 -26 q7 12 0 17 q-7 -5 0 -17z" fill="#9fd3ff" stroke="${LN}" stroke-width="1.6"/>`:""}`}
 const LOOK={
- tanaka:m=>elder(m,{top:"#a78bda",hair:"#d9d9de",bun:1}),
- sato:m=>elder(m,{top:"#f3a6c0",hair:"#f1f1f4",bun:1}),
- suzuki:m=>elder(m,{top:"#7fa6d9",hair:"#d9d9de",must:1}),
- nurse:m=>staff(m==="sad"?"plain":m,{uni:"#ff9fbf",hair:"#4a3328",cap:1,pin:"#fff"}),
- lead:m=>staff(m==="sad"?"plain":m,{uni:"#3c5a8a",hair:"#2b2622",short:1}),
- family:m=>staff(m==="sad"?"plain":m,{uni:"#f4a261",hair:"#7a4a2a",pin:"#ffd34d"})
+ tanaka:m=>elderA(m,{top:"#9b86c9",hair:"#d8d8dc",bun:1}),
+ sato:m=>elderA(m,{top:"#e9a3b9",hair:"#f0f0f2"}),
+ suzuki:m=>elderA(m,{top:"#6f93c4",hair:"#cfcfd4",male:1,must:1}),
+ nurse:m=>staffA(m==="sad"?"plain":m,{uni:"#f4a6c0",hair:"#4a3328",cap:1,pin:"#fff"}),
+ lead:m=>staffA(m==="sad"?"plain":m,{uni:"#3c5a8a",hair:"#2b2622",short:1,iris:"#2b2622"}),
+ family:m=>staffA(m==="sad"?"plain":m,{uni:"#e9935a",hair:"#7a4a2a",long:1})
 };
-const helperSVG=m=>staff(m,{uni:"#2fb39a",hair:"#3a2a22"});
+const helperSVG=m=>staffA(m==="plain"?"plain":m,{uni:"#2fb39a",hair:"#3a2a22",pin:"#ffb703"});
 // ---------- styles ----------
 const st=document.createElement("style");st.textContent=`
 .stage2{position:relative;border-radius:20px;overflow:hidden;height:190px}

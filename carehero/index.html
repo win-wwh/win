@@ -84,7 +84,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 </head>
 <body>
 <div id="app">
-  <div class="hud"><div class="sc" id="sc">0<small id="best"></small></div><span class="lv" id="lv">Lv1</span><span class="hp" id="hp"></span><button id="pauseB">⏸</button></div>
+  <div class="hud"><div class="sc" id="sc">0<small id="best"></small></div><span class="lv" id="lv">Lv1</span><span class="hp" id="hp"></span><button id="sndB">🔊</button><button id="pauseB">⏸</button></div>
   <div class="combo" id="combo"></div><div class="rush" id="rushB" style="display:none">⚡ ラッシュタイム！点数2倍</div>
   <div class="rooms" id="rooms"></div>
   <div class="tray" id="tray"></div>
@@ -118,6 +118,10 @@ const TITLES=[[1,"🌱 新人さん"],[3,"🌿 がんばりヘルパー"],[5,"�
 const titleOf=lv=>TITLES.filter(t=>lv>=t[0]).pop()[1];
 const PEOPLE=[["👵","田中さん"],["👴","鈴木さん"],["👵🏻","佐藤さん"],["🧓","高橋さん"],["👴🏻","山本さん"],["👵🏼","伊藤さん"]];
 const LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}};
+let sound=LS("carehero-sound",true),jaV=null;
+function pickV(){try{const vs=speechSynthesis.getVoices();jaV=vs.find(v=>/ja/i.test(v.lang)&&/Kyoko|O-ren|Otoya|Hattori/.test(v.name))||vs.find(v=>/^ja/i.test(v.lang))||null}catch(e){}}
+try{pickV();speechSynthesis.onvoiceschanged=pickV}catch(e){}
+function say(t,force){if(!sound&&!force)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/\s+/g,"").replace(/…/g,""));u.lang="ja-JP";u.rate=.9;if(jaV)u.voice=jaV;speechSynthesis.speak(u)}catch(e){}}
 let best=LS("carehero-best",{chal:0,slow:0}),maxLv=LS("carehero-maxlv",{chal:1,slow:1}),showMM=LS("carehero-mm",true);
 let G=null,raf=0,last=0;
 const toolsFor=lv=>Math.min(TOOLS.length,4+(lv-1)*2);
@@ -131,7 +135,7 @@ function spawnReq(){
  if(!free.length||G.rooms.filter(r=>r.req).length>=maxReq())return;
  const i=free[Math.random()*free.length|0],ts=TOOLS.slice(0,toolsFor(G.lv));
  const t=ts[Math.random()*ts.length|0],q=t.q[Math.random()*t.q.length|0],p=patience();
- G.rooms[i].req={t:t.id,jp:q[0],mm:q[1],left:p,max:p};
+ G.rooms[i].req={t:t.id,jp:q[0],mm:q[1],left:p,max:p};say(q[0]);
  if(G.sel<0)G.sel=i;drawRooms()}
 function loop(now){
  const dt=Math.min(.1,(now-last)/1000);last=now;
@@ -152,14 +156,14 @@ function nextSel(){const c=G.rooms.map((r,i)=>r.req?i:-1).filter(i=>i>=0).sort((
 function drawRooms(){
  $("#rooms").innerHTML=G.rooms.map((r,i)=>{const face=r.mt>0?r.mf:r.p[0];
   return`<div class="room${r.req?" req":""}${G.sel===i&&r.req?" sel":""}" data-r="${i}">${r.req?`<div class="bub"><div class="jp">${r.req.jp}</div>${showMM?`<div class="mm">${r.req.mm}</div>`:""}<div class="bar"><i style="width:${r.req.left/r.req.max*100}%"></i></div></div>`:""}<div class="face">${face}</div><div class="nm">${r.p[1]}</div></div>`}).join("");
- document.querySelectorAll("[data-r]").forEach(el=>el.onpointerdown=()=>{const i=+el.dataset.r;if(G.rooms[i].req){G.sel=i;drawRooms()}});updBars()}
+ document.querySelectorAll("[data-r]").forEach(el=>el.onpointerdown=()=>{const i=+el.dataset.r;if(G.rooms[i].req){G.sel=i;say(G.rooms[i].req.jp,true);drawRooms()}});updBars()}
 function drawTray(fresh,newIds=[]){const ts=TOOLS.slice(0,toolsFor(G.lv));const tr=$("#tray");tr.style.setProperty("--c",ts.length>12?5:4);tr.classList.toggle("many",ts.length>12);
  $("#tray").innerHTML=ts.map(t=>`<button class="tool${newIds.includes(t.id)?" new":""}" data-t="${t.id}"><b>${t.e}</b><span>${t.jp}</span>${showMM?`<small class="mm">${t.mm}</small>`:""}</button>`).join("");
  document.querySelectorAll("[data-t]").forEach(b=>b.onpointerdown=e=>{e.preventDefault();use(b.dataset.t,b)})}
 function use(tid,btn){if(!G||G.paused||G.over)return;
  if(G.sel<0||!G.rooms[G.sel].req)G.sel=nextSel();if(G.sel<0)return;
  const i=G.sel,r=G.rooms[i];
- if(r.req.t===tid){const bonus=Math.round(r.req.left/r.req.max*10);G.combo++;const pts=(10+bonus+Math.min(G.combo-1,10)*2)*(G.rush>0?2:1);G.score+=pts;G.helped++;G.seen[tid]=r.req;
+ if(r.req.t===tid){const bonus=Math.round(r.req.left/r.req.max*10);say(TOOLS.find(x=>x.id===tid).jp);G.combo++;const pts=(10+bonus+Math.min(G.combo-1,10)*2)*(G.rush>0?2:1);G.score+=pts;G.helped++;G.seen[tid]=r.req;
   r.req=null;r.mt=1.4;r.mf='😊';pop(i,"+"+pts+" ❤️","#2fb39a");if(G.combo>=3){const c=$("#combo");c.textContent=`🔥 ${G.combo} コンボ！`;c.style.display="block";clearTimeout(c.h);c.h=setTimeout(()=>c.style.display="none",900)}
   G.sel=nextSel();drawRooms();hud();
   if(G.helped%8===0)levelUp()}
@@ -186,21 +190,24 @@ function end(){G.over=true;const nb=G.score>best[G.mode];if(nb){best[G.mode]=G.s
  const used=TOOLS.filter(t=>G.seen[t.id]),miss=TOOLS.filter(t=>G.miss[t.id]);
  ov(`<div style="font-size:46px">${G.helped>=24?"🏆":G.helped>=12?"🥈":"💪"}</div><h2>${nb?"ベスト更新！🎉":"おつかれさま！"}</h2>
  <div class="big">${G.score}</div><p style="font-weight:900;color:#2fb39a;margin:2px 0">${titleOf(G.lv)}</p><p>${G.helped}人を 笑顔にしたよ 😊 ・ レベル ${G.lv}<br><span class="mm">လူ ${G.helped} ယောက်ကို ပြုံးစေခဲ့တယ်</span></p>
- ${used.length?`<div style="font-weight:900;text-align:left;margin-top:10px">📖 今日のことば ${miss.length?`<span style="color:#e85d4a;font-size:12px">（❗＝まちがえた）</span>`:""}</div><div class="words">${used.map(t=>`<div><b>${t.e}</b><div class="t"><b style="font-size:14px">${G.miss[t.id]?"❗ ":""}「${G.seen[t.id].jp}」→ ${t.jp}</b><small class="mm">${G.seen[t.id].mm} → ${t.mm}</small></div></div>`).join("")}</div>`:""}
+ ${used.length?`<div style="font-weight:900;text-align:left;margin-top:10px">📖 今日のことば <span style="font-size:11px;color:#8a7f72">（タップで 🔊）</span> ${miss.length?`<span style="color:#e85d4a;font-size:12px">（❗＝まちがえた）</span>`:""}</div><div class="words">${used.map(t=>`<div data-say="${G.seen[t.id].jp}"><b>${t.e}</b><div class="t"><b style="font-size:14px">${G.miss[t.id]?"❗ ":""}「${G.seen[t.id].jp}」→ ${t.jp}</b><small class="mm">${G.seen[t.id].mm} → ${t.mm}</small></div></div>`).join("")}</div>`:""}
  <button class="btn" id="again">もう一回 ▶</button><button class="btn sub" id="share">📤 友だちに送る</button><button class="btn sub" id="home">🏠 タイトルへ</button>`);
- $("#again").onclick=()=>newGame(G.mode);$("#home").onclick=title;
+ document.querySelectorAll("[data-say]").forEach(d=>d.onclick=()=>say(d.dataset.say,true));
+ $("#again").onclick=()=>{say("スタート");newGame(G.mode)};$("#home").onclick=title;
  $("#share").onclick=async()=>{const t=`ケアヒーローで ${G.score}点！${G.helped}人を笑顔にしたよ😊\n介護の日本語をゲームで覚えよう👇\nhttps://winlabjp.com/carehero/`;try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e.name==="AbortError")return}try{await navigator.clipboard.writeText(t);$("#share").textContent="コピーしました ✓"}catch(e){}}}
 function title(){G=null;$("#rooms").innerHTML="";$("#tray").innerHTML="";
  ov(`<div style="font-size:64px;line-height:1">🦸‍♀️👵</div><h1>ケアヒーロー</h1><p style="font-weight:800;margin-top:0">介護の おしごと ゲーム<br><span class="mm">ပြုစုစောင့်ရှောက်ရေး ဂိမ်း</span></p>
- <p style="font-size:14px;background:#fff;border-radius:16px;padding:10px 12px;text-align:left">👵 利用者さんの お願いを 読んで<br>👇 下から 正しい お世話を タッチ！<br>⏱ 早く 助けるほど 高得点。コンボも ねらおう<br><span class="mm" style="font-size:12px">တောင်းဆိုချက်ကို ဖတ်ပြီး မှန်တဲ့ ပစ္စည်းကို နှိပ်ပါ</span></p>
+ <p style="font-size:14px;background:#fff;border-radius:16px;padding:10px 12px;text-align:left">👵 利用者さんの お願いを 読んで<br>👇 下から 正しい お世話を タッチ！<br>⏱ 早く 助けるほど 高得点。コンボも ねらおう<br>🔊 お願いは 声でも 聞こえるよ（ふきだしを タッチで もう一回）<br><span class="mm" style="font-size:12px">တောင်းဆိုချက်ကို ဖတ်ပြီး မှန်တဲ့ ပစ္စည်းကို နှိပ်ပါ</span></p>
  <button class="btn" id="ch">🎮 チャレンジ<small>❤️3つ・どんどん はやくなる・全${TOOLS.length}種類のおしごと</small></button>
  <button class="btn sub" id="sl">🌱 ゆっくり モード<small>時間たっぷり・ハートが へらない</small></button>
  ${maxLv.chal>2||maxLv.slow>2?`<p style="font-size:13px;font-weight:800;margin:14px 0 0">📍 レベルを えらんで 始める</p><div class="lvchips">${[...new Set([1,3,5,7,9,12,15,20].filter(n=>n<=Math.max(maxLv.chal,maxLv.slow)))].map(n=>`<button data-lv="${n}" class="${n===1?"on":""}">Lv${n}</button>`).join("")}</div>`:""}
  <label class="tg"><input type="checkbox" id="mmT" ${showMM?"checked":""}> ミャンマー語も 表示する <span class="mm">မြန်မာဘာသာ</span></label>
  <p style="font-size:12px">ベスト：チャレンジ ${best.chal}点（Lv${maxLv.chal}）・ ゆっくり ${best.slow}点（Lv${maxLv.slow}）</p>`);
  let st=1;document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{st=+b.dataset.lv;document.querySelectorAll("[data-lv]").forEach(x=>x.classList.toggle("on",x===b))});
- $("#ch").onclick=()=>newGame("chal",Math.min(st,maxLv.chal));$("#sl").onclick=()=>newGame("slow",Math.min(st,maxLv.slow));
+ $("#ch").onclick=()=>{say("スタート");newGame("chal",Math.min(st,maxLv.chal))};$("#sl").onclick=()=>{say("スタート");newGame("slow",Math.min(st,maxLv.slow))};
  $("#mmT").onchange=e=>{showMM=e.target.checked;localStorage.setItem("carehero-mm",JSON.stringify(showMM))}}
+function sndIcon(){$("#sndB").textContent=sound?"🔊":"🔇"}sndIcon();
+$("#sndB").onclick=()=>{sound=!sound;localStorage.setItem("carehero-sound",JSON.stringify(sound));sndIcon();if(sound)say("おんせい オン",true);else try{speechSynthesis.cancel()}catch(e){}};
 $("#pauseB").onclick=()=>{if(!G||G.over)return;G.paused=true;ov(`<div style="font-size:50px">⏸</div><h2>ひとやすみ</h2><button class="btn" id="res">つづける ▶</button><button class="btn sub" id="quit">🏠 タイトルへ</button>`);
  $("#res").onclick=()=>{$("#ov").style.display="none";G.paused=false;last=performance.now()};$("#quit").onclick=title};
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&G&&!G.over&&!G.paused)$("#pauseB").click()});

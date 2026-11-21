@@ -52,6 +52,21 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 .tray.many .tool{min-height:52px;padding:4px 1px}.tray.many .tool b{font-size:22px}.tray.many .tool span{font-size:10px}.tray.many .tool small{display:none}
 .rush{position:absolute;left:50%;top:58px;transform:translateX(-50%);background:#e85d4a;color:#fff;font-weight:900;border-radius:20px;padding:3px 12px;font-size:13px;z-index:5;animation:glow 1s infinite}
 .lvchips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}.lvchips button{border:0;border-radius:12px;padding:8px 12px;font-weight:900;font-family:inherit;background:#fff;box-shadow:0 2px 0 #e8dccb;font-size:13px}.lvchips button.on{background:var(--g);color:#fff}
+.bub.gold{background:linear-gradient(135deg,#fff6c9,#ffe27a);box-shadow:0 0 0 3px #ffb703,0 2px 8px #ffb70399}
+.bub.gold:after{border-top-color:#ffe27a}
+.bub.gold .jp:before{content:"⭐ "}
+.room.gold{border-color:#ffb703}
+.room.joy .face{animation:jump .5s 2}
+@keyframes jump{40%{transform:translateY(-18px) scale(1.1)}}
+#app.fever{background:linear-gradient(120deg,#ffd6e7,#fff3b0,#c9f7e8,#d6e4ff,#ffd6e7);background-size:400% 400%;animation:fv 2s linear infinite}
+@keyframes fv{to{background-position:400% 0}}
+.fevB{position:absolute;left:50%;top:86px;transform:translateX(-50%);background:linear-gradient(90deg,#ff5c7a,#ffb703,#2fb39a,#5c7cfa);color:#fff;font-weight:900;border-radius:20px;padding:4px 14px;font-size:15px;z-index:6;display:none;box-shadow:0 2px 8px #0003}
+.toast{position:fixed;left:50%;top:120px;transform:translateX(-50%);background:#2b2622f0;color:#fff;font-weight:900;border-radius:16px;padding:10px 16px;font-size:15px;z-index:30;display:none;text-align:center;white-space:nowrap}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.badges div{background:#fff;border-radius:14px;padding:8px 4px;font-size:11px;font-weight:800;line-height:1.3;box-shadow:0 2px 6px #0000000f}
+.badges div b{display:block;font-size:30px}
+.badges div.no{opacity:.35;filter:grayscale(1)}
+.badges div small{display:block;font-weight:600;color:#8a7f72;font-size:10px}
 .tool.new{animation:glow 1s 3}
 @keyframes glow{50%{box-shadow:0 0 0 4px #ffb703}}
 .tool.hint{outline:3px solid #ffb703}
@@ -85,11 +100,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--
 <body>
 <div id="app">
   <div class="hud"><div class="sc" id="sc">0<small id="best"></small></div><span class="lv" id="lv">Lv1</span><span class="hp" id="hp"></span><button id="sndB">🔊</button><button id="pauseB">⏸</button></div>
-  <div class="combo" id="combo"></div><div class="rush" id="rushB" style="display:none">⚡ ラッシュタイム！点数2倍</div>
+  <div class="combo" id="combo"></div><div class="rush" id="rushB" style="display:none">⚡ ラッシュタイム！点数2倍</div><div class="fevB" id="fevB">🌈 フィーバー！ 点数3倍</div>
   <div class="rooms" id="rooms"></div>
   <div class="tray" id="tray"></div>
 </div>
-<div class="ov" id="ov"></div>
+<div class="ov" id="ov"></div><div class="toast" id="toast"></div>
 <script>
 const $=s=>document.querySelector(s);
 const TOOLS=[
@@ -122,12 +137,20 @@ let sound=LS("carehero-sound",true),jaV=null;
 function pickV(){try{const vs=speechSynthesis.getVoices();jaV=vs.find(v=>/ja/i.test(v.lang)&&/Kyoko|O-ren|Otoya|Hattori/.test(v.name))||vs.find(v=>/^ja/i.test(v.lang))||null}catch(e){}}
 try{pickV();speechSynthesis.onvoiceschanged=pickV}catch(e){}
 function say(t,force){if(!sound&&!force)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/\s+/g,"").replace(/…/g,""));u.lang="ja-JP";u.rate=.9;if(jaV)u.voice=jaV;speechSynthesis.speak(u)}catch(e){}}
+let AC=null;
+function unlockAudio(){try{if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(!C)return;AC=new C()}if(AC.state!=="running")AC.resume();const b=AC.createBuffer(1,1,22050),s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0)}catch(e){}}
+function tone(notes,dur=.09,type="sine",vol=.18){if(!sound||!AC)return;try{let t=AC.currentTime;notes.forEach(f=>{const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur*1.8);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+dur*2);t+=dur})}catch(e){}}
+const SFX={ok:()=>tone([880,1320]),ng:()=>tone([220,180],.12,"square",.08),lv:()=>tone([523,659,784,1047],.11,"triangle"),gold:()=>tone([1047,1319,1568,2093],.07,"triangle"),fever:()=>tone([523,784,659,1047,784,1319],.06,"square",.07),sad:()=>tone([392,330],.16,"sine",.12)};
+const BADGES=[["first","😊","はじめての笑顔","1人を笑顔に"],["c10","🔥","10コンボ","10回つづけて正解"],["fever","🌈","フィーバー","フィーバーになる"],["gold","⭐","ゴールデン","⭐のお願いを助ける"],["gold10","🌟","キラキラ名人","⭐を合計10回"],["lv5","🌳","たよれるスタッフ","Lv5に到達"],["lv10","🌟","リーダー","Lv10に到達"],["lv15","👑","ケアマスター","Lv15に到達"],["t100","💯","100人の笑顔","合計100人"],["t500","🏆","500人の笑顔","合計500人"],["all","📖","おしごと全部","20種類 全部できた"],["s1000","💎","1000点","1回で1000点"]];
+let badges=LS("carehero-badges",[]),stats=LS("carehero-stats",{total:0,gold:0,done:[]});
+function award(id){if(badges.includes(id))return;badges.push(id);localStorage.setItem("carehero-badges",JSON.stringify(badges));const b=BADGES.find(x=>x[0]===id);const t=$("#toast");t.innerHTML=`🏅 バッジ GET！<br><span style="font-size:22px">${b[1]}</span> ${b[2]}`;t.style.display="block";clearTimeout(t.h);t.h=setTimeout(()=>t.style.display="none",2200);SFX.gold()}
+function saveStats(){localStorage.setItem("carehero-stats",JSON.stringify(stats))}
 let best=LS("carehero-best",{chal:0,slow:0}),maxLv=LS("carehero-maxlv",{chal:1,slow:1}),showMM=LS("carehero-mm",true);
 let G=null,raf=0,last=0;
 const toolsFor=lv=>Math.min(TOOLS.length,4+(lv-1)*2);
 function newGame(mode,start=1){
- G={mode,score:0,lv:start,hp:3,helped:(start-1)*8,rush:0,combo:0,sel:-1,rooms:PEOPLE.map(p=>({p,req:null,mt:0,mf:''})),spawn:1.2,paused:false,seen:{},miss:{},over:false};
- $("#ov").style.display="none";drawTray(true);drawRooms();hud();last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+ G={mode,score:0,lv:start,hp:3,helped:(start-1)*8,rush:0,fever:0,combo:0,sel:-1,rooms:PEOPLE.map(p=>({p,req:null,mt:0,mf:''})),spawn:1.2,paused:false,seen:{},miss:{},over:false};
+ $("#ov").style.display="none";$("#app").classList.remove("fever");$("#fevB").style.display="none";drawTray(true);drawRooms();hud();last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
 function patience(){const b=G.mode==="slow"?30:Math.max(5.5,15-(G.lv-1)*.75);return G.rush>0?Math.max(b,8):b}
 function maxReq(){return G.mode==="slow"?Math.min(3,1+Math.floor(G.lv/2)):Math.min(6,1+G.lv)}
 function spawnReq(){
@@ -135,11 +158,12 @@ function spawnReq(){
  if(!free.length||G.rooms.filter(r=>r.req).length>=maxReq())return;
  const i=free[Math.random()*free.length|0],ts=TOOLS.slice(0,toolsFor(G.lv));
  const t=ts[Math.random()*ts.length|0],q=t.q[Math.random()*t.q.length|0],p=patience();
- G.rooms[i].req={t:t.id,jp:q[0],mm:q[1],left:p,max:p};say(q[0]);
+ G.rooms[i].req={t:t.id,jp:q[0],mm:q[1],left:p,max:p,gold:G.lv>=2&&Math.random()<.1};say(q[0]);
  if(G.sel<0)G.sel=i;drawRooms()}
 function loop(now){
  const dt=Math.min(.1,(now-last)/1000);last=now;
  if(G&&!G.paused&&!G.over){
+  if(G.fever>0){G.fever-=dt;if(G.fever<=0){G.fever=0;$("#app").classList.remove("fever");$("#fevB").style.display="none"}}
   if(G.rush>0){G.rush-=dt;if(G.rush<=0){G.rush=0;hud()}}
   G.spawn-=dt;if(G.spawn<=0){spawnReq();G.spawn=(G.mode==="slow"?4.5:Math.max(.9,3.2-G.lv*.22))*(G.rush>0?.45:1)}
   let ch=false;
@@ -148,26 +172,29 @@ function loop(now){
   if(ch)drawRooms();else updBars()}
  raf=requestAnimationFrame(loop)}
 function updBars(){G.rooms.forEach((r,i)=>{if(!r.req)return;const el=document.querySelector(`[data-r="${i}"]`);if(!el)return;const f=r.req.left/r.req.max;const b=el.querySelector(".bar i");b.style.width=f*100+"%";b.style.background=f<.3?"#e85d4a":f<.6?"#ffb703":"#2fb39a";el.classList.toggle("urg",f<.3)})}
-function fail(i){const r=G.rooms[i];G.miss[r.req.t]=(G.miss[r.req.t]||0)+1;G.seen[r.req.t]=r.req;r.req=null;r.mt=1.5;r.mf='😢';G.combo=0;
+function fail(i){const r=G.rooms[i];SFX.sad();G.miss[r.req.t]=(G.miss[r.req.t]||0)+1;G.seen[r.req.t]=r.req;r.req=null;r.mt=1.5;r.mf='😢';G.combo=0;
  if(G.sel===i)G.sel=nextSel();
  drawRooms();if(G.mode!=="slow"){G.hp--;hud();if(G.hp<=0){end();return}}
  pop(i,G.mode==="slow"?"😢":"💔","#e85d4a")}
 function nextSel(){const c=G.rooms.map((r,i)=>r.req?i:-1).filter(i=>i>=0).sort((a,b)=>G.rooms[a].req.left-G.rooms[b].req.left);return c.length?c[0]:-1}
 function drawRooms(){
  $("#rooms").innerHTML=G.rooms.map((r,i)=>{const face=r.mt>0?r.mf:r.p[0];
-  return`<div class="room${r.req?" req":""}${G.sel===i&&r.req?" sel":""}" data-r="${i}">${r.req?`<div class="bub"><div class="jp">${r.req.jp}</div>${showMM?`<div class="mm">${r.req.mm}</div>`:""}<div class="bar"><i style="width:${r.req.left/r.req.max*100}%"></i></div></div>`:""}<div class="face">${face}</div><div class="nm">${r.p[1]}</div></div>`}).join("");
+  return`<div class="room${r.req?" req":""}${r.req&&r.req.gold?" gold":""}${r.mt>0&&r.mf==="😊"?" joy":""}${G.sel===i&&r.req?" sel":""}" data-r="${i}">${r.req?`<div class="bub${r.req.gold?" gold":""}"><div class="jp">${r.req.jp}</div>${showMM?`<div class="mm">${r.req.mm}</div>`:""}<div class="bar"><i style="width:${r.req.left/r.req.max*100}%"></i></div></div>`:""}<div class="face">${face}</div><div class="nm">${r.p[1]}</div></div>`}).join("");
  document.querySelectorAll("[data-r]").forEach(el=>el.onpointerdown=()=>{const i=+el.dataset.r;if(G.rooms[i].req){G.sel=i;say(G.rooms[i].req.jp,true);drawRooms()}});updBars()}
 function drawTray(fresh,newIds=[]){const ts=TOOLS.slice(0,toolsFor(G.lv));const tr=$("#tray");tr.style.setProperty("--c",ts.length>12?5:4);tr.classList.toggle("many",ts.length>12);
  $("#tray").innerHTML=ts.map(t=>`<button class="tool${newIds.includes(t.id)?" new":""}" data-t="${t.id}"><b>${t.e}</b><span>${t.jp}</span>${showMM?`<small class="mm">${t.mm}</small>`:""}</button>`).join("");
- document.querySelectorAll("[data-t]").forEach(b=>b.onpointerdown=e=>{e.preventDefault();use(b.dataset.t,b)})}
+ document.querySelectorAll("[data-t]").forEach(b=>b.onpointerdown=e=>{e.preventDefault();unlockAudio();use(b.dataset.t,b)})}
 function use(tid,btn){if(!G||G.paused||G.over)return;
  if(G.sel<0||!G.rooms[G.sel].req)G.sel=nextSel();if(G.sel<0)return;
  const i=G.sel,r=G.rooms[i];
- if(r.req.t===tid){const bonus=Math.round(r.req.left/r.req.max*10);say(TOOLS.find(x=>x.id===tid).jp);G.combo++;const pts=(10+bonus+Math.min(G.combo-1,10)*2)*(G.rush>0?2:1);G.score+=pts;G.helped++;G.seen[tid]=r.req;
-  r.req=null;r.mt=1.4;r.mf='😊';pop(i,"+"+pts+" ❤️","#2fb39a");if(G.combo>=3){const c=$("#combo");c.textContent=`🔥 ${G.combo} コンボ！`;c.style.display="block";clearTimeout(c.h);c.h=setTimeout(()=>c.style.display="none",900)}
+ if(r.req.t===tid){const bonus=Math.round(r.req.left/r.req.max*10);say(TOOLS.find(x=>x.id===tid).jp);G.combo++;const gold=r.req.gold;let pts=(10+bonus+Math.min(G.combo-1,10)*2+(gold?40:0))*(G.rush>0?2:1)*(G.fever>0?3:1);G.score+=pts;G.helped++;G.seen[tid]=r.req;
+  stats.total++;if(!stats.done.includes(tid))stats.done.push(tid);if(gold){stats.gold++;G.rooms.forEach(o=>{if(o.req)o.req.left=Math.min(o.req.max,o.req.left+5)})}saveStats();
+  r.req=null;r.mt=1.4;r.mf='😊';pop(i,(gold?"⭐ ":"")+"+"+pts+(gold?" ⏰+5":" ❤️"),gold?"#e0a000":"#2fb39a");gold?SFX.gold():SFX.ok();
+  if(G.combo>0&&G.combo%8===0&&!(G.fever>0)){G.fever=8;$("#app").classList.add("fever");$("#fevB").style.display="block";SFX.fever();award("fever")}
+  award("first");if(G.combo>=10)award("c10");if(gold)award("gold");if(stats.gold>=10)award("gold10");if(stats.total>=100)award("t100");if(stats.total>=500)award("t500");if(stats.done.length>=TOOLS.length)award("all");if(G.score>=1000)award("s1000");if(G.combo>=3){const c=$("#combo");c.textContent=`🔥 ${G.combo} コンボ！`;c.style.display="block";clearTimeout(c.h);c.h=setTimeout(()=>c.style.display="none",900)}
   G.sel=nextSel();drawRooms();hud();
   if(G.helped%8===0)levelUp()}
- else{G.combo=0;r.req.left=Math.max(.5,r.req.left-2);btn.classList.add("shake");setTimeout(()=>btn.classList.remove("shake"),350);
+ else{SFX.ng();G.combo=0;r.req.left=Math.max(.5,r.req.left-2);btn.classList.add("shake");setTimeout(()=>btn.classList.remove("shake"),350);
   const ok=document.querySelector(`[data-t="${r.req.t}"]`);if(ok){ok.classList.add("hint");setTimeout(()=>ok.classList.remove("hint"),900)}
   G.miss[r.req.t]=(G.miss[r.req.t]||0)+1;try{navigator.vibrate&&navigator.vibrate(80)}catch(e){}}}
 function pop(i,txt,col){const el=document.querySelector(`[data-r="${i}"]`);if(!el)return;const b=el.getBoundingClientRect();const p=document.createElement("div");p.className="pop";p.textContent=txt;p.style.color=col;p.style.left=b.left+b.width/2-30+"px";p.style.top=b.top+b.height/2+"px";document.body.appendChild(p);setTimeout(()=>p.remove(),1000)}
@@ -175,7 +202,7 @@ function hud(){$("#sc").innerHTML=`${G.score}<small>ベスト ${best[G.mode]}</s
 function levelUp(){const before=toolsFor(G.lv),oldT=titleOf(G.lv);G.lv++;const after=toolsFor(G.lv),newT=titleOf(G.lv);
  if(G.lv>maxLv[G.mode]){maxLv[G.mode]=G.lv;localStorage.setItem("carehero-maxlv",JSON.stringify(maxLv))}
  if(G.mode!=="slow"&&G.lv%3===0&&G.hp<3)G.hp++;
- const rush=G.lv%5===0;hud();
+ const rush=G.lv%5===0;hud();SFX.lv();if(G.lv>=5)award("lv5");if(G.lv>=10)award("lv10");if(G.lv>=15)award("lv15");
  if(after>before||oldT!==newT||rush){G.paused=true;const nt=TOOLS.slice(before,after);
   ov(`<div style="font-size:50px">🎉</div><h2>レベル ${G.lv}！</h2>${oldT!==newT?`<p style="font-size:18px;font-weight:900;color:#2fb39a;margin:2px 0">${newT} に なったよ！</p>`:""}
   ${G.mode!=="slow"&&G.lv%3===0?`<p>❤️ ハートが 1つ もどった！</p>`:""}
@@ -193,18 +220,20 @@ function end(){G.over=true;const nb=G.score>best[G.mode];if(nb){best[G.mode]=G.s
  ${used.length?`<div style="font-weight:900;text-align:left;margin-top:10px">📖 今日のことば <span style="font-size:11px;color:#8a7f72">（タップで 🔊）</span> ${miss.length?`<span style="color:#e85d4a;font-size:12px">（❗＝まちがえた）</span>`:""}</div><div class="words">${used.map(t=>`<div data-say="${G.seen[t.id].jp}"><b>${t.e}</b><div class="t"><b style="font-size:14px">${G.miss[t.id]?"❗ ":""}「${G.seen[t.id].jp}」→ ${t.jp}</b><small class="mm">${G.seen[t.id].mm} → ${t.mm}</small></div></div>`).join("")}</div>`:""}
  <button class="btn" id="again">もう一回 ▶</button><button class="btn sub" id="share">📤 友だちに送る</button><button class="btn sub" id="home">🏠 タイトルへ</button>`);
  document.querySelectorAll("[data-say]").forEach(d=>d.onclick=()=>say(d.dataset.say,true));
- $("#again").onclick=()=>{say("スタート");newGame(G.mode)};$("#home").onclick=title;
+ $("#again").onclick=()=>{unlockAudio();say("スタート");newGame(G.mode)};$("#home").onclick=title;
  $("#share").onclick=async()=>{const t=`ケアヒーローで ${G.score}点！${G.helped}人を笑顔にしたよ😊\n介護の日本語をゲームで覚えよう👇\nhttps://winlabjp.com/carehero/`;try{if(navigator.share){await navigator.share({text:t});return}}catch(e){if(e.name==="AbortError")return}try{await navigator.clipboard.writeText(t);$("#share").textContent="コピーしました ✓"}catch(e){}}}
 function title(){G=null;$("#rooms").innerHTML="";$("#tray").innerHTML="";
  ov(`<div style="font-size:64px;line-height:1">🦸‍♀️👵</div><h1>ケアヒーロー</h1><p style="font-weight:800;margin-top:0">介護の おしごと ゲーム<br><span class="mm">ပြုစုစောင့်ရှောက်ရေး ဂိမ်း</span></p>
- <p style="font-size:14px;background:#fff;border-radius:16px;padding:10px 12px;text-align:left">👵 利用者さんの お願いを 読んで<br>👇 下から 正しい お世話を タッチ！<br>⏱ 早く 助けるほど 高得点。コンボも ねらおう<br>🔊 お願いは 声でも 聞こえるよ（ふきだしを タッチで もう一回）<br><span class="mm" style="font-size:12px">တောင်းဆိုချက်ကို ဖတ်ပြီး မှန်တဲ့ ပစ္စည်းကို နှိပ်ပါ</span></p>
+ <p style="font-size:14px;background:#fff;border-radius:16px;padding:10px 12px;text-align:left">👵 利用者さんの お願いを 読んで<br>👇 下から 正しい お世話を タッチ！<br>⏱ 早く 助けるほど 高得点。コンボも ねらおう<br>🔊 お願いは 声でも 聞こえるよ（ふきだしを タッチで もう一回）<br>⭐ キラキラの お願いは 大チャンス！ ・ 🌈 8コンボで フィーバー<br><span class="mm" style="font-size:12px">တောင်းဆိုချက်ကို ဖတ်ပြီး မှန်တဲ့ ပစ္စည်းကို နှိပ်ပါ</span></p>
  <button class="btn" id="ch">🎮 チャレンジ<small>❤️3つ・どんどん はやくなる・全${TOOLS.length}種類のおしごと</small></button>
  <button class="btn sub" id="sl">🌱 ゆっくり モード<small>時間たっぷり・ハートが へらない</small></button>
  ${maxLv.chal>2||maxLv.slow>2?`<p style="font-size:13px;font-weight:800;margin:14px 0 0">📍 レベルを えらんで 始める</p><div class="lvchips">${[...new Set([1,3,5,7,9,12,15,20].filter(n=>n<=Math.max(maxLv.chal,maxLv.slow)))].map(n=>`<button data-lv="${n}" class="${n===1?"on":""}">Lv${n}</button>`).join("")}</div>`:""}
+ <button class="btn sub" id="bdg" style="margin-top:14px">🏅 バッジ ${badges.length} / ${BADGES.length}<small>合計 ${stats.total}人を 笑顔にした</small></button>
  <label class="tg"><input type="checkbox" id="mmT" ${showMM?"checked":""}> ミャンマー語も 表示する <span class="mm">မြန်မာဘာသာ</span></label>
  <p style="font-size:12px">ベスト：チャレンジ ${best.chal}点（Lv${maxLv.chal}）・ ゆっくり ${best.slow}点（Lv${maxLv.slow}）</p>`);
  let st=1;document.querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{st=+b.dataset.lv;document.querySelectorAll("[data-lv]").forEach(x=>x.classList.toggle("on",x===b))});
- $("#ch").onclick=()=>{say("スタート");newGame("chal",Math.min(st,maxLv.chal))};$("#sl").onclick=()=>{say("スタート");newGame("slow",Math.min(st,maxLv.slow))};
+ $("#ch").onclick=()=>{unlockAudio();say("スタート");newGame("chal",Math.min(st,maxLv.chal))};$("#sl").onclick=()=>{unlockAudio();say("スタート");newGame("slow",Math.min(st,maxLv.slow))};
+ $("#bdg").onclick=()=>{ov(`<h2>🏅 バッジ</h2><p>${badges.length} / ${BADGES.length} こ ・ 合計 ${stats.total}人 ・ ⭐ ${stats.gold}回<br>おしごと ${stats.done.length} / ${TOOLS.length} 種類</p><div class="badges">${BADGES.map(b=>`<div class="${badges.includes(b[0])?"":"no"}"><b>${b[1]}</b>${b[2]}<small>${b[3]}</small></div>`).join("")}</div><button class="btn" id="bk">もどる</button>`);$("#bk").onclick=title};
  $("#mmT").onchange=e=>{showMM=e.target.checked;localStorage.setItem("carehero-mm",JSON.stringify(showMM))}}
 function sndIcon(){$("#sndB").textContent=sound?"🔊":"🔇"}sndIcon();
 $("#sndB").onclick=()=>{sound=!sound;localStorage.setItem("carehero-sound",JSON.stringify(sound));sndIcon();if(sound)say("おんせい オン",true);else try{speechSynthesis.cancel()}catch(e){}};

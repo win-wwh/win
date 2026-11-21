@@ -306,4 +306,11 @@ MG.spoon=(ev,cb)=>{let tries=0;
   if(L){b.classList.add("done");setTimeout(()=>{fx("もぐもぐ😋",150,30);cb(tries===0,true,"片麻痺の 人の 食事介助","よく動く方（健側）の 口から 少しずつ","健側から 入れると、かんで 飲みこみやすく なります。まひ側には 食べ物が 残りやすいので 気をつけます。")},600)}
   else{tries++;setTimeout(()=>{fx("こぼれちゃう…",80,60);setRes("sad","shk");$("#sp").style.transform=""},650)}})};
 window.CL_LOOK=LOOK;window.CL_HELPER=helperSVG;
+window.AV=(k,m)=>`<svg class="av" viewBox="-64 -74 128 128" overflow="hidden"><defs><clipPath id="avc"><circle cx="0" cy="-10" r="62"/></clipPath></defs><g clip-path="url(#avc)">${k==="me"?helperSVG(m||"plain"):LOOK[k](m||"plain")}</g></svg>`;
+{const t=document.getElementById("tface");if(t)t.innerHTML=["me","tanaka","suzuki"].map(k=>AV(k,"happy")).join("");}
+const avs=document.createElement("style");avs.textContent=`.av{width:100%;height:100%;display:block}
+#me .av{width:46px;height:46px;background:#fff;border-radius:50%;border:3px solid #2fb39a;box-sizing:border-box}
+.rm .pp{width:46px;height:46px}.rm .pp .av{background:#fffc;border-radius:50%;border:2.5px solid #4a3328;box-sizing:border-box}
+.mis .who{width:44px;height:44px;flex:none}.mis .who .av{background:#fff3e6;border-radius:50%}
+#tface{display:flex;justify-content:center;gap:6px;margin-top:-4px}#tface .av{width:64px;height:64px;background:#fff;border-radius:50%;border:3px solid #4a3328;box-sizing:border-box}`;document.head.appendChild(avs);
 })();

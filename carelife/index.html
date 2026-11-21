@@ -168,9 +168,9 @@ let jaV=null;function pickV(){try{const v=speechSynthesis.getVoices();jaV=v.find
 try{pickV();speechSynthesis.onvoiceschanged=pickV}catch(e){}
 function say(t,f){if(!sound&&!f)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/[…\s]/g,""));u.lang="ja-JP";u.rate=.9;if(jaV)u.voice=jaV;speechSynthesis.speak(u)}catch(e){}}
 const ROOMS={
- r1:{x:10,y:10,w:105,h:115,n:"101号室",ic:"🛏️",f:"f-bed",v:"--c1:#ffe8d9;--c2:#ffdfcb",p:"👵",d:[["🛏️",8,30],["🪴",72,30],["🖼️",40,58]],door:"b"},
- r2:{x:127,y:10,w:106,h:115,n:"102号室",ic:"🛏️",f:"f-bed",v:"--c1:#e3f1ff;--c2:#d6eaff",p:"👴",d:[["🛏️",8,30],["📻",72,30],["🧸",40,60]],door:"b"},
- r3:{x:245,y:10,w:105,h:115,n:"103号室",ic:"🛏️",f:"f-bed",v:"--c1:#f1e8ff;--c2:#e9ddff",p:"👵🏻",d:[["🛏️",8,30],["💐",72,30],["🧶",40,60]],door:"b"},
+ r1:{x:10,y:10,w:105,h:115,n:"101号室",ic:"🛏️",f:"f-bed",v:"--c1:#ffe8d9;--c2:#ffdfcb",p:"tanaka",d:[["🛏️",8,30],["🪴",72,30],["🖼️",40,58]],door:"b"},
+ r2:{x:127,y:10,w:106,h:115,n:"102号室",ic:"🛏️",f:"f-bed",v:"--c1:#e3f1ff;--c2:#d6eaff",p:"suzuki",d:[["🛏️",8,30],["📻",72,30],["🧸",40,60]],door:"b"},
+ r3:{x:245,y:10,w:105,h:115,n:"103号室",ic:"🛏️",f:"f-bed",v:"--c1:#f1e8ff;--c2:#e9ddff",p:"sato",d:[["🛏️",8,30],["💐",72,30],["🧶",40,60]],door:"b"},
  din:{x:10,y:190,w:165,h:140,n:"食堂",ic:"🍽️",f:"f-wood",d:[["🍽️",20,34],["🪑",56,34],["🍽️",96,34],["🪑",130,34],["🍵",30,80],["🪑",66,80],["🍙",104,80]],door:"t"},
  hall:{x:185,y:190,w:165,h:140,n:"ホール",ic:"🎵",f:"f-green",d:[["📺",14,30],["🎹",112,30],["🪴",132,94],["🎵",60,60],["🪑",20,92]],door:"t"},
  wc:{x:10,y:340,w:105,h:130,n:"トイレ",ic:"🚽",f:"f-tile",d:[["🚽",14,40],["🧻",64,44],["🧼",40,86]],door:"t"},
@@ -266,13 +266,13 @@ let S=null,me={x:180,y:157},scale=1;
 function fit(){const w=$("#mapw"),m=$("#map");scale=Math.min(w.clientWidth/360,w.clientHeight/480);m.style.transform=`translate(-50%,-50%) scale(${scale})`}
 addEventListener("resize",fit);
 function drawMap(){const ev=S&&S.day[S.i],tg=ev&&ev[2];
- $("#map").innerHTML=`<div class="hall">ろうか</div>`+Object.entries(ROOMS).map(([id,r])=>`<div class="rm ${r.f}${id===tg?" tg":""}" data-room="${id}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${r.v||""}"><span class="lbl">${r.n}</span>${r.d.map(d=>`<span class="dec" style="left:${d[1]}px;top:${d[2]}px">${d[0]}</span>`).join("")}<span class="door" style="${r.door==="b"?"bottom:-8px":"top:-8px"}"></span>${r.p?`<span class="pp">${r.p}</span>`:""}${id===tg?`<span class="ex">!</span>`:""}</div>`).join("")+`<div id="me" style="left:${me.x}px;top:${me.y}px">👩🏻‍⚕️</div>`;
+ $("#map").innerHTML=`<div class="hall">ろうか</div>`+Object.entries(ROOMS).map(([id,r])=>`<div class="rm ${r.f}${id===tg?" tg":""}" data-room="${id}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${r.v||""}"><span class="lbl">${r.n}</span>${r.d.map(d=>`<span class="dec" style="left:${d[1]}px;top:${d[2]}px">${d[0]}</span>`).join("")}<span class="door" style="${r.door==="b"?"bottom:-8px":"top:-8px"}"></span>${r.p?`<span class="pp">${window.AV?AV(r.p):P[r.p][0]}</span>`:""}${id===tg?`<span class="ex">!</span>`:""}</div>`).join("")+`<div id="me" style="left:${me.x}px;top:${me.y}px">${window.AV?AV("me"):"👩🏻‍⚕️"}</div>`;
  const night=ev&&["よる","しんや"].includes(ev[1]);$("#map").classList.toggle("night",!!night);setLight();
  document.body.className=ev?"t-"+ev[1]:"t-あさ";
  document.querySelectorAll("[data-room]").forEach(el=>el.onclick=()=>go(el.dataset.room))}
 function setLight(){const m=$("#map");m.style.setProperty("--mx",me.x/360*100+"%");m.style.setProperty("--my",me.y/480*100+"%")}
 function hud(){const ev=S.day[S.i];$("#clk").innerHTML=`<span class="sky">${SKY[ev[1]]}</span><span><b>${ev[0]}</b><small>${S.n?S.n+"日目・":""}${ev[1]}</small></span>`;
- const r=ROOMS[ev[2]],who=P[ev[3]];$("#mis").innerHTML=`<span class="who">${who[0]}</span><span>${who[1]}のところへ<small>${r.n} ・ 光っている部屋を タッチ</small></span>`;
+ const r=ROOMS[ev[2]],who=P[ev[3]];$("#mis").innerHTML=`<span class="who">${window.AV?AV(ev[3]):who[0]}</span><span>${who[1]}のところへ<small>${r.n} ・ 光っている部屋を タッチ</small></span>`;
  $("#prog").innerHTML=S.day.map((d,i)=>`<i class="${i<S.i?"d":i===S.i?"c":""}"></i>`).join("")}
 function go(id){if(!S||S.busy)return;const r=ROOMS[id];const x=r.x+r.w/2,y=r.y+r.h/2;
  // walk: via hallway
@@ -359,7 +359,7 @@ function questEnd(win){clearInterval(qt);say(win?"クリア おめでとう":"�
  <button class="btn" id="qr" style="background:#3b5bdb;box-shadow:0 5px 0 #2a44a8">${win?"もう一回 のぼる":QZ.f+"Fから やりなおす"}</button><button class="btn sub" id="qh">🏯 クエストの トップ</button><button class="btn sub" id="qhome">🏠 タイトルへ</button>`);
  $("#qr").onclick=()=>questStart(win?1:QZ.f);$("#qh").onclick=questTitle;$("#qhome").onclick=titleScr}
 function titleScr(){clearInterval(qt);S=null;
- document.body.className="t-あさ";center(`<div class="titlecard"><span class="sun"></span><svg width="260" height="130" viewBox="0 0 260 130"><rect x="0" y="112" width="260" height="18" fill="#9fd98a"/><path d="M40 60 L130 10 L220 60 Z" fill="#e85d4a" stroke="#2b2622" stroke-width="4" stroke-linejoin="round"/><rect x="55" y="58" width="150" height="56" fill="#fff8ee" stroke="#2b2622" stroke-width="4"/><rect x="117" y="78" width="26" height="36" rx="3" fill="#f4a261" stroke="#2b2622" stroke-width="3"/><rect x="70" y="70" width="30" height="24" rx="3" fill="#bfe6ff" stroke="#2b2622" stroke-width="3"/><rect x="160" y="70" width="30" height="24" rx="3" fill="#bfe6ff" stroke="#2b2622" stroke-width="3"/><path d="M100 30 h60" stroke="#2b2622" stroke-width="0"/><text x="130" y="50" text-anchor="middle" font-size="16" font-weight="900" fill="#fff">ケアホーム</text><text x="20" y="112" font-size="26">🌳</text><text x="212" y="112" font-size="26">🌷</text></svg><div style="font-size:44px;line-height:1;margin-top:-6px">👩🏻‍⚕️👵👴</div></div><h1>ケアの一日</h1><p style="font-weight:800;margin-top:0">介護施設の 日常生活ゲーム<br><span class="mm" style="font-weight:500">သူနာပြုစောင့်ရှောက်ရေး ဌာနရဲ့ တစ်နေ့တာ</span></p>
+ document.body.className="t-あさ";center(`<div class="titlecard"><span class="sun"></span><svg width="260" height="130" viewBox="0 0 260 130"><rect x="0" y="112" width="260" height="18" fill="#9fd98a"/><path d="M40 60 L130 10 L220 60 Z" fill="#e85d4a" stroke="#2b2622" stroke-width="4" stroke-linejoin="round"/><rect x="55" y="58" width="150" height="56" fill="#fff8ee" stroke="#2b2622" stroke-width="4"/><rect x="117" y="78" width="26" height="36" rx="3" fill="#f4a261" stroke="#2b2622" stroke-width="3"/><rect x="70" y="70" width="30" height="24" rx="3" fill="#bfe6ff" stroke="#2b2622" stroke-width="3"/><rect x="160" y="70" width="30" height="24" rx="3" fill="#bfe6ff" stroke="#2b2622" stroke-width="3"/><path d="M100 30 h60" stroke="#2b2622" stroke-width="0"/><text x="130" y="50" text-anchor="middle" font-size="16" font-weight="900" fill="#fff">ケアホーム</text><text x="20" y="112" font-size="26">🌳</text><text x="212" y="112" font-size="26">🌷</text></svg><div id="tface" style="font-size:44px;line-height:1;margin-top:-6px">${window.AV?["me","tanaka","suzuki"].map(k=>AV(k,"happy")).join(""):"👩🏻‍⚕️👵👴"}</div></div><h1>ケアの一日</h1><p style="font-weight:800;margin-top:0">介護施設の 日常生活ゲーム<br><span class="mm" style="font-weight:500">သူနာပြုစောင့်ရှောက်ရေး ဌာနရဲ့ တစ်နေ့တာ</span></p>
  <div class="tl"><div><b>7:00</b>🌅 おはよう</div><div><b>8:00</b>🍚 朝ごはん</div><div><b>10:00</b>🛁 お風呂</div><div><b>14:00</b>🎵 レク</div><div><b>17:30</b>🌇 夕方</div><div><b>2:00</b>🌌 見回り</div></div>
  <p style="font-size:13px">毎日 ちがう できごとが おこるよ（全${DAY.length*3}場面）<br>❗の部屋を タッチして 行こう。<br>利用者さんに 何て 声を かける？ どうする？</p>
  <button class="btn o" id="go">🌅 一日を はじめる</button>

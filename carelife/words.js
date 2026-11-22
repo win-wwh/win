@@ -16,6 +16,7 @@ night:["🔦 夜の 見回りの 場面",[["夜勤","やきん","ညဆိုင
 hand:["📋 申し送りの 場面",[["申し送り","もうしおくり","တာဝန်လွှဲ အစီရင်ခံခြင်း"],["記録","きろく","မှတ်တမ်း"],["引き継ぎ","ひきつぎ","တာဝန် လွှဲယူခြင်း"],["情報共有","じょうほうきょうゆう","သတင်း မျှဝေခြင်း"],["様子","ようす","အခြေအနေ"]]],
 cup:["🥤 水分の 場面",[["脱水","だっすい","ရေဓာတ် ခန်းခြောက်ခြင်း"],["水分量","すいぶんりょう","ရေ ပမာဏ"],["こまめに","こまめに","မကြာခဏ"],["熱中症","ねっちゅうしょう","အပူလျှပ်ခြင်း"],["尿の色","にょうのいろ","ဆီး၏ အရောင်"]]]
 };
+const X=window.CL_WEXTRA||{};Object.entries(X).forEach(([k,v])=>{if(V[k]&&Array.isArray(v))V[k][1].push(...v);else if(!V[k]&&v[0])V[k]=v});
 const ALL=[];Object.entries(V).forEach(([k,[t,ws]])=>ws.forEach(w=>{if(!ALL.find(a=>a[0]===w[0]))ALL.push([...w,k])}));
 const LS=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch(e){return{}}};
 let LW=LS("carelife-words");const save=()=>{try{localStorage.setItem("carelife-words",JSON.stringify(LW))}catch(e){}};
@@ -51,27 +52,27 @@ window.wordBook=function(){const got=ALL.filter(w=>LW[w[0]]).length;
  <p style="margin:0;font-weight:800">覚えた ことば ${got} / ${ALL.length}</p><div class="wbar"><i style="width:${got/ALL.length*100}%"></i></div>
  <div class="wtab"><button data-t="all" class="${tab==="all"?"on":""}">ぜんぶ</button>${Object.entries(V).map(([k,v])=>`<button data-t="${k}" class="${tab===k?"on":""}">${v[0].split(" ")[0]} ${v[0].split(" ")[1].replace("の","")}</button>`).join("")}</div>
  <div class="wlist">${list.map(card).join("")}</div>
- <button class="btn" id="wq" style="background:#ff7aa2;box-shadow:0 5px 0 #d9567f">🎯 ことばクイズ（10問）</button><button class="btn sub" id="wb">🏠 もどる</button>`);
+ <button class="btn" id="wq" style="background:#ff7aa2;box-shadow:0 5px 0 #d9567f">🎯 ${tab==="all"?"ことばクイズ":V[tab][0]+" クイズ"}（10問）</button><button class="btn sub" id="wb">🏠 もどる</button>`);
  hookSay();document.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{tab=b.dataset.t;wordBook()});
  $("#wq").onclick=()=>wordQuiz();$("#wb").onclick=()=>titleScr()};
 // ことばクイズ
 let WQ=null;
-window.wordQuiz=function(){const pool=ALL.slice().sort(()=>Math.random()-.5).slice(0,10);WQ={pool,i:0,ok:0};wqShow()};
+window.wordQuiz=function(){const src=tab==="all"?ALL:ALL.filter(w=>w[3]===tab);const pool=src.slice().sort(()=>Math.random()-.5).slice(0,10);WQ={pool,i:0,ok:0,n:pool.length};wqShow()};
 function wqShow(){const w=WQ.pool[WQ.i],type=WQ.i%3;// 0:ことば→意味 1:音→ことば 2:意味→ことば
  const others=ALL.filter(a=>a[0]!==w[0]).sort(()=>Math.random()-.5).slice(0,3);const ch=[w,...others].sort(()=>Math.random()-.5);
  const q=type===0?`<ruby style="font-size:34px;font-weight:900">${w[0]}<rt style="font-size:13px">${w[1]}</rt></ruby><p>この ことばの 意味は？</p>`
   :type===1?`<button class="btn" id="wqs" style="background:#3b5bdb;box-shadow:0 5px 0 #2a44a8;font-size:22px">🔊 きいて えらぶ</button><p>聞こえた ことばは どれ？</p>`
   :`<div style="font-size:20px;font-weight:900;background:#fff;border-radius:14px;padding:12px">${w[2]}</div><p>日本語で どれ？</p>`;
- center(`<div class="qhud"><span>📚 ${WQ.i+1}/10</span><span>⭕ ${WQ.ok}</span></div>${q}
+ center(`<div class="qhud"><span>📚 ${WQ.i+1}/${WQ.n}</span><span>⭕ ${WQ.ok}</span></div>${q}
  <div>${ch.map((c,j)=>`<button class="ch" data-w="${j}"><span class="ab">${j+1}</span><span>${type===0?c[2]:c[0]}</span></button>`).join("")}</div><div id="wqx"></div>`);
  const sp=$("#wqs");if(sp){sp.onclick=()=>say(w[1],true);say(w[1],true)}
  document.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>{const c=ch[+b.dataset.w],ok=c===w;
   document.querySelectorAll("[data-w]").forEach(x=>{x.disabled=true;if(ch[+x.dataset.w]===w)x.classList.add("ok");else if(x===b)x.classList.add("ng")});
   if(ok){WQ.ok++;LW[w[0]]=(LW[w[0]]||0)+1;save()}say(ok?"せいかい":w[1],true);
-  $("#wqx").innerHTML=`${card(w)}<button class="btn" id="wqn" style="background:#2fb39a;box-shadow:0 5px 0 #1f8a76">${WQ.i<9?"つぎへ ▶":"けっか を見る"}</button>`;hookSay();
-  $("#wqn").onclick=()=>{WQ.i++;if(WQ.i<10)wqShow();else wqEnd()}})}
-function wqEnd(){const s=WQ.ok;say(s>=8?"すごい":"がんばろう",true);
- center(`<div style="font-size:60px">${s>=8?"🏆":s>=5?"🌟":"💪"}</div><h1>${s} / 10 正解</h1><p style="font-weight:800">${s>=8?"すばらしい！ 介護の ことば マスター！":s>=5?"いいね！ もう少し！":"ずかんで 練習しよう！"}</p>
+  $("#wqx").innerHTML=`${card(w)}<button class="btn" id="wqn" style="background:#2fb39a;box-shadow:0 5px 0 #1f8a76">${WQ.i<WQ.n-1?"つぎへ ▶":"けっか を見る"}</button>`;hookSay();
+  $("#wqn").onclick=()=>{WQ.i++;if(WQ.i<WQ.n)wqShow();else wqEnd()}})}
+function wqEnd(){const s=WQ.ok;say(s>=WQ.n*.8?"すごい":"がんばろう",true);
+ center(`<div style="font-size:60px">${s>=WQ.n*.8?"🏆":s>=WQ.n*.5?"🌟":"💪"}</div><h1>${s} / ${WQ.n} 正解</h1><p style="font-weight:800">${s>=WQ.n*.8?"すばらしい！ 介護の ことば マスター！":s>=WQ.n*.5?"いいね！ もう少し！":"ずかんで 練習しよう！"}</p>
  <button class="btn" id="wr" style="background:#ff7aa2;box-shadow:0 5px 0 #d9567f">もう一回</button><button class="btn sub" id="wbk">📚 ずかんへ</button>`);
  $("#wr").onclick=wordQuiz;$("#wbk").onclick=wordBook}
 window.CL_WORDS=ALL;

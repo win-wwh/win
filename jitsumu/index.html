@@ -84,14 +84,14 @@ function ans(n,i,j){const q=JS.find(x=>x.n===n).q[i],box=$("#q"+i);if(box.datase
  box.querySelectorAll(".ch").forEach((b,k)=>{if(k===q[2])b.classList.add("ok");else if(k===j)b.classList.add("ng")});
  box.insertAdjacentHTML("beforeend",`<div class="ex2">${j===q[2]?"⭕ 正解！":"❌ ざんねん。"} ${q[3]}</div>`);say(j===q[2]?"せいかい":"ざんねん")}
 function mark(n){if(ST.done[n])delete ST.done[n];else{ST.done[n]=1;toast("🎉 よくできました！")}save();render()}
-function info(){view=info;scrollTo(0,0);$("#app").innerHTML=hdr(1)+`<div class="card info"><h3>ℹ️ 実務者研修とは</h3><ul>
+function info(){view=info;scrollTo(0,0);$("#app").innerHTML=hdr(1)+`<div class="card info"><h3>ℹ️ 実務者研修とは <span class="mm">ဒီသင်တန်း ဆိုတာ</span></h3><ul>
  <li>介護福祉士の 国家試験を 受けるために 必要な 研修です。<span class="mm">အမျိုးသားစာမေးပွဲ ဖြေရန် လိုအပ်သော သင်တန်း</span></li>
- <li>実務経験 3年（1095日 以上・働いた日 540日 以上）＋ 実務者研修の 修了で、受験できます。</li>
- <li>全部で <b>20科目・450時間</b>。初任者研修などを 持っている 人は、いくつかの 科目が 免除に なります（初任者研修なら 320時間）。</li>
- <li>多くは 家で 勉強（テキスト・レポート）＋ 教室に 通う日（介護過程Ⅲ と 医療的ケアの 演習）。</li>
- <li>修了証に 期限は ありません。</li>
- <li>修了すると「サービス提供責任者」にも なれます。</li></ul></div>
- <div class="card info"><h3>⚖️ 初任者研修と 実務者研修の ちがい</h3>
+ <li>実務経験 3年（1095日 以上・働いた日 540日 以上）＋ 実務者研修の 修了で、受験できます。<br><span class="mm">လုပ်ငန်းအတွေ့အကြုံ ၃ နှစ် (၁၀၉၅ ရက်အထက်・အလုပ်လုပ်ရက် ၅၄၀ ရက်အထက်) + ဒီသင်တန်း ပြီးလျှင် စာမေးပွဲ ဖြေနိုင်ပါသည်။</span></li>
+ <li>全部で <b>20科目・450時間</b>。初任者研修などを 持っている 人は、いくつかの 科目が 免除に なります（初任者研修なら 320時間）。<br><span class="mm">စုစုပေါင်း ဘာသာ ၂၀・၄၅၀ နာရီ။ ကနဦးသင်တန်း ရှိသူများ ဘာသာအချို့ ကင်းလွတ်ခွင့်ရ (၃၂၀ နာရီ)။</span></li>
+ <li>多くは 家で 勉強（テキスト・レポート）＋ 教室に 通う日（介護過程Ⅲ と 医療的ケアの 演習）。<br><span class="mm">အများစုမှာ အိမ်တွင် လေ့လာ (စာအုပ်・အစီရင်ခံစာ) + စာသင်ခန်း တက်ရက် (ပြုစုမှု လုပ်ငန်းစဉ် ၃ နှင့် ဆေးဘက် ပြုစုမှု လက်တွေ့)။</span></li>
+ <li>修了証に 期限は ありません。<br><span class="mm">သင်တန်းဆင်း လက်မှတ်တွင် သက်တမ်း မရှိပါ။</span></li>
+ <li>修了すると「サービス提供責任者」にも なれます。<br><span class="mm">ပြီးဆုံးလျှင် "ဝန်ဆောင်မှု တာဝန်ခံ" လည်း ဖြစ်နိုင်ပါသည်။</span></li></ul></div>
+ <div class="card info"><h3>⚖️ 初任者研修と 実務者研修の ちがい</h3><p class="mm" style="margin:-4px 0 8px">ကနဦး သင်တန်းနှင့် လက်တွေ့လုပ်ငန်း သင်တန်း ကွာခြားချက်</p>
  <table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.5">
  <tr style="background:#eef1fb"><th style="padding:8px;text-align:left"></th><th style="padding:8px">初任者研修<br><span class="mm">ကနဦး သင်တန်း</span></th><th style="padding:8px">実務者研修<br><span class="mm">လက်တွေ့လုပ်ငန်း သင်တန်း</span></th></tr>
  <tr><td style="padding:8px;font-weight:800">レベル<br><span class="mm">အဆင့်</span></td><td>入門（はじめの一歩）<br><span class="mm">အခြေခံ</span></td><td>応用（もっと深く）<br><span class="mm">အဆင့်မြင့်</span></td></tr>
@@ -102,8 +102,8 @@ function info(){view=info;scrollTo(0,0);$("#app").innerHTML=hdr(1)+`<div class="
  <tr style="background:#f8f9fd"><td style="padding:8px;font-weight:800">最後の 試験<br><span class="mm">နောက်ဆုံး စာမေးပွဲ</span></td><td>筆記テスト<br><span class="mm">စာဖြေ စာမေးပွဲ</span></td><td>実技などの 修了評価<br><span class="mm">လက်တွေ့ စသည့် အကဲဖြတ်ခြင်း</span></td></tr>
  <tr><td style="padding:8px;font-weight:800">できること<br><span class="mm">လုပ်နိုင်သည်များ</span></td><td>訪問介護で 体の 介護が できる<br><span class="mm">အိမ်သို့သွား၍ ကိုယ်ခန္ဓာ ပြုစုမှု လုပ်နိုင်</span></td><td>国家試験の 受験に 必要／サービス提供責任者に なれる<br><span class="mm">အမျိုးသားစာမေးပွဲ ဖြေရန် လိုအပ် / ဝန်ဆောင်မှု တာဝန်ခံ ဖြစ်နိုင်</span></td></tr>
  </table><p class="mm" style="margin-top:8px">ကနဦးသင်တန်း = အခြေခံ ၁၃၀ နာရီ ・ လက်တွေ့လုပ်ငန်းသင်တန်း = အဆင့်မြင့် ၄၅၀ နာရီ (အမျိုးသားစာမေးပွဲအတွက် လိုအပ်)</p></div>
- <div class="card info"><h3>🗺 これからの 道</h3><ul><li>① 実務者研修（今ここ）</li><li>② 実務3年 ＋ 修了 → 介護福祉士 国家試験（毎年 1月ごろ・申しこみは 夏）</li><li>③ 介護福祉士として 5年・900日 → ケアマネジャーの 試験</li></ul></div>
- <div class="card src">申しこみ・日程・費用は 学校や 職場で 必ず 確認してください。</div>`}
+ <div class="card info"><h3>🗺 これからの 道 <span class="mm">ရှေ့ဆက်မည့် လမ်း</span></h3><ul><li>① 実務者研修（今ここ）<br><span class="mm">လက်တွေ့လုပ်ငန်း သင်တန်း (ယခု ဒီနေရာ)</span></li><li>② 実務3年 ＋ 修了 → 介護福祉士 国家試験（毎年 1月ごろ・申しこみは 夏）<br><span class="mm">အတွေ့အကြုံ ၃ နှစ် + သင်တန်းပြီး → အမျိုးသား စာမေးပွဲ (နှစ်စဉ် ဇန်နဝါရီ・လျှောက်ထားချိန် နွေရာသီ)</span></li><li>③ 介護福祉士として 5年・900日 → ケアマネジャーの 試験<br><span class="mm">介護福祉士 အဖြစ် ၅ နှစ်・၉၀၀ ရက် → ကေးမန်နေဂျာ စာမေးပွဲ</span></li></ul></div>
+ <div class="card src">申しこみ・日程・費用は 学校や 職場で 必ず 確認してください。<br><span class="mm">လျှောက်ထားခြင်း・ရက်စွဲ・ကုန်ကျစရိတ်ကို ကျောင်း သို့မဟုတ် အလုပ်ခွင်တွင် သေချာ မေးပါ။</span></div>`}
 let QZ;function quiz(){const all=[];JS.forEach(s=>s.q.forEach(q=>all.push({s,q})));QZ={list:all.sort(()=>Math.random()-.5).slice(0,10),i:0,ok:0};qs()}
 function qs(){view=qs;scrollTo(0,0);const {s,q}=QZ.list[QZ.i];$("#app").innerHTML=hdr(1)+`<div class="card qz"><div style="display:flex;justify-content:space-between;font-weight:800;color:var(--sub)"><span>🎯 ${QZ.i+1} / 10</span><span>⭕ ${QZ.ok}</span></div>
  <div style="font-size:12px;font-weight:800;color:${GC[s.g]};margin-top:8px">科目${s.n}：${s.t}</div><div class="big">${q[0]}</div><div id="qq">${q[1].map((c,j)=>`<button class="ch" onclick="qa(${j})">${"ABC"[j]}. ${c}</button>`).join("")}</div><div id="qx"></div></div>`;say(q[0])}

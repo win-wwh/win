@@ -91,6 +91,17 @@ function info(){view=info;scrollTo(0,0);$("#app").innerHTML=hdr(1)+`<div class="
  <li>多くは 家で 勉強（テキスト・レポート）＋ 教室に 通う日（介護過程Ⅲ と 医療的ケアの 演習）。</li>
  <li>修了証に 期限は ありません。</li>
  <li>修了すると「サービス提供責任者」にも なれます。</li></ul></div>
+ <div class="card info"><h3>⚖️ 初任者研修と 実務者研修の ちがい</h3>
+ <table style="width:100%;border-collapse:collapse;font-size:14px;line-height:1.5">
+ <tr style="background:#eef1fb"><th style="padding:8px;text-align:left"></th><th style="padding:8px">初任者研修</th><th style="padding:8px">実務者研修</th></tr>
+ <tr><td style="padding:8px;font-weight:800">レベル</td><td>入門（はじめの一歩）</td><td>応用（もっと深く）</td></tr>
+ <tr style="background:#f8f9fd"><td style="padding:8px;font-weight:800">時間</td><td>130時間</td><td>450時間<br><small>初任者を持っていれば 320時間</small></td></tr>
+ <tr><td style="padding:8px;font-weight:800">期間の めやす</td><td>1〜4か月</td><td>4〜6か月</td></tr>
+ <tr style="background:#f8f9fd"><td style="padding:8px;font-weight:800">医療的ケア</td><td>なし</td><td>あり（たん吸引・経管栄養の 基本）</td></tr>
+ <tr><td style="padding:8px;font-weight:800">介護過程</td><td>少し</td><td>くわしく（Ⅰ・Ⅱ・Ⅲ）</td></tr>
+ <tr style="background:#f8f9fd"><td style="padding:8px;font-weight:800">最後の 試験</td><td>筆記テスト</td><td>実技などの 修了評価</td></tr>
+ <tr><td style="padding:8px;font-weight:800">できること</td><td>訪問介護で 体の 介護が できる</td><td>国家試験の 受験に 必要／サービス提供責任者に なれる</td></tr>
+ </table><p class="mm" style="margin-top:8px">ကနဦးသင်တန်း = အခြေခံ ၁၃၀ နာရီ ・ လက်တွေ့လုပ်ငန်းသင်တန်း = အဆင့်မြင့် ၄၅၀ နာရီ (အမျိုးသားစာမေးပွဲအတွက် လိုအပ်)</p></div>
  <div class="card info"><h3>🗺 これからの 道</h3><ul><li>① 実務者研修（今ここ）</li><li>② 実務3年 ＋ 修了 → 介護福祉士 国家試験（毎年 1月ごろ・申しこみは 夏）</li><li>③ 介護福祉士として 5年・900日 → ケアマネジャーの 試験</li></ul></div>
  <div class="card src">申しこみ・日程・費用は 学校や 職場で 必ず 確認してください。</div>`}
 let QZ;function quiz(){const all=[];JS.forEach(s=>s.q.forEach(q=>all.push({s,q})));QZ={list:all.sort(()=>Math.random()-.5).slice(0,10),i:0,ok:0};qs()}

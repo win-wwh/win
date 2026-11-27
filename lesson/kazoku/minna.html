@@ -4,98 +4,105 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:linear-gradient(#fff4e6,#ffe8cc);min-height:100vh;color:#2b2118;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
 .mm{font-family:"Noto Sans Myanmar","Myanmar Sangam MN",sans-serif;color:#6741d9}
-.wrap{max-width:560px;margin:auto;padding:12px 14px 40px}
+.wrap{max-width:620px;margin:auto;padding:12px 14px 40px}
 a.back,button.back{background:none;border:0;padding:0;color:#d9480f;font-weight:800;font-size:15px;text-decoration:none;font-family:inherit}
-h1{font-size:24px;margin:6px 0 2px}.sub{color:#7a6550;font-size:13px;line-height:1.6;margin-bottom:12px}
+h1{font-size:24px;margin:6px 0 2px}.sub{color:#7a6550;font-size:13px;line-height:1.6;margin-bottom:10px}
 .card{background:#fff;border-radius:22px;padding:16px;box-shadow:0 4px 0 #f0c9a0;margin-bottom:12px}
 .btn{display:block;text-align:center;text-decoration:none;border:0;border-radius:16px;padding:15px;font-size:17px;font-weight:900;background:#fd7e14;color:#fff;width:100%;margin-top:10px;box-shadow:0 4px 0 #d9480f;font-family:inherit}
-.btn.g{background:#fff;color:#d9480f;box-shadow:0 4px 0 #f0c9a0}.btn.line{background:#06c755;box-shadow:0 4px 0 #04a144}
-.code{font-size:64px;font-weight:900;letter-spacing:10px;text-align:center;color:#d9480f;margin:4px 0}
-input,textarea{width:100%;font-size:18px;padding:12px 14px;border-radius:14px;border:2px solid #f0c9a0;font-family:inherit}textarea{font-size:14px;min-height:140px}
+.btn.g{background:#fff;color:#d9480f;box-shadow:0 4px 0 #f0c9a0}.btn.b{background:#1c7ed6;box-shadow:0 4px 0 #1864ab}.btn:disabled{opacity:.4}
+input{width:100%;font-size:18px;padding:12px 14px;border-radius:14px;border:2px solid #f0c9a0;font-family:inherit}
+.link{font-size:13px;word-break:break-all;background:#fff8f0;border-radius:10px;padding:8px 10px;margin-top:8px}
 .hud{display:flex;justify-content:space-between;font-weight:900;font-size:16px;margin:6px 0 8px}
-.tbar{height:10px;background:#fff;border-radius:6px;overflow:hidden;margin-bottom:10px}.tbar i{display:block;height:100%;background:#fd7e14}
-.qtx{font-size:21px;font-weight:900;text-align:center;line-height:1.6;min-height:96px;display:flex;align-items:center;justify-content:center}
-.qno{text-align:center;font-weight:900;color:#d9480f}
+.qtx{font-size:21px;font-weight:900;text-align:center;line-height:1.6;min-height:90px;display:flex;align-items:center;justify-content:center}
 .chs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.chs button{border:0;border-radius:16px;font-size:26px;font-weight:900;padding:16px 0;color:#fff;font-family:inherit}
-.c0{background:#e8590c;box-shadow:0 4px 0 #b8430a}.c1{background:#1c7ed6;box-shadow:0 4px 0 #1864ab}.c2{background:#2b8a3e;box-shadow:0 4px 0 #1f6b2f}.c3{background:#ae3ec9;box-shadow:0 4px 0 #862e9c}.c4{background:#495057;box-shadow:0 4px 0 #343a40}
-.chs button:disabled{opacity:.35}.chs button.ans{opacity:1;outline:5px solid #ffd43b}
-.big .qtx{font-size:30px;min-height:160px}.big .chs button{font-size:34px;padding:22px 0}
+.chs button{border:0;border-radius:16px;font-size:24px;font-weight:900;padding:16px 0;color:#fff;font-family:inherit}
+.c0{background:#e8590c;box-shadow:0 4px 0 #b8430a}.c1{background:#1c7ed6;box-shadow:0 4px 0 #1864ab}.c2{background:#2b8a3e;box-shadow:0 4px 0 #1f6b2f}.c3{background:#ae3ec9;box-shadow:0 4px 0 #862e9c}
+.chs button.me{outline:5px solid #ffd43b}
+.ppl{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.ppl span{background:#fff3bf;border-radius:20px;padding:5px 10px;font-weight:800;font-size:14px}.ppl span.ok{background:#d3f9d8}.ppl span.wait{background:#f1f3f5;color:#868e96}
+.ans{border-radius:14px;padding:10px 12px;margin-top:8px;border:3px solid transparent;background:#f8f9fa}.ans.right{border-color:#2b8a3e;background:#ebfbee}
+.ans .h{display:flex;align-items:center;gap:8px;font-weight:900;font-size:17px}.ans .h .dot{width:16px;height:16px;border-radius:50%}.ans .h .n{margin-left:auto;color:#7a6550}
 .rk{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #f3e3d0;font-size:17px}.rk b{flex:1}.rk .md{font-size:26px;width:36px;text-align:center}.rk .sc{font-weight:900;color:#d9480f}
-.bar2{display:flex;align-items:center;gap:8px;font-size:14px;margin:4px 0}.bar2 .t{flex:1}.bar2 i{display:block;height:12px;background:#ff8787;border-radius:6px}
-.step{display:flex;gap:10px;align-items:flex-start;margin:8px 0;font-size:15px;line-height:1.6}.step .n{flex:none;width:28px;height:28px;border-radius:50%;background:#fd7e14;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center}
-.fl{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.5);font-size:110px;opacity:0;pointer-events:none;transition:.25s}.fl.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
-</style></head><body><div class="wrap" id="app"></div><div class="fl" id="fl"></div>
+.tbl{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}.tbl th,.tbl td{border-bottom:1px solid #f3e3d0;padding:6px 4px;text-align:center}.tbl td:first-child,.tbl th:first-child{text-align:left}
+.st{font-size:12px;color:#7a6550;text-align:center;margin-top:6px}.st.err{color:#e03131;font-weight:800}
+.spin{display:inline-block;animation:sp 1.2s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+</style></head><body><div class="wrap" id="app"></div>
 <script src="game-data.js"></script>
 <script>
+/* しくみ：ntfy.sh（無料の 公開メッセージ サーバー）で、同じ ルームの 人どうし 答えを やりとり します */
 const app=document.getElementById("app"),$=i=>document.getElementById(i);
-const NQ=10,SEC=15;
+const SP=new URLSearchParams(location.search),BASE=SP.get("srv")||"https://ntfy.sh";
+const NQ=10,COL=["#e8590c","#1c7ed6","#2b8a3e","#ae3ec9"];
 function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hash(s){let h=7;for(const c of s)h=Math.imul(h,31)+c.charCodeAt(0)|0;return h}
 function shS(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-// ルーム番号から 同じ 問題を つくる
-function makeQ(code){const r=rng(+code*7919);const ox=shS(OX,r).slice(0,6).map(o=>({t:o[0],c:["○","✕"],a:o[1]?0:1,e:o[2]}));
+function makeQ(room){const r=rng(hash(room));const ox=shS(OX,r).slice(0,6).map(o=>({t:o[0],c:["○","✕"],a:o[1]?0:1,e:o[2]}));
  const sn=shS(N.filter(n=>n[0]!=="honnin"),r).slice(0,4).map(n=>{const opts=n[4]==="なし"?["1","2","3","なし"]:["1","2","3","4"];if(n[4]!=="なし"&&!opts.includes(String(n[4])))opts[3]=String(n[4]);return{t:`本人から 見て「${n[1]}」は 何親等？`,c:opts.map(o=>o==="なし"?"なし":o+"親等"),a:opts.indexOf(String(n[4])),e:n[5]}});
  return shS([...ox,...sn],r)}
-const LINK=c=>location.origin+location.pathname+"?room="+c;
-function sendText(t){if(navigator.share)navigator.share({text:t}).catch(()=>{});else location.href="https://line.me/R/share?text="+encodeURIComponent(t)}
-function flash(ok){const f=$("fl");f.textContent=ok?"⭕":"❌";f.classList.add("on");setTimeout(()=>f.classList.remove("on"),380)}
-let ROOM=null,Q=[],I=0,ANS=[],T0=0,TM=null,TL=0;
-function getN(){try{return localStorage.getItem("stu-name")||""}catch(e){return""}}
-function setN(v){try{localStorage.setItem("stu-name",v)}catch(e){}}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rid=n=>Array.from(crypto.getRandomValues(new Uint8Array(n)),b=>"abcdefghjkmnpqrstuvwxyz23456789"[b%31]).join("");
 
-/* ===== はじめ ===== */
-function home(){clearInterval(TM);scrollTo(0,0);history.replaceState(null,"",location.pathname);
- app.innerHTML=`<a class="back" href="game.html">‹ ゲーム</a><h1>👥 みんなで あそぶ</h1><div class="sub">親族・家族・世帯 ／ 同じ 問題 10問で 勝負！<br><span class="mm">အတူတူ ဆော့ပြီး ပြိုင်ကြမယ်</span></div>
- <div class="card"><b>👩‍🏫 先生</b><div class="step"><span class="n">1</span><span>ルームを 作る → 生徒の LINEグループに リンクを 送る</span></div><div class="step"><span class="n">2</span><span>みんなで 同時に スタート（先生の 画面を 見せながら でも OK）</span></div><div class="step"><span class="n">3</span><span>生徒が LINEグループに 結果を 送る → 先生が コピーして ランキング</span></div>
- <button class="btn" onclick="tHome()">🏠 ルームを 作る（先生）</button></div>
- <div class="card"><b>🎒 生徒</b> <span class="mm" style="font-size:13px">ကျောင်းသား</span><div class="sub" style="margin:6px 0">先生から 聞いた ルーム番号を 入れて ください</div>
- <input id="rc" inputmode="numeric" maxlength="4" placeholder="ルーム番号（4けた）"><button class="btn" onclick="const c=$('rc').value.trim();if(!/^\\d{4}$/.test(c)){alert('4けたの 数字を 入れて ください');return}sHome(c)">▶ 入る</button></div>`}
+let ROOM=null,TOPIC=null,ME=null,HOST=false,Q=[],SEEN=new Set(),ES=null,POLL=null,CONN=0;
+const S={players:{},ans:{},started:false,reveal:{}};// ans[q][id]=choice
+function store(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}function load(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
 
-/* ===== 先生 ===== */
-function tHome(c){c=c||String(1000+Math.floor(Math.random()*9000));ROOM=c;scrollTo(0,0);
- app.innerHTML=`<button class="back" onclick="home()">‹ もどる</button><div class="card" style="text-align:center"><div class="sub" style="margin:0">ルーム番号</div><div class="code">${c}</div><div class="sub">生徒は この 番号を 入れるか、リンクを 開きます</div>
- <button class="btn line" onclick="sendText('🎮 みんなで ゲーム！\\n親族・家族・世帯（10問）\\nルーム番号：${c}\\n'+LINK('${c}')+'\\n\\n名前を 入れて、先生の 合図で スタート！ 終わったら 結果を この グループに 送って ください。')">📤 生徒に リンクを 送る（LINE）</button>
- <button class="btn" onclick="tPlay()">📺 問題を 大きく 見せる（先生の 画面）</button>
- <button class="btn g" onclick="tRank()">🏆 結果を 集めて ランキング</button>
- <button class="btn g" onclick="tHome()">🔄 新しい ルーム</button></div>`}
-function tPlay(){Q=makeQ(ROOM);I=0;tShow()}
-function tShow(rev){clearInterval(TM);const q=Q[I];scrollTo(0,0);
- app.innerHTML=`<button class="back" onclick="tHome('${ROOM}')">‹ ルーム ${ROOM}</button><div class="card big"><div class="qno">${I+1} / ${Q.length}</div><div class="qtx">${q.t}</div>
- <div class="chs">${q.c.map((c,k)=>`<button class="c${q.c.length===2?k:k} ${rev&&k===q.a?"ans":""}" ${rev&&k!==q.a?"disabled":""}>${c}</button>`).join("")}</div>
- ${rev?`<div class="sub" style="text-align:center;margin-top:10px;font-size:16px">${q.e||""}</div>`:""}</div>
- ${rev?`<button class="btn" onclick="I++;I<Q.length?tShow():tHome('${ROOM}')">${I<Q.length-1?"次の 問題 ›":"おわり → ランキングへ"}</button>`:`<button class="btn" onclick="tShow(1)">💡 答えを 見せる</button>`}`}
-function tRank(){scrollTo(0,0);
- app.innerHTML=`<button class="back" onclick="tHome('${ROOM}')">‹ ルーム ${ROOM}</button><h1>🏆 ランキング</h1><div class="sub">LINEグループの 結果メッセージを 長押し → コピー して、下に 貼りつけて ください（何人分でも まとめて OK）</div>
- <textarea id="pt" placeholder="ここに 貼りつけ"></textarea><button class="btn" onclick="rank()">🏆 ランキングを 出す</button><div id="rk"></div>`}
-function rank(){const txt=$("pt").value;const re=/#R(\d{4})\s*\|\s*([^|\n]+?)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*([01]+)/g;let m,P={};
- while(m=re.exec(txt)){if(m[1]!==ROOM)continue;P[m[2]]={n:m[2],s:+m[3],t:+m[4],b:m[5]}}
- const L=Object.values(P).sort((a,b)=>b.s-a.s||a.t-b.t);
- if(!L.length){$("rk").innerHTML=`<div class="card">ルーム ${ROOM} の 結果が 見つかりません。「#R${ROOM}」が 入った メッセージを 貼って ください。</div>`;return}
- Q=makeQ(ROOM);const miss=Q.map((q,k)=>({q,k,n:L.filter(p=>p.b[k]==="0").length})).sort((a,b)=>b.n-a.n);
- $("rk").innerHTML=`<div class="card">${L.map((p,k)=>`<div class="rk"><span class="md">${["🥇","🥈","🥉"][k]||k+1}</span><b>${p.n}</b><span class="sc">${p.s}点</span><span style="color:#7a6550;font-size:13px">${p.t}秒</span></div>`).join("")}</div>
- <div class="card"><b>❌ まちがいが 多かった 問題</b><div class="sub" style="margin:4px 0 8px">授業で もう一度 説明しましょう</div>${miss.filter(x=>x.n).slice(0,5).map(x=>`<div class="bar2"><span class="t">問${x.k+1} ${x.q.t}<br><small style="color:#2b8a3e">答え：${x.q.c[x.q.a]}</small></span><span style="width:70px"><i style="width:${x.n/L.length*100}%"></i></span><b>${x.n}人</b></div>`).join("")||"全員 全問 正解！ 🎉"}</div>
- <button class="btn line" onclick="sendText(RT())">📤 ランキングを LINEに 送る</button>`;window._L=L}
-function RT(){return `🏆 ランキング（ルーム ${ROOM}）\n`+window._L.map((p,k)=>`${["🥇","🥈","🥉"][k]||(k+1)+"位"} ${p.n} ${p.s}点（${p.t}秒）`).join("\n")}
+/* --- 通信 --- */
+async function pub(o){o.id=ME.id;o.n=ME.n;for(let i=0;i<3;i++){try{const r=await fetch(BASE+"/"+TOPIC,{method:"POST",body:JSON.stringify(o)});if(r.ok)return true}catch(e){}await new Promise(r=>setTimeout(r,800))}stat("⚠️ 送れませんでした。インターネットを 確認して ください",1);return false}
+function onMsg(m){if(!m||m.event!=="message"||SEEN.has(m.id))return;SEEN.add(m.id);let o;try{o=JSON.parse(m.message)}catch(e){return}apply(o);render()}
+function listen(){try{ES=new EventSource(BASE+"/"+TOPIC+"/sse?since=all");ES.onmessage=e=>{CONN=1;stat("");try{onMsg(JSON.parse(e.data))}catch(x){}};ES.onopen=()=>{CONN=1;stat("")};ES.onerror=()=>{CONN=0;stat("つながり なおし中…")}}catch(e){}
+ POLL=setInterval(poll,6000);poll()}
+async function poll(){try{const r=await fetch(BASE+"/"+TOPIC+"/json?poll=1&since=all");const t=await r.text();let ch=0;t.split("\n").forEach(l=>{if(!l.trim())return;try{const m=JSON.parse(l);if(!SEEN.has(m.id)){SEEN.add(m.id);const o=JSON.parse(m.message);apply(o);ch=1}}catch(e){}});if(ch)render();CONN=1;stat("")}catch(e){if(!CONN)stat("⚠️ サーバーに つながりません",1)}}
+function stat(t,err){const e=$("st");if(e){e.textContent=t;e.className="st"+(err?" err":"")}}
+function apply(o){if(!o||!o.id)return;
+ if(o.t==="join"){S.players[o.id]=S.players[o.id]||{n:o.n,host:!!o.host};S.players[o.id].n=o.n;if(o.host)S.players[o.id].host=true}
+ if(o.t==="start")S.started=true;
+ if(o.t==="ans"&&typeof o.q==="number"){(S.ans[o.q]=S.ans[o.q]||{})[o.id]=o.c;S.players[o.id]=S.players[o.id]||{n:o.n}}
+ if(o.t==="reveal")S.reveal[o.q]=1}
+const P=()=>Object.entries(S.players).filter(([id,p])=>!p.host||p.play);
+const players=()=>Object.keys(S.players);
+function allIn(q){const a=S.ans[q]||{};return players().length>0&&players().every(id=>id in a)}
+function revealed(q){return S.reveal[q]||allIn(q)}
+function score(id){return Q.reduce((s,q,k)=>s+((S.ans[k]||{})[id]===q.a&&revealed(k)?1:0),0)}
 
-/* ===== 生徒 ===== */
-function sHome(c){ROOM=c;history.replaceState(null,"",location.pathname+"?room="+c);scrollTo(0,0);
- app.innerHTML=`<button class="back" onclick="home()">‹ もどる</button><div class="card" style="text-align:center"><div class="sub" style="margin:0">ルーム</div><div class="code" style="font-size:44px">${c}</div>
- <input id="nm" placeholder="名前（例：Aung）" value="${getN().replace(/"/g,"")}"><div class="sub" style="margin-top:8px">先生の 合図で スタート！ 1問 ${SEC}秒、全部で ${NQ}問<br><span class="mm">ဆရာ အချက်ပြမှ စပါ</span></div>
- <button class="btn" onclick="const n=$('nm').value.trim().replace(/[|#]/g,'');if(!n){alert('名前を 入れて ください');return}setN(n);sStart()">▶ スタート</button></div>`}
-function sStart(){Q=makeQ(ROOM);I=0;ANS=[];T0=Date.now();sShow()}
-function sShow(){clearInterval(TM);const q=Q[I];TL=SEC*10;scrollTo(0,0);
- app.innerHTML=`<div class="hud"><span>${I+1} / ${Q.length}</span><span>⭕ ${ANS.filter(x=>x).length}</span></div><div class="tbar"><i id="tb" style="width:100%"></i></div>
- <div class="card"><div class="qtx">${q.t}</div><div class="chs">${q.c.map((c,k)=>`<button class="c${k}" onclick="sAns(${k})">${c}</button>`).join("")}</div><div class="sub" id="ex" style="text-align:center;margin-top:10px;min-height:1.5em"></div></div>`;
- TM=setInterval(()=>{TL--;$("tb").style.width=(TL/SEC/10*100)+"%";if(TL<=0)sAns(-1)},100)}
-function sAns(k){clearInterval(TM);const q=Q[I];const ok=k===q.a;ANS.push(ok);flash(ok);
- document.querySelectorAll(".chs button").forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add("ans")});
- $("ex").innerHTML=(k<0?"⏰ 時間 切れ　":"")+(q.e||"");
- setTimeout(()=>{I++;if(I<Q.length)sShow();else sEnd()},ok?800:1700)}
-function sEnd(){const s=ANS.filter(x=>x).length,t=Math.round((Date.now()-T0)/1000),n=getN();scrollTo(0,0);
- const msg=`🎮 みんなで ゲーム 結果\n名前：${n}\n${s} / ${Q.length} 正解（${t}秒）\n#R${ROOM}|${n}|${s}|${t}|${ANS.map(x=>x?1:0).join("")}`;
- app.innerHTML=`<div class="card" style="text-align:center"><div style="font-size:70px">${s===Q.length?"🏆":s>=7?"🌟":"💪"}</div><h1>${s} / ${Q.length} 正解</h1><div class="sub">${t}秒</div>
- <button class="btn line" onclick='sendText(${JSON.stringify(msg)})'>📤 LINEグループに 結果を 送る</button><div class="sub" style="margin-top:8px">⚠️ 最後の 行（#R…）は 消さないで ください。先生の ランキングに 使います<br><span class="mm">#R… စာကြောင်းကို မဖျက်ပါနဲ့</span></div>
- <button class="btn g" onclick="sHome('${ROOM}')">🔁 もう一回</button><a class="btn g" href="game.html">🎮 ほかの ゲーム</a></div>`}
-
-{const c=new URLSearchParams(location.search).get("room");if(c&&/^\d{4}$/.test(c))sHome(c);else home()}
+/* --- 画面 --- */
+let VIEW="home";
+function home(){VIEW="home";app.innerHTML=`<a class="back" href="game.html">‹ ゲーム</a><h1>👥 みんなで あそぶ</h1><div class="sub">Zoom でも OK！ リンクを チャットに 送って、みんなで 同じ 問題に 答えます。<br>全員が 答えると、みんなの 答えが 見られます。<br><span class="mm">Zoom chat ထဲ link ပို့ပြီး အားလုံး အတူ ဖြေကြမယ်</span></div>
+ <div class="card"><b>👩‍🏫 先生（ルームを 作る）</b><input id="hn" placeholder="先生の 名前（例：ウィン先生）" value="${esc((load("mn-name")||""))}" style="margin-top:8px"><button class="btn" onclick="create()">🏠 ルームを 作る</button></div>
+ <div class="sub" style="text-align:center">🎒 生徒は 先生から 送られた リンクを 開いて ください</div>`}
+function create(){const n=$("hn").value.trim();if(!n){alert("名前を 入れて ください");return}store("mn-name",n);ROOM=rid(10);history.replaceState(null,"",location.pathname+"?r="+ROOM+(SP.get("srv")?"&srv="+SP.get("srv"):""));store("mn-host-"+ROOM,1);enter(n,true)}
+function joinView(){VIEW="join";app.innerHTML=`<h1>👥 みんなで あそぶ</h1><div class="sub">親族・家族・世帯 ／ 10問</div><div class="card"><b>名前を 入れて ください</b> <span class="mm" style="font-size:13px">နာမည် ထည့်ပါ</span><input id="pn" style="margin-top:8px" placeholder="例：Aung" value="${esc(load("mn-name")||"")}"><button class="btn" onclick="const n=$('pn').value.trim();if(!n){alert('名前を 入れて ください');return}store('mn-name',n);enter(n,false)">▶ 入る</button></div>`}
+function enter(n,host){HOST=host;TOPIC="winlabjp-kazoku-"+ROOM;Q=makeQ(ROOM);
+ let me=load("mn-me-"+ROOM);if(!me){me={id:rid(8),k:0};store("mn-me-"+ROOM,me)}ME={id:me.id,n};
+ VIEW="lobby";listen();pub({t:"join",host});render()}
+let CUR=0;function saveCur(){const m=load("mn-me-"+ROOM)||{};m.k=CUR;store("mn-me-"+ROOM,m)}
+const LINK=()=>location.origin+location.pathname+"?r="+ROOM+(SP.get("srv")?"&srv="+SP.get("srv"):"");
+function copyLink(){const t="🎮 みんなで ゲーム！ 親族・家族・世帯（10問）\n"+LINK();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>alert("コピーしました。Zoom の チャットに 貼りつけて ください")).catch(()=>prompt("コピーして ください",t))}
+function plist(q){const a=q==null?{}:(S.ans[q]||{});return `<div class="ppl">${players().map(id=>`<span class="${q==null?"":id in a?"ok":"wait"}">${q!=null&&id in a?"✅ ":q!=null?"⏳ ":""}${esc(S.players[id].n)}${S.players[id].host?" 👩‍🏫":""}</span>`).join("")}</div>`}
+function render(){if(!ROOM)return;
+ if(!S.started&&VIEW!=="join"){VIEW="lobby";
+  app.innerHTML=`<h1>👥 ロビー</h1><div class="sub">親族・家族・世帯 ／ 10問</div>
+  ${HOST?`<div class="card"><b>① この リンクを Zoom の チャットに 送って ください</b><div class="link">${esc(LINK())}</div><button class="btn b" onclick="copyLink()">📋 リンクを コピー</button></div>`:""}
+  <div class="card"><b>入った 人（${players().length}人）</b>${plist()}
+  ${HOST?`<button class="btn" onclick="pub({t:'start'})" ${players().length<1?"disabled":""}>▶ ② 全員 そろったら スタート</button>`:`<div class="sub" style="text-align:center;margin-top:12px"><span class="spin">⏳</span> 先生が スタートするのを 待って います<br><span class="mm">ဆရာ စတင်တာ စောင့်နေပါ</span></div>`}</div><div class="st" id="st"></div>`;return}
+ if(S.started&&VIEW==="lobby"){VIEW="play";CUR=(load("mn-me-"+ROOM)||{}).k||0}
+ if(VIEW!=="play")return;
+ if(CUR>=Q.length)return final();
+ const q=Q[CUR],a=S.ans[CUR]||{},mine=a[ME.id];
+ if(mine===undefined){app.innerHTML=`<div class="hud"><span>問題 ${CUR+1} / ${Q.length}</span><span>${esc(ME.n)}</span></div><div class="card"><div class="qtx">${q.t}</div><div class="chs">${q.c.map((c,k)=>`<button class="c${k}" onclick="answer(${k})">${c}</button>`).join("")}</div></div><div class="card"><b>答えた 人 ${Object.keys(a).length} / ${players().length}</b>${plist(CUR)}</div><div class="st" id="st"></div>`;return}
+ if(!revealed(CUR)){app.innerHTML=`<div class="hud"><span>問題 ${CUR+1} / ${Q.length}</span><span>${esc(ME.n)}</span></div><div class="card" style="text-align:center"><div class="qtx" style="min-height:60px;font-size:18px">${q.t}</div><div style="font-size:15px">あなたの 答え：<b style="color:${COL[mine]}">${q.c[mine]}</b></div><div style="margin-top:12px"><span class="spin">⏳</span> みんなを 待って います… ${Object.keys(a).length} / ${players().length}人</div></div><div class="card">${plist(CUR)}${HOST?`<button class="btn g" onclick="pub({t:'reveal',q:${CUR}})">⏩ 待たないで 答えを 見せる（先生）</button>`:""}</div><div class="st" id="st"></div>`;return}
+ const ok=mine===q.a;
+ app.innerHTML=`<div class="hud"><span>問題 ${CUR+1} / ${Q.length}</span><span>⭐ ${score(ME.id)}点</span></div><div class="card"><div class="qtx" style="min-height:60px;font-size:18px">${q.t}</div>
+ <div style="text-align:center;font-size:26px;font-weight:900;color:${ok?"#2b8a3e":"#e03131"}">${ok?"⭕ 正解！":mine===-1?"⏰":"❌ ざんねん"}</div>
+ <div class="sub" style="text-align:center;margin:4px 0">答え：<b>${q.c[q.a]}</b>${q.e?" ／ "+q.e:""}</div>
+ <b style="display:block;margin-top:8px">👀 みんなの 答え</b>${q.c.map((c,k)=>{const who=Object.keys(a).filter(id=>a[id]===k);return `<div class="ans ${k===q.a?"right":""}"><div class="h"><span class="dot" style="background:${COL[k]}"></span>${c}${k===q.a?" ✅":""}<span class="n">${who.length}人</span></div><div class="ppl">${who.map(id=>`<span>${esc((S.players[id]||{}).n||"?")}</span>`).join("")}</div></div>`}).join("")}
+ ${players().filter(id=>!(id in a)).length?`<div class="sub" style="margin-top:6px">答えなかった 人：${players().filter(id=>!(id in a)).map(id=>esc(S.players[id].n)).join("、")}</div>`:""}</div>
+ <button class="btn" onclick="CUR++;saveCur();render();scrollTo(0,0)">${CUR<Q.length-1?"次の 問題 ›":"🏆 結果を 見る"}</button><div class="st" id="st"></div>`}
+function answer(k){if((S.ans[CUR]||{})[ME.id]!==undefined)return;(S.ans[CUR]=S.ans[CUR]||{})[ME.id]=k;render();pub({t:"ans",q:CUR,c:k})}
+function final(){const ids=players(),done=Q.every((_,k)=>revealed(k));
+ const L=ids.map(id=>({id,n:S.players[id].n,s:score(id)})).sort((a,b)=>b.s-a.s);
+ app.innerHTML=`<h1>🏆 結果</h1>${done?"":`<div class="sub"><span class="spin">⏳</span> まだ 答えて いる 人が います。点数は 変わります。</div>`}
+ <div class="card">${L.map((p,k)=>`<div class="rk"><span class="md">${["🥇","🥈","🥉"][k]||k+1}</span><b>${esc(p.n)}${p.id===ME.id?"（あなた）":""}</b><span class="sc">${p.s} / ${Q.length}</span></div>`).join("")}</div>
+ <div class="card"><b>📊 問題ごとの 正解者</b><table class="tbl"><tr><th>問題</th><th>答え</th><th>正解</th></tr>${Q.map((q,k)=>{const a=S.ans[k]||{};const c=Object.values(a).filter(x=>x===q.a).length;return `<tr><td>問${k+1} ${q.t.length>16?q.t.slice(0,16)+"…":q.t}</td><td>${q.c[q.a]}</td><td style="font-weight:900;color:${c===ids.length?"#2b8a3e":c<ids.length/2?"#e03131":"#2b2118"}">${c}/${ids.length}</td></tr>`}).join("")}</table><div class="sub" style="margin-top:6px">赤い 問題は 半分 以上が まちがえました。もう一度 説明しましょう。</div></div>
+ <a class="btn g" href="game.html">🎮 ゲームに もどる</a>${HOST?`<button class="btn" onclick="location.href=location.pathname+(SP.get('srv')?'?srv='+SP.get('srv'):'')">🏠 新しい ルーム</button>`:""}<div class="st" id="st"></div>`}
+setInterval(()=>{if(VIEW==="final")return},5000);
+{const r=SP.get("r");if(r&&/^[a-z0-9]{6,16}$/.test(r)){ROOM=r;if(load("mn-host-"+r)&&load("mn-name")){enter(load("mn-name"),true)}else joinView()}else home()}
 </script></body></html>

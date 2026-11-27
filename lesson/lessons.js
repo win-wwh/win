@@ -5,7 +5,7 @@ window.LESSONS=[
  {icon:"👩‍🏫",t:"先生モード（スライド）",s:"説明ごと・先生メモ（日本語・ミャンマー語）・🔊",url:"kazoku/"},
  {icon:"📜",t:"台本① 親族のページ",s:"ふりがな・ミャンマー語つき",url:"kazoku/daihon.html"},
  {icon:"📜",t:"台本② 世帯の数字のページ",s:"ふりがな・ミャンマー語つき",url:"kazoku/daihon2.html"},
- {icon:"👥",t:"みんなで あそぶ（ルームを 作る）",s:"同じ 問題で 勝負・LINEの 結果で ランキング",url:"kazoku/minna.html"},
+ {icon:"👥",t:"みんなで あそぶ（ルームを 作る）",s:"Zoomの チャットに リンク → みんなで 答えて 全員の 答えを 見る",url:"kazoku/minna.html"},
  {icon:"🙋",t:"よくある 質問と 答えかた",s:"まちがえやすい ところ 13問",url:"kazoku/qa.html"},
  {icon:"📒",t:"授業の 記録",s:"日づけ・生徒・やった ところ・宿題",url:"kazoku/kiroku.html"},
  {send:1,icon:"📖",t:"生徒用 スライド",s:"🔊 読み上げつき・先生メモなし",url:"kazoku/seito.html"},

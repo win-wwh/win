@@ -38,7 +38,7 @@ function flash(ok){const f=document.getElementById("fl");f.textContent=ok?"⭕":
 let TM=null;function stopT(){clearInterval(TM)}
 function home(){stopT();scrollTo(0,0);
  app.innerHTML=`<a class="back" href="../">‹ 先生の部屋</a><h1>🎮 ゲームで おぼえよう</h1><div class="sub">親族・家族・世帯 ／ 3つの ゲーム<br><span class="mm">ဂိမ်းဆော့ပြီး မှတ်ကြမယ်</span></div>
- <a class="gm" href="minna.html" style="text-decoration:none;background:#fd7e14;color:#fff;box-shadow:0 4px 0 #d9480f"><span class="ic">👥</span><span><b>みんなで あそぶ</b><span class="s" style="color:#fff3e0">同じ 問題で 勝負！ 結果を LINEで 送って ランキング</span></span></a>
+ <a class="gm" href="minna.html" style="text-decoration:none;background:#fd7e14;color:#fff;box-shadow:0 4px 0 #d9480f"><span class="ic">👥</span><span><b>みんなで あそぶ</b><span class="s" style="color:#fff3e0">Zoomでも OK！ 全員の 答えが 見られる</span></span></a>
  <button class="gm" onclick="G1()"><span class="ic">🌳</span><span><b>親等 タッチ</b><span class="s">光った 人は 何親等？ 60秒</span><br><span class="mm" style="font-size:12px">ဘယ်နှစ်ဆက်လဲ</span></span><span class="best">ベスト<br>${BEST.g1||0}点</span></button>
  <button class="gm" onclick="G2()"><span class="ic">🃏</span><span><b>ことば ペア</b><span class="s">ことばと 意味を そろえる</span><br><span class="mm" style="font-size:12px">စကားလုံးနဲ့ အဓိပ္ပာယ် တွဲ</span></span><span class="best">ベスト<br>${BEST.g2?BEST.g2+"秒":"-"}</span></button>
  <button class="gm" onclick="G3()"><span class="ic">⭕</span><span><b>○✕ スピード</b><span class="s">正しい？ まちがい？ 1問 7秒</span><br><span class="mm" style="font-size:12px">မှန်လား မှားလား</span></span><span class="best">ベスト<br>${BEST.g3||0}点</span></button>

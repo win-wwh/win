@@ -3,6 +3,7 @@ window.LESSONS=[
 {id:"kazoku",ch:"第1章 人間と社会",title:"親族・家族・世帯",mm:"ဆွေမျိုး・မိသားစု・အိမ်ထောင်စု",date:"2026-11-27",items:[
  {k:"daihon",icon:"📜",t:"台本① 親族のページ",s:"ふりがな・ミャンマー語つき",url:"kazoku/daihon.html"},
  {k:"daihon",icon:"📜",t:"台本② 世帯の数字のページ",s:"ふりがな・ミャンマー語つき",url:"kazoku/daihon2.html"},
+ {k:"kotoba",icon:"📚",t:"この授業の 試験に 出る ことば（42語）",s:"説明1〜4ごと・ふりがな・ミャンマー語・テスト",url:"kazoku/kotoba.html"},
  {k:"mondai",icon:"📝",t:"国家試験 練習問題① 親族・家族（10問）",s:"5択・解説・ミャンマー語つき",url:"kazoku/mondai.html"},
  {k:"mondai",icon:"📝",t:"国家試験 練習問題② 世帯の数字（10問）",s:"5択・解説・ミャンマー語つき",url:"kazoku/mondai.html?p=2"},
  {k:"seito",icon:"📖",t:"生徒用 スライド（送る用）",s:"先生メモなし・問題とビデオつき",url:"kazoku/seito.html"},

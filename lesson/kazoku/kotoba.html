@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>この授業の ことば：親族・家族・世帯</title><meta name="description" content="介護福祉士 国家試験の 科目ごとの 大切な ことば。ふりがな・ミャンマー語・かんたんな 意味つき。">
+<meta name="theme-color" content="#5f3dc4"><meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#f4f6fb;color:#1f2544;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Sangam MN",sans-serif;color:#6741d9}
+.wrap{max-width:640px;margin:auto;padding:14px 14px 40px}
+a.back,button.back{background:none;border:0;padding:0;color:#5f3dc4;font-weight:800;font-size:15px;text-decoration:none;font-family:inherit}
+h1{font-size:22px;margin:6px 0 2px}.sub{color:#68708a;font-size:13px;line-height:1.6;margin-bottom:12px}
+input{width:100%;font-size:16px;padding:12px 14px;border-radius:14px;border:2px solid #e1e4f0;margin-bottom:12px;font-family:inherit}
+.subj{display:flex;align-items:center;gap:12px;width:100%;border:0;background:#fff;border-radius:16px;padding:12px 14px;margin-bottom:9px;text-align:left;box-shadow:0 2px 8px #0000000d;font-family:inherit;color:inherit}
+.subj .ic{font-size:30px;width:44px;text-align:center}.subj .t{font-weight:900;font-size:16px}.subj .m{font-size:12.5px}.subj .n{margin-left:auto;color:#9aa0b8;font-size:13px;font-weight:800;white-space:nowrap}
+.subj.star{background:#fff8db}
+.tools{display:flex;gap:8px;margin:8px 0 12px;flex-wrap:wrap}.tools button{border:0;border-radius:12px;padding:10px 12px;font-size:14px;font-weight:800;background:#e5dbff;color:#5f3dc4;font-family:inherit}
+.tools button.on{background:#5f3dc4;color:#fff}.tools .q{background:#5f3dc4;color:#fff;margin-left:auto}
+.w{background:#fff;border-radius:16px;padding:12px 14px;margin-bottom:9px;box-shadow:0 2px 8px #0000000d;position:relative}
+.w .jp{font-size:21px;font-weight:900;line-height:1.9;padding-right:36px}.w rt{font-size:.52em;color:#c2410c;font-weight:700}
+.w .mean{font-size:15px;color:#3b4262;margin-top:2px;line-height:1.6}.w .mm{font-size:15px;margin-top:4px;line-height:1.7}
+.w .sb{position:absolute;right:10px;top:10px;border:0;background:none;font-size:24px;color:#d0d4e4;padding:2px}.w .sb.on{color:#f59f00}
+.w .tag{font-size:11px;color:#9aa0b8;font-weight:800}
+body.hide .w .hd{filter:blur(7px);transition:.2s}body.hide .w.open .hd{filter:none}
+.qz{background:#fff;border-radius:20px;padding:18px;box-shadow:0 2px 10px #0000000f}
+.qz .hud{display:flex;justify-content:space-between;color:#68708a;font-weight:800;font-size:14px}
+.qz .big{font-size:28px;font-weight:900;text-align:center;margin:18px 0 6px;line-height:1.8}.qz .big.mm{font-size:22px;color:#6741d9}
+.ch{display:block;width:100%;border:2px solid #e1e4f0;background:#fff;border-radius:14px;padding:12px;margin:8px 0;font-size:17px;text-align:left;font-family:inherit;color:inherit;line-height:1.6}
+.ch.ok{border-color:#2f9e44;background:#ebfbee}.ch.ng{border-color:#e03131;background:#fff5f5}
+.btn{border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:800;background:#5f3dc4;color:#fff;width:100%;margin-top:10px;font-family:inherit}.btn.g{background:#e5dbff;color:#5f3dc4}
+.fb{margin-top:8px;padding:10px 12px;border-radius:12px;line-height:1.7;font-size:15px}
+</style></head><body><div class="wrap" id="app"></div>
+<script src="kotoba-data.js"></script>
+<script>
+const app=document.getElementById("app");
+let ST={};try{ST=JSON.parse(localStorage.getItem("ks-star-kazoku")||"{}")}catch(e){}
+const saveST=()=>{try{localStorage.setItem("ks-star-kazoku",JSON.stringify(ST))}catch(e){}};
+const ALL=[];KS.forEach((s,si)=>s[3].forEach(w=>ALL.push({w,si})));
+function home(){document.body.classList.remove("hide");scrollTo(0,0);
+ const ns=Object.keys(ST).length;
+ app.innerHTML=`<a class="back" href="../">‹ 先生の部屋</a><h1>📚 この 授業の ことば</h1><div class="sub">親族・家族・世帯 ／ 介護福祉士 試験に 出る ことば ${ALL.length}語<br><span class="mm">ဒီသင်ခန်းစာ၏ စာမေးပွဲ စကားလုံးများ</span></div>
+ <input id="sq" placeholder="🔍 さがす（日本語・よみ・ミャンマー語）" oninput="search(this.value)"><div id="res"></div><div id="list">
+ ${ns?`<button class="subj star" onclick="openS(-1)"><span class="ic">⭐</span><span><div class="t">自分の ★ ことば</div><div class="m mm">မှတ်ထားသော စကားလုံး</div></span><span class="n">${ns}語</span></button>`:""}
+ ${KS.map((s,i)=>`<button class="subj" onclick="openS(${i})"><span class="ic">${s[2]}</span><span><div class="t">${s[0]}</div><div class="m mm">${s[1]}</div></span><span class="n">${s[3].length}語 ›</span></button>`).join("")}
+ <div class="sub" style="margin-top:10px">※ ミャンマー語は かんたんな 訳です。 ★を 押すと 自分の リストに 入ります。</div></div>`}
+function card(w,si){const k=w[0];return `<div class="w" onclick="this.classList.toggle('open')"><button class="sb ${ST[k]?"on":""}" onclick="event.stopPropagation();star('${k}',this)">★</button>
+ ${si!=null?`<div class="tag">${KS[si][2]} ${KS[si][0]}</div>`:""}<div class="jp">${/[一-龯]/.test(w[0])?`<ruby>${w[0]}<rt>${w[1]}</rt></ruby>`:w[0]+(w[0]!==w[1]&&!/[ァ-ヶ]/.test(w[0])?` <small style="font-size:.55em;color:#c2410c">${w[1]}</small>`:"")}</div>
+ <div class="hd"><div class="mm">${w[2]}</div><div class="mean">💡 ${w[3]}</div></div></div>`}
+function star(k,b){if(ST[k])delete ST[k];else ST[k]=1;saveST();b.classList.toggle("on",!!ST[k])}
+function words(i){return i<0?ALL.filter(x=>ST[x.w[0]]).map(x=>x.w):KS[i][3]}
+let CUR=0;
+function openS(i){CUR=i;scrollTo(0,0);const s=i<0?["自分の ★ ことば","မှတ်ထားသော စကားလုံး","⭐"]:KS[i];const ws=words(i);
+ app.innerHTML=`<button class="back" onclick="home()">‹ 一覧</button><h1>${s[2]} ${s[0]}</h1><div class="sub mm">${s[1]}</div>
+ <div class="tools"><button id="hb" onclick="document.body.classList.toggle('hide');this.classList.toggle('on')">🙈 意味を かくす</button><button class="q" onclick="quiz(${i})">✏️ テスト</button></div>
+ <div class="sub" id="hint" style="margin-top:-4px">「かくす」に すると、カードを タップして 答えを 見られます</div>
+ ${ws.map(w=>card(w,i<0?ALL.find(x=>x.w===w).si:null)).join("")}<button class="btn" onclick="quiz(${i})">✏️ この 科目の テスト（${Math.min(10,ws.length)}問）</button><button class="btn g" onclick="home()">‹ 一覧へ</button>`}
+function search(q){q=q.trim();const r=document.getElementById("res"),l=document.getElementById("list");if(!q){r.innerHTML="";l.style.display="";return}
+ const f=ALL.filter(x=>x.w.some(t=>t.includes(q))).slice(0,40);l.style.display="none";
+ r.innerHTML=f.length?f.map(x=>card(x.w,x.si)).join(""):`<div class="sub">見つかりません</div>`}
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let Q=[],QI=0,QOK=0,QS=0,QMODE=0;
+function quiz(i){QS=i;const ws=words(i);if(ws.length<4){alert("★ ことばが 4つ 以上 必要です");return}document.body.classList.remove("hide");
+ Q=sh(ws).slice(0,10);QI=0;QOK=0;qShow()}
+function qShow(){scrollTo(0,0);const w=Q[QI];const pool=QS<0?ALL.map(x=>x.w):KS[QS][3];
+ QMODE=QI%2;// 0: 日本語→意味 1: 意味→日本語
+ const ops=sh([w,...sh(pool.filter(x=>x!==w)).slice(0,3)]);window._ops=ops;
+ app.innerHTML=`<button class="back" onclick="openS(${QS})">‹ もどる</button><div class="qz" style="margin-top:8px"><div class="hud"><span>✏️ ${QI+1} / ${Q.length}</span><span>⭕ ${QOK}</span></div>
+ ${QMODE===0?`<div class="big">${/[一-龯]/.test(w[0])?`<ruby>${w[0]}<rt style="font-size:.45em;color:#c2410c">${w[1]}</rt></ruby>`:w[0]}</div><div class="sub" style="text-align:center">意味は どれ？ <span class="mm">အဓိပ္ပာယ် ဘယ်ဟာလဲ</span></div>`
+ :`<div class="big" style="font-size:20px">💡 ${w[3]}</div><div class="big mm" style="margin-top:0">${w[2]}</div><div class="sub" style="text-align:center">どの ことば？ <span class="mm">ဘယ်စကားလုံးလဲ</span></div>`}
+ <div id="chs">${ops.map((o,k)=>`<button class="ch" onclick="qa(${k})">${QMODE===0?`<span class="mm">${o[2]}</span><br><small style="color:#68708a">${o[3]}</small>`:`<b style="font-size:19px">${o[0]}</b> <small style="color:#c2410c">${o[1]}</small>`}</button>`).join("")}</div><div id="fb"></div></div>`}
+function qa(k){const bs=document.querySelectorAll("#chs .ch");if(bs[0].disabled)return;const w=Q[QI],ok=window._ops[k]===w;
+ bs.forEach((b,j)=>{b.disabled=true;if(window._ops[j]===w)b.classList.add("ok");else if(j===k)b.classList.add("ng")});if(ok)QOK++;
+ document.getElementById("fb").innerHTML=`<div class="fb" style="background:${ok?"#ebfbee":"#fff5f5"}"><b>${ok?"⭕ 正解！":"❌ ざんねん"}</b> ${w[0]}（${w[1]}）＝ ${w[3]}</div>${!ok&&!ST[w[0]]?`<button class="btn g" onclick="ST['${w[0]}']=1;saveST();this.textContent='⭐ 入れました'">⭐ ★ことばに 入れる</button>`:""}<button class="btn" onclick="qn()">${QI<Q.length-1?"次 ›":"結果"}</button>`}
+function qn(){QI++;if(QI<Q.length)qShow();else{scrollTo(0,0);app.innerHTML=`<div class="qz" style="text-align:center"><div style="font-size:60px">${QOK===Q.length?"🏆":QOK>=Q.length*.6?"🌟":"💪"}</div><h2>${QOK} / ${Q.length}</h2><button class="btn" onclick="quiz(${QS})">🔁 もう一回（ちがう 問題）</button><button class="btn g" onclick="openS(${QS})">📖 ことばを 見る</button><button class="btn g" onclick="home()">‹ 一覧</button></div>`}}
+home();
+</script></body></html>

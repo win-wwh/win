@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>授業プラン：親族・家族・世帯</title><meta name="robots" content="noindex">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#f3f7f6;color:#1f2a2a;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Sangam MN",sans-serif;color:#6741d9}
+.wrap{max-width:640px;margin:auto;padding:14px 14px 140px}a.back{color:#2f9e8f;font-weight:800;text-decoration:none}
+h1{font-size:22px;margin:6px 0 2px}.sub{color:#5c6b6b;font-size:13px;line-height:1.6;margin-bottom:12px}
+.len{display:flex;gap:8px;margin-bottom:12px}.len button{flex:1;border:0;border-radius:12px;padding:10px;font-weight:800;font-size:15px;background:#fff;color:#1f2a2a;box-shadow:0 2px 6px #0000000d}.len button.on{background:#2f9e8f;color:#fff}
+.st{background:#fff;border-radius:16px;padding:12px 14px;margin-bottom:10px;box-shadow:0 2px 8px #0000000d;border-left:6px solid #cfe9e4}
+.st.now{border-left-color:#f59f00;background:#fffbea}.st.done{opacity:.55}
+.st .h{display:flex;align-items:center;gap:8px}.st .min{background:#2f9e8f;color:#fff;border-radius:8px;padding:2px 8px;font-weight:900;font-size:13px;white-space:nowrap}
+.st .t{font-weight:900;font-size:16px;flex:1}.st .do{font-size:14px;line-height:1.7;margin:6px 0 0;padding-left:18px}.st .lk{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.st .lk a{background:#e6fcf5;color:#087f5b;border-radius:10px;padding:6px 10px;font-size:13px;font-weight:800;text-decoration:none}
+.st .go{border:0;background:#f59f00;color:#fff;border-radius:10px;padding:6px 10px;font-weight:800;font-size:13px}
+#tm{position:fixed;left:0;right:0;bottom:0;background:#1f2a2a;color:#fff;padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px}
+#tm .tt{flex:1;min-width:0}#tm .nm{font-size:13px;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#tm .clk{font-size:30px;font-weight:900;font-variant-numeric:tabular-nums}#tm .clk.over{color:#ff8787}
+#tm button{border:0;border-radius:12px;background:#2f9e8f;color:#fff;font-weight:800;font-size:16px;padding:12px 14px}#tm .g{background:#3a4545}
+</style></head><body><div class="wrap">
+<a class="back" href="../">‹ 先生の部屋</a><h1>🗓 授業プラン</h1><div class="sub">親族・家族・世帯 ／ 何を、どの 順番で、何分 やるか<br>「▶ ここから」を 押すと 下の タイマーが 動きます</div>
+<div class="len"><button data-l="60" onclick="setLen(60)">60分</button><button data-l="90" onclick="setLen(90)">90分</button><button data-l="2" onclick="setLen(2)">2回に 分ける</button></div>
+<div id="list"></div></div>
+<div id="tm"><div class="tt"><div class="nm" id="tnm">▶ を 押して スタート</div><div class="clk" id="clk">--:--</div></div><button class="g" id="pb" onclick="pause()">⏸</button><button onclick="nextStep()">次 ›</button></div>
+<script>
+const L={
+60:[
+[5,"あいさつ・導入","「家族は 何人？」と 聞いて 話に 入る",[["先生モード","./?s=all"]]],
+[15,"説明1 親等の 数え方","図を 指で なぞりながら。兄弟姉妹＝2親等が 大事",[["説明1","./?s=1"],["台本①","daihon.html"]]],
+[8,"説明2 直系・傍系／扶養","「6・配・3」を 声に 出して",[["説明2","./?s=2"]]],
+[7,"説明3 家族の 種類と 役割","定位⇔創設、手段的⇔表出的 を ペアで",[["説明3","./?s=3"]]],
+[10,"説明4 世帯と 数字","グラフの 前に「今は 何人だと 思う？」",[["説明4","./?s=4"],["台本②","daihon2.html"]]],
+[5,"まとめ クイズ","手を あげて 答えて もらう",[["説明5","./?s=5"]]],
+[10,"練習問題・宿題","時間が なければ 宿題に。リンクを LINEで 送る",[["練習問題①","mondai.html"],["練習問題②","mondai.html?p=2"],["ことば","kotoba.html"]]]],
+90:[
+[5,"あいさつ・導入","前回の 復習／「家族は 何人？」",[["先生モード","./?s=all"]]],
+[20,"説明1 親等の 数え方","生徒に 自分の 家族の 図を かいて もらう",[["説明1","./?s=1"],["台本①","daihon.html"]]],
+[10,"説明2 直系・傍系／扶養","「6・配・3」を 声に 出して",[["説明2","./?s=2"]]],
+[5,"休けい","",[]],
+[10,"説明3 家族の 種類と 役割","定位⇔創設、手段的⇔表出的 を ペアで",[["説明3","./?s=3"]]],
+[15,"説明4 世帯と 数字","数字は 全部 おぼえなくて いい。「一番 多い」を おぼえる",[["説明4","./?s=4"],["台本②","daihon2.html"]]],
+[5,"まとめ クイズ","手を あげて 答えて もらう",[["説明5","./?s=5"]]],
+[10,"ことばテスト","みんなで ことばテスト（説明1〜4）",[["ことば","kotoba.html"]]],
+[10,"練習問題","①を 授業で、②は 宿題",[["練習問題①","mondai.html"],["練習問題②","mondai.html?p=2"]]]],
+2:[
+[5,"【1回目】あいさつ・導入","「家族は 何人？」",[["先生モード","./?s=all"]]],
+[20,"【1回目】説明1 親等","家族の 図を かいて もらう",[["説明1","./?s=1"],["台本①","daihon.html"]]],
+[15,"【1回目】説明2・3","直系・傍系、家族の ことば",[["説明2","./?s=2"],["説明3","./?s=3"]]],
+[10,"【1回目】練習問題①","おわったら 結果を 先生に 送って もらう",[["練習問題①","mondai.html"]]],
+[5,"【2回目】復習","説明1〜3の ことばテスト",[["ことば","kotoba.html"]]],
+[20,"【2回目】説明4 世帯と 数字","グラフ",[["説明4","./?s=4"],["台本②","daihon2.html"]]],
+[5,"【2回目】まとめ クイズ","",[["説明5","./?s=5"]]],
+[15,"【2回目】練習問題②","結果を 送って もらう",[["練習問題②","mondai.html?p=2"]]]]};
+let LEN=60,cur=-1,left=0,run=false,tk=null;
+try{LEN=+localStorage.getItem("plan-len")||60}catch(e){}
+function setLen(l){LEN=l;try{localStorage.setItem("plan-len",l)}catch(e){}cur=-1;stop();draw()}
+function draw(){document.querySelectorAll(".len button").forEach(b=>b.classList.toggle("on",+b.dataset.l===LEN));
+ const P=L[LEN];let t=0;
+ document.getElementById("list").innerHTML=P.map((s,k)=>{const a=t;t+=s[0];return `<div class="st ${k===cur?"now":k<cur?"done":""}" id="s${k}"><div class="h"><span class="min">${s[0]}分</span><span class="t">${s[1]}</span><button class="go" onclick="startStep(${k})">▶ ここから</button></div><div style="font-size:12px;color:#7a8888;margin-top:2px">${a}分 → ${t}分</div>${s[2]?`<div class="do">💡 ${s[2]}</div>`:""}${s[3].length?`<div class="lk">${s[3].map(l=>`<a href="${l[1]}">${l[0]} ›</a>`).join("")}</div>`:""}</div>`}).join("")+`<div class="sub" style="text-align:center">合計 ${t}分</div>`}
+function fmt(x){const n=x<0;x=Math.abs(x);return (n?"+":"")+String(Math.floor(x/60)).padStart(2,"0")+":"+String(x%60).padStart(2,"0")}
+function tick(){left--;show()}
+function show(){const c=document.getElementById("clk");c.textContent=fmt(left);c.classList.toggle("over",left<0);
+ if(left===0){try{navigator.vibrate&&navigator.vibrate([300,100,300])}catch(e){}}}
+function startStep(k){cur=k;left=L[LEN][k][0]*60;document.getElementById("tnm").textContent=L[LEN][k][1];stop();run=true;tk=setInterval(tick,1000);document.getElementById("pb").textContent="⏸";draw();show();document.getElementById("s"+k).scrollIntoView({behavior:"smooth",block:"center"})}
+function stop(){clearInterval(tk);run=false}
+function pause(){if(cur<0)return;if(run){stop();document.getElementById("pb").textContent="▶"}else{run=true;tk=setInterval(tick,1000);document.getElementById("pb").textContent="⏸"}}
+function nextStep(){if(cur<L[LEN].length-1)startStep(cur+1);else{stop();cur=L[LEN].length;draw();document.getElementById("tnm").textContent="🎉 授業 おわり！";document.getElementById("clk").textContent="おつかれさま"}}
+draw();
+</script></body></html>

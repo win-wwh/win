@@ -1,0 +1,38 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>授業の 記録：親族・家族・世帯</title><meta name="robots" content="noindex">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#f3f7f6;color:#1f2a2a;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+.wrap{max-width:640px;margin:auto;padding:14px 14px 40px}a.back{color:#2f9e8f;font-weight:800;text-decoration:none}
+h1{font-size:22px;margin:6px 0 2px}.sub{color:#5c6b6b;font-size:13px;line-height:1.6;margin-bottom:12px}
+.card{background:#fff;border-radius:16px;padding:14px;box-shadow:0 2px 8px #0000000d;margin-bottom:12px}
+label{display:block;font-weight:800;font-size:14px;margin:10px 0 4px}
+input,textarea{width:100%;font-size:16px;padding:10px 12px;border-radius:10px;border:2px solid #dde5e3;font-family:inherit}textarea{min-height:70px}
+.chk{display:flex;flex-wrap:wrap;gap:6px}.chk span{border:2px solid #cfe9e4;border-radius:10px;padding:7px 10px;font-size:14px;font-weight:800;background:#fff}.chk span.on{background:#2f9e8f;color:#fff;border-color:#2f9e8f}
+.btn{border:0;border-radius:12px;padding:13px;font-size:16px;font-weight:800;background:#2f9e8f;color:#fff;width:100%;margin-top:12px;font-family:inherit}.btn.g{background:#e6fcf5;color:#087f5b}
+.rec{background:#fff;border-radius:14px;padding:12px 14px;margin-bottom:8px;box-shadow:0 2px 6px #0000000a;font-size:14px;line-height:1.7}
+.rec .d{font-weight:900;font-size:16px}.rec .x{float:right;border:0;background:none;color:#adb5bd;font-size:13px}.rec .e{float:right;border:0;background:none;color:#2f9e8f;font-size:13px;font-weight:800;margin-right:6px}
+</style></head><body><div class="wrap">
+<a class="back" href="../">‹ 先生の部屋</a><h1>📒 授業の 記録</h1><div class="sub">親族・家族・世帯 ／ この スマホの 中に 保存されます</div>
+<div class="card"><label>日づけ</label><input type="date" id="d">
+<label>来た 生徒（名前を 「、」で）</label><input id="who" placeholder="例：Aung、Mya、Su">
+<label>やった ところ</label><div class="chk" id="done"></div>
+<label>練習問題の 結果・気づいた こと</label><textarea id="memo" placeholder="例：兄弟姉妹の 親等で まちがいが 多かった"></textarea>
+<label>宿題・次回</label><textarea id="next" placeholder="例：練習問題② を 宿題。次回は 説明4 から"></textarea>
+<button class="btn" onclick="save()">💾 保存</button></div>
+<div id="list"></div></div>
+<script>
+const PARTS=["説明1 親等","説明2 直系・扶養","説明3 家族","説明4 世帯","説明5 クイズ","練習問題①","練習問題②","ことばテスト"];
+let R=[],ED=-1;try{R=JSON.parse(localStorage.getItem("kiroku-kazoku")||"[]")}catch(e){}
+const $=i=>document.getElementById(i);
+function form(r){$("d").value=r?r.d:new Date(Date.now()+9*36e5).toISOString().slice(0,10);$("who").value=r?r.who:"";$("memo").value=r?r.memo:"";$("next").value=r?r.next:"";
+ $("done").innerHTML=PARTS.map(p=>`<span class="${r&&r.done.includes(p)?"on":""}" onclick="this.classList.toggle('on')">${p}</span>`).join("")}
+function save(){const r={d:$("d").value,who:$("who").value.trim(),memo:$("memo").value.trim(),next:$("next").value.trim(),done:[...document.querySelectorAll("#done span.on")].map(s=>s.textContent)};
+ if(ED>=0)R[ED]=r;else R.unshift(r);ED=-1;R.sort((a,b)=>b.d.localeCompare(a.d));try{localStorage.setItem("kiroku-kazoku",JSON.stringify(R))}catch(e){alert("保存できませんでした")}form();list();scrollTo({top:0,behavior:"smooth"})}
+function del(k){if(confirm("この 記録を 消しますか？")){R.splice(k,1);try{localStorage.setItem("kiroku-kazoku",JSON.stringify(R))}catch(e){}list()}}
+function edit(k){ED=k;form(R[k]);scrollTo({top:0,behavior:"smooth"})}
+function txt(r){return `【授業の 記録】親族・家族・世帯\n${r.d}\n生徒：${r.who||"-"}\nやった ところ：${r.done.join("、")||"-"}\nメモ：${r.memo||"-"}\n宿題・次回：${r.next||"-"}`}
+function share(k){const t=txt(R[k]);if(navigator.share)navigator.share({text:t}).catch(()=>{});else location.href="https://line.me/R/share?text="+encodeURIComponent(t)}
+function list(){$("list").innerHTML=R.length?`<div class="sub" style="font-weight:800">これまでの 記録（${R.length}回）</div>`+R.map((r,k)=>`<div class="rec"><button class="x" onclick="del(${k})">🗑</button><button class="e" onclick="share(${k})">📤</button><button class="e" onclick="edit(${k})">✏️</button><div class="d">📅 ${r.d}</div>👥 ${r.who||"-"}<br>✅ ${r.done.join("、")||"-"}${r.memo?`<br>📝 ${r.memo}`:""}${r.next?`<br>➡ ${r.next}`:""}</div>`).join(""):`<div class="sub">まだ 記録は ありません。</div>`}
+form();list();
+</script></body></html>

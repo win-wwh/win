@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>よくある質問と 答えかた：親族・家族・世帯</title><meta name="robots" content="noindex">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:#f3f7f6;color:#1f2a2a;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Sangam MN",sans-serif;color:#6741d9;font-size:14px;line-height:1.8}
+.wrap{max-width:640px;margin:auto;padding:14px 14px 40px}a.back{color:#2f9e8f;font-weight:800;text-decoration:none}
+h1{font-size:22px;margin:6px 0 2px}.sub{color:#5c6b6b;font-size:13px;line-height:1.6;margin-bottom:12px}
+details{background:#fff;border-radius:16px;margin-bottom:10px;box-shadow:0 2px 8px #0000000d;overflow:hidden}
+summary{list-style:none;padding:14px 16px;font-weight:900;font-size:16px;line-height:1.6;display:flex;gap:10px}summary::-webkit-details-marker{display:none}
+summary .q{flex:none;background:#e8590c;color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.a{padding:0 16px 14px 52px;font-size:15px;line-height:1.8}.a .lab{font-weight:900;color:#2f9e8f}.tip{background:#fff8db;border-radius:10px;padding:8px 10px;margin-top:6px;font-size:14px}
+.sec{font-weight:900;color:#2f9e8f;margin:16px 0 8px}
+</style></head><body><div class="wrap">
+<a class="back" href="../">‹ 先生の部屋</a><h1>🙋 よくある 質問と 答えかた</h1><div class="sub">生徒が まちがえやすい ところ・よく 聞く 質問。タップで 答えが 出ます。</div>
+<div id="list"></div></div>
+<script>
+const QA=[
+["説明1 親等",[
+["配偶者（夫・妻）は 何親等？","親等は ありません（0でも 1でもない）。でも 親族に 入ります。","အိမ်ထောင်ဖက်မှာ 親等 မရှိပါ။ ဒါပေမယ့် ဆွေမျိုး ဖြစ်တယ်။","「1親等」と 答える 生徒が 多い。試験の ひっかけに なります。"],
+["兄弟姉妹は どうして 1親等じゃないの？","横に まっすぐ 数えないからです。本人→親（1）→兄弟姉妹（2）で 2親等です。","မောင်နှမကို တိုက်ရိုက် မရေတွက်ရ။ မိဘဆီ တက်(၁) ဆင်း(၁) = ၂။","図の 線を 指で なぞって 見せると すぐ 分かります。"],
+["義理の 父母（配偶者の 親）は？","姻族の 1親等です。","အိမ်ထောင်ဖက်၏ မိဘ = 姻族 ၁ ဆက်။","配偶者の 位置から 数える と 説明します。"],
+["いとこの 子は？","5親等です（いとこ 4＋1）。6親等までなので、親族に 入ります。","ဝမ်းကွဲ၏ သားသမီး = ၅ ဆက်။ ဆွေမျိုး ဖြစ်တယ်။","「6親等まで」の 例として 使えます。"],
+["配偶者の いとこは 親族？","親族では ありません。姻族の 4親等なので、3親等までに 入りません。","အိမ်ထောင်ဖက်၏ ဝမ်းကွဲ = 姻族 ၄ → ဆွေမျိုး မဟုတ်။","「6・配・3」を 思い出させます。"]]],
+["説明2 直系・傍系・扶養",[
+["おじ・おばは 直系？","傍系です。たてに 本人と つながって いないからです。","ဦးလေး・အဒေါ် = 傍系။","直系は 父母・祖父母・子・孫 の たての 線だけ。"],
+["おじ・おばに 扶養義務は ある？","原則 ありません。扶養義務は 直系血族と 兄弟姉妹です（特別な 事情が あれば 家庭裁判所が 決める ことも あります）。","ဦးလေး・အဒေါ်မှာ မူအားဖြင့် 扶養義務 မရှိ။","試験では「直系血族と 兄弟姉妹」を おぼえれば OK。"]]],
+["説明3 家族",[
+["定位家族と 創設家族の おぼえかた？","定位＝自分の 位置が 決まって いる 生まれた 家族。創設＝新しく つくる 家族（生殖家族とも いう）。","定位 = မွေးလာတဲ့ မိသားစု၊ 創設 = အသစ် ဆောက်တဲ့ မိသားစု။","ミャンマーの 実家＝定位家族、日本で 結婚して つくる 家族＝創設家族、と 自分の 話に すると 分かりやすい。"],
+["核家族に ひとり親の 家族は 入る？","入ります。夫婦のみ、夫婦と 未婚の 子、ひとり親と 未婚の 子 の 3つです。","မိဘတစ်ဦးနှင့် အိမ်ထောင်မပြုသေးသော သားသမီး → 核家族 ထဲ ပါတယ်။","祖父母が いたら 核家族では なく 三世代。"],
+["DINKs と DEWKs の ちがい？","N＝No Kids（子ども いない）、W＝With Kids（子ども いる）。どちらも 共働き。","N = ကလေးမရှိ၊ W = ကလေးရှိ။",""]]],
+["説明4 世帯",[
+["家族と 世帯の ちがいは？","家族は 血や 結婚の つながり。世帯は いっしょに 住んで 生計（お金）が 同じ グループ。家族でも 別に 住めば 別の 世帯です。","မိသားစု = သွေး/လက်ထပ် ဆက်နွယ်မှု။ 世帯 = အတူနေ + ငွေ အတူသုံး။","ひとり暮らしの 学生は、親と 別の 世帯。"],
+["数字は 全部 おぼえないと だめ？","全部 おぼえなくて いいです。「一番 多いのは 何か」「ふえた か へった か」を おぼえましょう。","ကိန်းဂဏန်း အားလုံး မမှတ်လည်း ရ။ ဘာက အများဆုံးလဲ၊ တိုးလား လျော့လား ကို မှတ်ပါ။","数字は 毎年 変わります。最新の 数字は 本で 確認して ください。"],
+["高齢者世帯と 65歳以上の 人が いる 世帯は 同じ？","ちがいます。高齢者世帯は 65歳以上の 人だけ（＋18歳未満の 未婚の 人）の 世帯。65歳以上の 人が いる 世帯は、若い 人が いっしょでも 入ります。","高齢者世帯 = ၆၅ နှစ်အထက်သာ။ ၆၅ နှစ်အထက် ရှိသော အိမ်ထောင်စု = လူငယ် ပါလည်း ရ။","試験の ひっかけに なりやすい ところ。"]]]];
+document.getElementById("list").innerHTML=QA.map(g=>`<div class="sec">${g[0]}</div>`+g[1].map(q=>`<details><summary><span class="q">Q</span><span>${q[0]}</span></summary><div class="a"><span class="lab">答え：</span>${q[1]}<div class="mm">${q[2]}</div>${q[3]?`<div class="tip">💡 先生へ：${q[3]}</div>`:""}</div></details>`).join("")).join("");
+</script></body></html>

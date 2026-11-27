@@ -13,7 +13,7 @@ input[type=search]{width:100%;border:2px solid #d5e6e1;border-radius:14px;paddin
 .les{background:#fff;border-radius:20px;margin:14px 0;box-shadow:0 2px 8px #0000000d;overflow:hidden}
 .les .hd{padding:14px 16px;background:linear-gradient(135deg,#2f9e8f,#3bb39f);color:#fff}
 .les .hd .ch{font-size:12px;opacity:.9;font-weight:700}.les .hd b{font-size:20px;display:block;margin-top:2px}.les .hd .mm{color:#e6dcff;font-size:13px}
-a.it{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #eef3f1;color:inherit;text-decoration:none}
+a.it{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #eef3f1;color:inherit;text-decoration:none}
 a.it:active{background:#f4faf8}
 a.it .ic{font-size:26px;width:36px;text-align:center}a.it .tx{flex:1}a.it b{font-size:16px;display:block}a.it span{font-size:12px;color:var(--sub)}
 a.it .go{color:var(--main);font-size:22px}
@@ -28,6 +28,8 @@ h2{font-size:16px;margin:22px 4px 8px}
 .empty{color:var(--sub);font-size:13px;padding:6px 0}
 .tip{font-size:13px;color:var(--sub);line-height:1.7;margin:16px 6px}
 .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#22303a;color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;opacity:0;transition:.3s;pointer-events:none}.toast.on{opacity:1}
+.row{display:flex;align-items:center;border-top:1px solid #eef3f1}.row a.it{border-top:0}.snd{flex:none;border:0;background:#06c755;color:#fff;border-radius:12px;width:46px;height:40px;font-size:18px;margin-right:12px}
+.grp{padding:10px 16px 6px;font-weight:900;font-size:13px;color:#2f9e8f;background:#f6faf9;display:flex;align-items:center;border-top:1px solid #eef3f1}.grp .all{margin-left:auto;border:0;background:#06c755;color:#fff;border-radius:10px;padding:7px 10px;font-weight:800;font-size:13px}
 </style></head><body><div class="wrap">
 <header><span style="font-size:40px">👩‍🏫</span><h1>先生の部屋<small class="mm">ဆရာ့ အခန်း</small></h1></header>
 <input type="search" id="q" placeholder="🔍 さがす（例：親族、台本）" oninput="render()">
@@ -46,9 +48,16 @@ function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");setT
 const ext=u=>/^https?:/.test(u)&&!u.includes("winlabjp.com");
 function render(){const q=$("#q").value.trim();
  $("#list").innerHTML=LESSONS.map(L=>{const its=L.items.filter(i=>!q||(L.title+L.ch+i.t+i.s).includes(q));if(!its.length)return"";
-  return `<div class="les"><div class="hd"><div class="ch">${L.ch} ・ ${L.date}</div><b>${L.title}</b><div class="mm">${L.mm}</div></div>${its.map(i=>`<a class="it" href="${i.url}" ${ext(i.url)?'target="_blank" rel="noopener"':""}><div class="ic">${i.icon}</div><div class="tx"><b>${i.t}</b><span>${i.s}</span></div><div class="go">›</div></a>`).join("")}</div>`}).join("")||'<p class="empty">見つかりません</p>';
+  const row=i=>`<div class="row"><a class="it" href="${i.url}" ${ext(i.url)?'target="_blank" rel="noopener"':""}><div class="ic">${i.icon}</div><div class="tx"><b>${i.t}</b><span>${i.s}</span></div>${i.send?"":'<div class="go">›</div>'}</a>${i.send?`<button class="snd" onclick="sendOne('${L.id}','${i.url}')">📤</button>`:""}</div>`;
+  const T=its.filter(i=>!i.send),S=its.filter(i=>i.send);
+  return `<div class="les"><div class="hd"><div class="ch">${L.ch} ・ ${L.date}</div><b>${L.title}</b><div class="mm">${L.mm}</div></div>${T.length?'<div class="grp">👩‍🏫 先生用</div>'+T.map(row).join(""):""}${S.length?`<div class="grp">🎒 生徒に 送る <button class="all" onclick="sendAll('${L.id}')">📤 まとめて 送る</button></div>`+S.map(row).join(""):""}</div>`}).join("")||'<p class="empty">見つかりません</p>';
  $("#tools").innerHTML=TOOLS.map(t=>`<a href="${t.url}"><span>${t.icon}</span>${t.t}</a>`).join("");mine()}
 const LS=()=>{try{return JSON.parse(localStorage.getItem("lesson-mine"))||[]}catch(e){return[]}};
+
+const ABS=u=>new URL(u,location.href).href;
+function shareT(t){if(navigator.share)navigator.share({text:t}).catch(()=>{});else location.href="https://line.me/R/share?text="+encodeURIComponent(t)}
+function sendOne(id,u){const L=LESSONS.find(x=>x.id===id),i=L.items.find(x=>x.url===u);shareT(`【${L.title}】${i.t}\n${ABS(u)}`)}
+function sendAll(id){const L=LESSONS.find(x=>x.id===id);shareT(`【介護福祉士 国家試験】${L.title}\n家で 復習して ください 📚\n\n`+L.items.filter(i=>i.send).map(i=>`${i.icon} ${i.t}\n${ABS(i.url)}`).join("\n\n")+`\n\n問題が おわったら、結果を 先生に 送って ください。`)}
 function mine(){const m=LS();$("#mine").innerHTML=m.length?m.map((x,k)=>`<div style="display:flex;align-items:center;gap:8px"><a class="it" style="flex:1;padding:10px 0;border:0" href="${esc(x.u)}" target="_blank" rel="noopener"><div class="ic">🔗</div><div class="tx"><b>${esc(x.t)}</b><span>${esc(x.u.slice(0,40))}</span></div></a><button class="del" onclick="delMine(${k})">🗑</button></div>`).join(""):'<div class="empty">まだ ありません。下に 名前と リンクを 入れて 追加できます。</div>'}
 function addMine(){const t=$("#mt").value.trim(),u=$("#mu").value.trim();if(!/^https?:\/\//.test(u)){toast("リンク（https://…）を 入れてください");return}
  const m=LS();m.unshift({t:t||u,u});try{localStorage.setItem("lesson-mine",JSON.stringify(m))}catch(e){}$("#mt").value="";$("#mu").value="";mine();toast("⭐ 追加しました")}

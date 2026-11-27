@@ -34,7 +34,7 @@ h1{font-size:21px;margin:0 0 4px}.sub{color:var(--sub);font-size:13px;margin-bot
 <div class="tabs"><button id="t1" onclick="start('p1')"></button><button id="t2" onclick="start('p2')"></button></div>
 <div class="card" id="box"></div></div>
 <div id="tool"><button onclick="fs(-2)">A−</button><button onclick="fs(2)">A＋</button><button onclick="document.body.classList.toggle('nofuri')">ふ</button><button onclick="document.body.classList.toggle('nomm')" style="font-family:Noto Sans Myanmar,sans-serif">မ</button></div>
-<script src="mondai-data.js"></script>
+<script src="mondai-data.js"></script><script src="send.js"></script>
 <script>
 const $=s=>document.querySelector(s);let P="p1",L=[],I=0,OK=0,WR=[];
 $("#t1").innerHTML=MONDAI.p1.t;$("#t2").innerHTML=MONDAI.p2.t;
@@ -50,8 +50,8 @@ function ans(k){const q=MONDAI[P].q[L[I]];const bs=document.querySelectorAll("#c
  $("#ex").innerHTML=`<div class="ex ${ok?"ok":"ng"}"><b>${ok?"⭕ 正解！":"❌ ざんねん。正解は "+q.a}</b><br>${q.e}<div class="mmt">${q.em}</div></div><button class="btn" onclick="next()">${I<L.length-1?"次の 問題 ›":"結果を 見る"}</button>`;
  $("#ex").scrollIntoView({behavior:"smooth",block:"nearest"})}
 function next(){I++;if(I<L.length){show();scrollTo({top:0,behavior:"smooth"})}else res()}
-function res(){const n=L.length;$("#box").innerHTML=`<div class="res"><div class="big">${OK===n?"🏆":OK>=n*.6?"🌟":"💪"}</div><h2>${OK} / ${n} 正解</h2><p>${OK===n?"全問 正解！ すばらしい！":OK>=n*.6?"合格ライン（6割）を こえました！":"もう一度 台本を 読んで チャレンジ！"}</p>
- ${WR.length?`<button class="btn" onclick="start('${P}',[${WR}])">❌ まちがえた 問題だけ もう一度（${WR.length}問）</button>`:""}<button class="btn g" onclick="start('${P}')">🔁 最初から</button><button class="btn g" onclick="start('${P==="p1"?"p2":"p1"}')">➡ ${P==="p1"?"②":"①"}の 問題へ</button></div>`;scrollTo({top:0})}
+function res(){const n=L.length;window.RES=nm=>`【練習問題】親族・家族・世帯 ${P==="p1"?"①親族・家族":"②世帯の数字"}\n名前：${nm}\n結果：${OK} / ${n} 正解\n${WR.length?"まちがい：問題 "+WR.map(x=>x+1).join("・"):"全問 正解！"}\n${new Date().toLocaleDateString("ja-JP")}`;$("#box").innerHTML=`<div class="res"><div class="big">${OK===n?"🏆":OK>=n*.6?"🌟":"💪"}</div><h2>${OK} / ${n} 正解</h2><p>${OK===n?"全問 正解！ すばらしい！":OK>=n*.6?"合格ライン（6割）を こえました！":"もう一度 台本を 読んで チャレンジ！"}</p>
+ ${WR.length?`<button class="btn" onclick="start('${P}',[${WR}])">❌ まちがえた 問題だけ もう一度（${WR.length}問）</button>`:""}<button class="btn g" onclick="start('${P}')">🔁 最初から</button>${sendBox("RES")}<button class="btn g" onclick="start('${P==="p1"?"p2":"p1"}')">➡ ${P==="p1"?"②":"①"}の 問題へ</button></div>`;scrollTo({top:0})}
 let f=19;try{f=+localStorage.getItem("mondai-fs")||19}catch(e){}function fs(d){f=Math.max(14,Math.min(28,f+d));document.documentElement.style.setProperty("--fs",f+"px");try{localStorage.setItem("mondai-fs",f)}catch(e){}}fs(0);
 start(new URLSearchParams(location.search).get("p")==="2"?"p2":"p1");
 </script></body></html>

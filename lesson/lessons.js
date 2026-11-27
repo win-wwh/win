@@ -12,6 +12,7 @@ window.LESSONS=[
  {k:"print",icon:"🗂",t:"まとめシート（A4）",s:"Claude のデザイン（ログインが 必要）",url:"https://claude.ai/artifact/Sh4dS7JWF2T2Z5tF96drmB"}]}
 ];
 window.TOOLS=[
+ {icon:"📚",t:"国家試験 科目別ことば（332語）",url:"kotoba/"},
  {icon:"📘",t:"実務者研修 まなびノート",url:"../jitsumu/"},
  {icon:"📄",t:"わたしの翻訳ノート",url:"../honyaku/"},
  {icon:"🏠",t:"ケアの一日（ゲーム・ことばずかん）",url:"../carelife/"},

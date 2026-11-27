@@ -28,7 +28,7 @@ svg text{font-family:-apple-system,"Hiragino Sans",sans-serif}
 .btn{border:0;border-radius:16px;padding:14px;font-size:17px;font-weight:900;background:#fd7e14;color:#fff;width:100%;margin-top:10px;box-shadow:0 4px 0 #d9480f;font-family:inherit}.btn.g{background:#fff;color:#d9480f;box-shadow:0 4px 0 #f0c9a0}
 .exp{font-size:14px;line-height:1.7;background:#fff8f0;border-radius:12px;padding:8px 10px;margin-top:8px;min-height:2em}
 </style></head><body><div class="wrap" id="app"></div><div class="fl" id="fl"></div>
-<script src="kotoba-data.js"></script><script src="send.js"></script>
+<script src="kotoba-data.js"></script><script src="game-data.js"></script><script src="send.js"></script>
 <script>
 const app=document.getElementById("app");
 const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -38,6 +38,7 @@ function flash(ok){const f=document.getElementById("fl");f.textContent=ok?"⭕":
 let TM=null;function stopT(){clearInterval(TM)}
 function home(){stopT();scrollTo(0,0);
  app.innerHTML=`<a class="back" href="../">‹ 先生の部屋</a><h1>🎮 ゲームで おぼえよう</h1><div class="sub">親族・家族・世帯 ／ 3つの ゲーム<br><span class="mm">ဂိမ်းဆော့ပြီး မှတ်ကြမယ်</span></div>
+ <a class="gm" href="minna.html" style="text-decoration:none;background:#fd7e14;color:#fff;box-shadow:0 4px 0 #d9480f"><span class="ic">👥</span><span><b>みんなで あそぶ</b><span class="s" style="color:#fff3e0">同じ 問題で 勝負！ 結果を LINEで 送って ランキング</span></span></a>
  <button class="gm" onclick="G1()"><span class="ic">🌳</span><span><b>親等 タッチ</b><span class="s">光った 人は 何親等？ 60秒</span><br><span class="mm" style="font-size:12px">ဘယ်နှစ်ဆက်လဲ</span></span><span class="best">ベスト<br>${BEST.g1||0}点</span></button>
  <button class="gm" onclick="G2()"><span class="ic">🃏</span><span><b>ことば ペア</b><span class="s">ことばと 意味を そろえる</span><br><span class="mm" style="font-size:12px">စကားလုံးနဲ့ အဓိပ္ပာယ် တွဲ</span></span><span class="best">ベスト<br>${BEST.g2?BEST.g2+"秒":"-"}</span></button>
  <button class="gm" onclick="G3()"><span class="ic">⭕</span><span><b>○✕ スピード</b><span class="s">正しい？ まちがい？ 1問 7秒</span><br><span class="mm" style="font-size:12px">မှန်လား မှားလား</span></span><span class="best">ベスト<br>${BEST.g3||0}点</span></button>
@@ -46,18 +47,6 @@ function result(icon,title,sub,again,send){stopT();window.RES=n=>send.replace("N
  app.innerHTML=`<div class="card res"><div class="big">${icon}</div><h2>${title}</h2><p>${sub}</p><button class="btn" onclick="${again}()">🔁 もう一回</button><button class="btn g" onclick="home()">🎮 ゲーム 一覧</button>${sendBox("RES")}</div>`}
 
 /* ---------- 1. 親等タッチ ---------- */
-const N=[ // id,label,x,y,answer(数字 or "なし"),説明
-["sobo","祖父母",105,30,2,"本人→父母(1)→祖父母(2)"],
-["oji","おじ・おば",42,95,3,"父母(1)→祖父母(2)→おじ・おば(3)"],
-["fubo","父母",165,95,1,"親子の 線 1本"],
-["gfubo","配偶者の父母",292,95,1,"姻族の 1親等"],
-["itoko","いとこ",42,160,4,"おじ・おば(3)の 子 → 4"],
-["kyodai","兄弟姉妹",125,160,2,"親まで 上がって 1、下りて 2"],
-["honnin","本人",208,160,0,"スタート"],
-["haigu","配偶者",292,160,"なし","配偶者に 親等は ない"],
-["oi","おい・めい",125,225,3,"兄弟姉妹(2)の 子 → 3"],
-["ko","子",208,225,1,"親子の 線 1本"],
-["mago","孫",208,285,2,"子(1)の 子 → 2"]];
 const E=[["sobo","fubo"],["sobo","oji"],["fubo","honnin"],["fubo","kyodai"],["oji","itoko"],["kyodai","oi"],["honnin","ko"],["ko","mago"],["gfubo","haigu"]];
 function tree(hi,show){const P=Object.fromEntries(N.map(n=>[n[0],n]));
  return `<svg viewBox="0 0 340 315" width="100%"><g stroke="#c9a57a" stroke-width="2.5" fill="none">${E.map(([a,b])=>{const A=P[a],B=P[b];return `<path d="M${A[2]} ${A[3]+14} V${(A[3]+B[3])/2} H${B[2]} V${B[3]-14}"/>`}).join("")}<path d="M${P.honnin[2]+37} 160 H${P.haigu[2]-37}" stroke="#e599f7" stroke-dasharray="5 4"/></g>
@@ -80,14 +69,6 @@ function g2t(k){if(g2c[k].done)return;if(g2sel===null||g2sel===k){g2sel=g2sel===
   setTimeout(()=>result(s<40?"🏆":s<70?"🌟":"💪",s+"秒",(nb?"🎉 ベスト 更新！<br>":"")+`まちがい ${g2miss}回（1回 ＋3秒）`,"G2",`【ゲーム】ことばペア\n名前：NAME\n${s}秒（まちがい ${g2miss}回）`),500)}}
 
 /* ---------- 3. ○✕スピード ---------- */
-const OX=[
-["配偶者は 1親等である",0,"配偶者に 親等は ない"],["兄弟姉妹は 2親等である",1,"親まで 上がって 下りる"],["いとこは 4親等である",1,""],["おい・めいは 2親等である",0,"3親等"],
-["祖父母は 直系血族である",1,"たての つながり"],["おじ・おばは 直系血族である",0,"傍系血族"],["民法の 親族は 6親等内の 血族を ふくむ",1,"6・配・3"],["姻族は 6親等まで 親族である",0,"姻族は 3親等まで"],
-["配偶者の 父母は 姻族である",1,""],["直系血族と 兄弟姉妹には 扶養義務が ある",1,""],["いとこには 扶養義務が ある",0,"原則 ない"],
-["定位家族は 自分が 生まれ 育った 家族",1,""],["創設家族は 自分が 生まれ 育った 家族",0,"結婚して つくる 家族"],["DINKs は 子どもが いる 共働き夫婦",0,"N＝No。子どもは いない"],["DEWKs の W は With",1,""],
-["表出的役割は 家族の 気持ちを 支える 役割",1,""],["核家族に ひとり親と 未婚の 子の 世帯は 入る",1,""],["祖父母と 住む 家族も 核家族である",0,"三世代世帯"],
-["世帯は 住む 所と 生計が 同じ グループ",1,""],["今 いちばん 多い 世帯は 三世代世帯",0,"単独世帯"],["平均世帯人員は 1986年より 減っている",1,""],["三世代世帯は 1986年より ふえている",0,"大きく 減った"],
-["高齢者世帯は 65歳以上の 人だけで つくる 世帯（＋18歳未満の 未婚の 人）",1,""],["65歳以上の 人が いる 世帯で 一番 多いのは 夫婦のみの 世帯",0,"単独世帯"]];
 let g3q=[],g3i=0,g3s=0,g3t=0,g3ng=[];
 function G3(){g3q=sh(OX).slice(0,15);g3i=0;g3s=0;g3ng=[];g3show()}
 function g3show(){stopT();g3t=70;const q=g3q[g3i];

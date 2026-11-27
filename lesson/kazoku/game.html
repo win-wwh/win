@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ゲーム：親族・家族・世帯</title><meta name="robots" content="noindex">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+body{margin:0;background:linear-gradient(#fff4e6,#ffe8cc);min-height:100vh;color:#2b2118;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Sangam MN",sans-serif;color:#6741d9}
+.wrap{max-width:560px;margin:auto;padding:12px 14px 40px}
+a.back,button.back{background:none;border:0;padding:0;color:#d9480f;font-weight:800;font-size:15px;text-decoration:none;font-family:inherit}
+h1{font-size:24px;margin:6px 0 2px}.sub{color:#7a6550;font-size:13px;line-height:1.6;margin-bottom:12px}
+.gm{display:flex;align-items:center;gap:14px;width:100%;border:0;background:#fff;border-radius:20px;padding:16px;margin-bottom:12px;text-align:left;box-shadow:0 4px 0 #f0c9a0;font-family:inherit;color:inherit}
+.gm:active{transform:translateY(3px);box-shadow:0 1px 0 #f0c9a0}.gm .ic{font-size:44px}.gm b{font-size:18px;display:block}.gm span.s{font-size:13px;color:#7a6550}.gm .best{margin-left:auto;font-size:12px;font-weight:800;color:#d9480f;text-align:center;white-space:nowrap}
+.hud{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:16px;margin:6px 0 8px}
+.tbar{height:10px;background:#fff;border-radius:6px;overflow:hidden;margin-bottom:10px}.tbar i{display:block;height:100%;background:#fd7e14;transition:width .2s linear}
+.card{background:#fff;border-radius:22px;padding:16px;box-shadow:0 4px 0 #f0c9a0}
+.qtx{font-size:20px;font-weight:900;text-align:center;line-height:1.6;margin:4px 0 8px}
+svg text{font-family:-apple-system,"Hiragino Sans",sans-serif}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.nums button,.ox button{border:0;border-radius:16px;font-size:22px;font-weight:900;padding:14px 0;background:#fff3bf;color:#5c3d00;box-shadow:0 4px 0 #f2d06b;font-family:inherit}
+.nums button:active,.ox button:active{transform:translateY(3px);box-shadow:0 1px 0 #f2d06b}
+.nums .wide{grid-column:span 4;font-size:16px}
+.ox{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.ox button{font-size:48px;padding:10px 0}
+.ox .o{background:#d3f9d8;box-shadow:0 4px 0 #8ce99a;color:#2b8a3e}.ox .x{background:#ffe3e3;box-shadow:0 4px 0 #ffa8a8;color:#e03131}
+.fl{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%) scale(.5);font-size:110px;opacity:0;pointer-events:none;transition:.25s}.fl.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mc{border:0;border-radius:14px;min-height:84px;padding:6px;font-size:14px;font-weight:800;line-height:1.4;background:#fd7e14;color:#fff;box-shadow:0 4px 0 #d9480f;font-family:inherit}
+.mc.op{background:#fff;color:#2b2118;box-shadow:0 4px 0 #f0c9a0}.mc.w{font-size:16px}.mc.ok{background:#d3f9d8;color:#2b8a3e;box-shadow:none;opacity:.7}.mc.sel{outline:4px solid #4dabf7}
+.res{text-align:center}.res .big{font-size:70px}.res h2{font-size:30px;margin:4px 0}
+.btn{border:0;border-radius:16px;padding:14px;font-size:17px;font-weight:900;background:#fd7e14;color:#fff;width:100%;margin-top:10px;box-shadow:0 4px 0 #d9480f;font-family:inherit}.btn.g{background:#fff;color:#d9480f;box-shadow:0 4px 0 #f0c9a0}
+.exp{font-size:14px;line-height:1.7;background:#fff8f0;border-radius:12px;padding:8px 10px;margin-top:8px;min-height:2em}
+</style></head><body><div class="wrap" id="app"></div><div class="fl" id="fl"></div>
+<script src="kotoba-data.js"></script><script src="send.js"></script>
+<script>
+const app=document.getElementById("app");
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+let BEST={};try{BEST=JSON.parse(localStorage.getItem("game-kazoku")||"{}")}catch(e){}
+function setBest(k,v){if(v>0&&!(BEST[k]>=v)){BEST[k]=v;try{localStorage.setItem("game-kazoku",JSON.stringify(BEST))}catch(e){}return true}return false}
+function flash(ok){const f=document.getElementById("fl");f.textContent=ok?"⭕":"❌";f.classList.add("on");setTimeout(()=>f.classList.remove("on"),380);try{navigator.vibrate&&navigator.vibrate(ok?30:[60,40,60])}catch(e){}}
+let TM=null;function stopT(){clearInterval(TM)}
+function home(){stopT();scrollTo(0,0);
+ app.innerHTML=`<a class="back" href="../">‹ 先生の部屋</a><h1>🎮 ゲームで おぼえよう</h1><div class="sub">親族・家族・世帯 ／ 3つの ゲーム<br><span class="mm">ဂိမ်းဆော့ပြီး မှတ်ကြမယ်</span></div>
+ <button class="gm" onclick="G1()"><span class="ic">🌳</span><span><b>親等 タッチ</b><span class="s">光った 人は 何親等？ 60秒</span><br><span class="mm" style="font-size:12px">ဘယ်နှစ်ဆက်လဲ</span></span><span class="best">ベスト<br>${BEST.g1||0}点</span></button>
+ <button class="gm" onclick="G2()"><span class="ic">🃏</span><span><b>ことば ペア</b><span class="s">ことばと 意味を そろえる</span><br><span class="mm" style="font-size:12px">စကားလုံးနဲ့ အဓိပ္ပာယ် တွဲ</span></span><span class="best">ベスト<br>${BEST.g2?BEST.g2+"秒":"-"}</span></button>
+ <button class="gm" onclick="G3()"><span class="ic">⭕</span><span><b>○✕ スピード</b><span class="s">正しい？ まちがい？ 1問 7秒</span><br><span class="mm" style="font-size:12px">မှန်လား မှားလား</span></span><span class="best">ベスト<br>${BEST.g3||0}点</span></button>
+ <div class="sub" style="text-align:center">授業の 最後や、家での 復習に どうぞ 🎉</div>`}
+function result(icon,title,sub,again,send){stopT();window.RES=n=>send.replace("NAME",n)+"\n"+new Date().toLocaleDateString("ja-JP");scrollTo(0,0);
+ app.innerHTML=`<div class="card res"><div class="big">${icon}</div><h2>${title}</h2><p>${sub}</p><button class="btn" onclick="${again}()">🔁 もう一回</button><button class="btn g" onclick="home()">🎮 ゲーム 一覧</button>${sendBox("RES")}</div>`}
+
+/* ---------- 1. 親等タッチ ---------- */
+const N=[ // id,label,x,y,answer(数字 or "なし"),説明
+["sobo","祖父母",105,30,2,"本人→父母(1)→祖父母(2)"],
+["oji","おじ・おば",42,95,3,"父母(1)→祖父母(2)→おじ・おば(3)"],
+["fubo","父母",165,95,1,"親子の 線 1本"],
+["gfubo","配偶者の父母",292,95,1,"姻族の 1親等"],
+["itoko","いとこ",42,160,4,"おじ・おば(3)の 子 → 4"],
+["kyodai","兄弟姉妹",125,160,2,"親まで 上がって 1、下りて 2"],
+["honnin","本人",208,160,0,"スタート"],
+["haigu","配偶者",292,160,"なし","配偶者に 親等は ない"],
+["oi","おい・めい",125,225,3,"兄弟姉妹(2)の 子 → 3"],
+["ko","子",208,225,1,"親子の 線 1本"],
+["mago","孫",208,285,2,"子(1)の 子 → 2"]];
+const E=[["sobo","fubo"],["sobo","oji"],["fubo","honnin"],["fubo","kyodai"],["oji","itoko"],["kyodai","oi"],["honnin","ko"],["ko","mago"],["gfubo","haigu"]];
+function tree(hi,show){const P=Object.fromEntries(N.map(n=>[n[0],n]));
+ return `<svg viewBox="0 0 340 315" width="100%"><g stroke="#c9a57a" stroke-width="2.5" fill="none">${E.map(([a,b])=>{const A=P[a],B=P[b];return `<path d="M${A[2]} ${A[3]+14} V${(A[3]+B[3])/2} H${B[2]} V${B[3]-14}"/>`}).join("")}<path d="M${P.honnin[2]+37} 160 H${P.haigu[2]-37}" stroke="#e599f7" stroke-dasharray="5 4"/></g>
+ ${N.map(n=>{const on=n[0]===hi,me=n[0]==="honnin";return `<g><rect x="${n[2]-37}" y="${n[3]-15}" width="74" height="30" rx="9" fill="${on?"#fd7e14":me?"#4dabf7":"#fff"}" stroke="${on?"#d9480f":me?"#1c7ed6":"#e9c9a5"}" stroke-width="2"/><text x="${n[2]}" y="${n[3]+5}" text-anchor="middle" font-size="${n[1].length>5?11:13}" font-weight="800" fill="${on||me?"#fff":"#2b2118"}">${n[1]}</text>${show&&n[0]!=="honnin"?`<text x="${n[2]+33}" y="${n[3]-10}" text-anchor="middle" font-size="12" font-weight="900" fill="#d9480f">${n[4]==="なし"?"×":n[4]}</text>`:""}</g>`}).join("")}</svg>`}
+let g1s=0,g1t=0,g1q=null,g1last=null,g1n=0;
+function G1(){g1s=0;g1t=60;g1n=0;g1last=null;g1next();stopT();TM=setInterval(()=>{g1t--;const b=document.querySelector(".tbar i");if(b)b.style.width=(g1t/60*100)+"%";const t=document.getElementById("g1t");if(t)t.textContent=g1t;if(g1t<=0){const nb=setBest("g1",g1s);result(g1s>=10?"🏆":g1s>=6?"🌟":"💪",g1s+"点",(nb?"🎉 ベスト 更新！<br>":"")+`${g1n}問 中 ${g1s}問 正解`,"G1",`【ゲーム】親等タッチ\n名前：NAME\n${g1s}点（${g1n}問中）`)}},1000)}
+function g1next(){const c=N.filter(n=>n[0]!=="honnin"&&n[0]!==g1last);g1q=c[Math.random()*c.length|0];g1last=g1q[0];
+ app.innerHTML=`<button class="back" onclick="home()">‹ やめる</button><div class="hud"><span>⏱ <span id="g1t">${g1t}</span>秒</span><span>⭐ ${g1s}点</span></div><div class="tbar"><i style="width:${g1t/60*100}%"></i></div>
+ <div class="card"><div class="qtx">オレンジの「${g1q[1]}」は 何親等？</div>${tree(g1q[0])}<div class="nums">${[1,2,3,4,5,6].map(k=>`<button onclick="g1a(${k})">${k}</button>`).join("")}<button style="grid-column:span 2;font-size:16px" onclick="g1a('なし')">親等 なし</button></div><div class="exp" id="g1e">本人（青）から 数えよう</div></div>`}
+function g1a(k){g1n++;const ok=k===g1q[4];if(ok)g1s++;flash(ok);document.getElementById("g1e").innerHTML=(ok?"⭕ ":"❌ 正解は "+(g1q[4]==="なし"?"なし":g1q[4]+"親等")+"。")+g1q[5];document.querySelectorAll(".nums button").forEach(b=>b.disabled=true);setTimeout(()=>{if(g1t>0)g1next()},ok?500:1400)}
+
+/* ---------- 2. ことばペア ---------- */
+const ALLW=KS.flatMap(s=>s[3]);let g2c=[],g2sel=null,g2st=0,g2miss=0,g2ok=0;
+function G2(){const w=sh(ALLW).slice(0,6);g2c=sh(w.flatMap((x,i)=>[{i,t:x[0],w:1},{i,t:x[3]}]));g2sel=null;g2st=Date.now();g2miss=0;g2ok=0;g2draw();stopT();TM=setInterval(()=>{const t=document.getElementById("g2t");if(t)t.textContent=Math.floor((Date.now()-g2st)/1000)},500)}
+function g2draw(){app.innerHTML=`<button class="back" onclick="home()">‹ やめる</button><div class="hud"><span>⏱ <span id="g2t">0</span>秒</span><span>❌ ${g2miss}</span></div>
+ <div class="sub" style="text-align:center;margin:0 0 8px">ことば と 意味の ペアを タップ</div><div class="grid">${g2c.map((c,k)=>`<button class="mc op ${c.w?"w":""} ${c.done?"ok":""} ${g2sel===k?"sel":""}" ${c.done?"disabled":""} onclick="g2t(${k})">${c.t}</button>`).join("")}</div>`;const t=document.getElementById("g2t");if(t)t.textContent=Math.floor((Date.now()-g2st)/1000)}
+function g2t(k){if(g2c[k].done)return;if(g2sel===null||g2sel===k){g2sel=g2sel===k?null:k;g2draw();return}
+ const a=g2c[g2sel],b=g2c[k];if(a.i===b.i&&a.w!==b.w){a.done=b.done=1;g2ok++;flash(true)}else{g2miss++;flash(false)}g2sel=null;g2draw();
+ if(g2ok===6){const s=Math.floor((Date.now()-g2st)/1000)+g2miss*3;const nb=!(BEST.g2<=s);if(nb){BEST.g2=s;try{localStorage.setItem("game-kazoku",JSON.stringify(BEST))}catch(e){}}
+  setTimeout(()=>result(s<40?"🏆":s<70?"🌟":"💪",s+"秒",(nb?"🎉 ベスト 更新！<br>":"")+`まちがい ${g2miss}回（1回 ＋3秒）`,"G2",`【ゲーム】ことばペア\n名前：NAME\n${s}秒（まちがい ${g2miss}回）`),500)}}
+
+/* ---------- 3. ○✕スピード ---------- */
+const OX=[
+["配偶者は 1親等である",0,"配偶者に 親等は ない"],["兄弟姉妹は 2親等である",1,"親まで 上がって 下りる"],["いとこは 4親等である",1,""],["おい・めいは 2親等である",0,"3親等"],
+["祖父母は 直系血族である",1,"たての つながり"],["おじ・おばは 直系血族である",0,"傍系血族"],["民法の 親族は 6親等内の 血族を ふくむ",1,"6・配・3"],["姻族は 6親等まで 親族である",0,"姻族は 3親等まで"],
+["配偶者の 父母は 姻族である",1,""],["直系血族と 兄弟姉妹には 扶養義務が ある",1,""],["いとこには 扶養義務が ある",0,"原則 ない"],
+["定位家族は 自分が 生まれ 育った 家族",1,""],["創設家族は 自分が 生まれ 育った 家族",0,"結婚して つくる 家族"],["DINKs は 子どもが いる 共働き夫婦",0,"N＝No。子どもは いない"],["DEWKs の W は With",1,""],
+["表出的役割は 家族の 気持ちを 支える 役割",1,""],["核家族に ひとり親と 未婚の 子の 世帯は 入る",1,""],["祖父母と 住む 家族も 核家族である",0,"三世代世帯"],
+["世帯は 住む 所と 生計が 同じ グループ",1,""],["今 いちばん 多い 世帯は 三世代世帯",0,"単独世帯"],["平均世帯人員は 1986年より 減っている",1,""],["三世代世帯は 1986年より ふえている",0,"大きく 減った"],
+["高齢者世帯は 65歳以上の 人だけで つくる 世帯（＋18歳未満の 未婚の 人）",1,""],["65歳以上の 人が いる 世帯で 一番 多いのは 夫婦のみの 世帯",0,"単独世帯"]];
+let g3q=[],g3i=0,g3s=0,g3t=0,g3ng=[];
+function G3(){g3q=sh(OX).slice(0,15);g3i=0;g3s=0;g3ng=[];g3show()}
+function g3show(){stopT();g3t=70;const q=g3q[g3i];
+ app.innerHTML=`<button class="back" onclick="home()">‹ やめる</button><div class="hud"><span>${g3i+1} / ${g3q.length}</span><span>⭐ ${g3s}点</span></div><div class="tbar"><i id="g3b" style="width:100%"></i></div>
+ <div class="card"><div class="qtx" style="min-height:110px;display:flex;align-items:center;justify-content:center">${q[0]}</div><div class="ox"><button class="o" onclick="g3a(1)">○</button><button class="x" onclick="g3a(0)">✕</button></div><div class="exp" id="g3e"></div></div>`;
+ TM=setInterval(()=>{g3t--;const b=document.getElementById("g3b");if(b)b.style.width=(g3t/70*100)+"%";if(g3t<=0)g3a(-1)},100)}
+function g3a(k){stopT();const q=g3q[g3i];document.querySelectorAll(".ox button").forEach(b=>b.disabled=true);const ok=k===q[1];
+ if(ok)g3s+=1+Math.floor(g3t/35);else g3ng.push(q[0]);flash(ok);
+ document.getElementById("g3e").innerHTML=(k<0?"⏰ 時間 切れ！ ":ok?"⭕ ":"❌ ")+"答えは "+(q[1]?"○":"✕")+(q[2]?"："+q[2]:"");
+ setTimeout(()=>{g3i++;if(g3i<g3q.length)g3show();else{const nb=setBest("g3",g3s);result(g3s>=35?"🏆":g3s>=22?"🌟":"💪",g3s+"点",(nb?"🎉 ベスト 更新！<br>":"")+`はやく 答えると ボーナス！<br>まちがい ${g3ng.length}問`,"G3",`【ゲーム】○✕スピード\n名前：NAME\n${g3s}点（まちがい ${g3ng.length}問）`)}},ok?700:1600)}
+home();
+</script></body></html>

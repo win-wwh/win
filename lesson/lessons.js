@@ -8,6 +8,7 @@ window.LESSONS=[
  {icon:"🙋",t:"よくある 質問と 答えかた",s:"まちがえやすい ところ 13問",url:"kazoku/qa.html"},
  {icon:"📒",t:"授業の 記録",s:"日づけ・生徒・やった ところ・宿題",url:"kazoku/kiroku.html"},
  {send:1,icon:"📖",t:"生徒用 スライド",s:"🔊 読み上げつき・先生メモなし",url:"kazoku/seito.html"},
+ {send:1,icon:"🎮",t:"ゲーム（3つ）",s:"親等タッチ・ことばペア・○✕スピード",url:"kazoku/game.html"},
  {send:1,icon:"📚",t:"試験に 出る ことば（42語）",s:"説明1〜4ごと・テスト・結果を 送れる",url:"kazoku/kotoba.html"},
  {send:1,icon:"📝",t:"練習問題① 親族・家族（10問）",s:"5択・解説・結果を 送れる",url:"kazoku/mondai.html"},
  {send:1,icon:"📝",t:"練習問題② 世帯の数字（10問）",s:"5択・解説・結果を 送れる",url:"kazoku/mondai.html?p=2"},

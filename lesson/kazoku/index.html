@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>先生モード：親族・家族・世帯</title><meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#2f9e8f">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#1f2a2a;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;color:#fff;overflow:hidden}
+#wrap{position:fixed;inset:0;display:flex;flex-direction:column}
+#view{flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:0}
+#img{max-width:100%;max-height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none;transition:opacity .25s}
+.tap{position:absolute;top:0;bottom:0;width:50%}.tap.l{left:0}.tap.r{right:0}
+#note{background:#fffbe6;color:#3b2f0b;padding:12px 16px;font-size:16px;line-height:1.7;max-height:36vh;overflow:auto;border-top:4px solid #f59f00;display:none}
+#note.on{display:block}#note b{color:#c2410c}.mm{font-family:"Noto Sans Myanmar","Myanmar Sangam MN",sans-serif}
+#bar{display:flex;align-items:center;gap:8px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:#111}
+#bar button{border:0;border-radius:12px;background:#2f9e8f;color:#fff;font-size:17px;font-weight:800;padding:12px 14px}
+#bar .g{background:#3a4545}#cnt{flex:1;text-align:center;font-weight:800;font-size:15px}
+#prog{height:5px;background:#333}#prog i{display:block;height:100%;background:#f59f00;transition:width .3s}
+</style></head><body><div id="wrap"><div id="prog"><i></i></div><div id="view"><img id="img" alt=""><div class="tap l" onclick="go(-1)"></div><div class="tap r" onclick="go(1)"></div></div><div id="note"></div>
+<div id="bar"><button class="g" onclick="go(-1)">‹ 前</button><button class="g" id="nb" onclick="tn()">📝 メモ</button><div id="cnt"></div><button onclick="go(1)">次 ›</button></div></div>
+<script>
+const S=[
+["title","<b>ပြော：</b>「ဒီနေ့ ဆွေမျိုး・မိသားစု・အိမ်ထောင်စု အကြောင်း လေ့လာမယ်။ ပြုစုရေးမှာ အသုံးပြုသူရဲ့ မိသားစုကို သိဖို့ အရေးကြီးတယ်။」"],
+["rule","<b>ပြော：</b>「親等 ဆိုတာ ဆွေမျိုး ဘယ်လောက် နီးလဲ ပြတဲ့ နံပါတ်။ စည်းကမ်း တစ်ခုတည်း — မိဘနဲ့ သားသမီး တစ်ဆင့် = ၁ ဆက်။」"],
+["t1","<b>ပြော：</b>「အမြဲတမ်း 本人 (ကိုယ်တိုင်) ကနေ စရေတွက်ပါ။」"],
+["t2","<b>ပြော：</b>「အပေါ် တစ်ဆင့် = မိဘ = ၁ ဆက်။ အောက် တစ်ဆင့် = သားသမီး = ၁ ဆက်။」"],
+["t3","<b>❓</b>「အဘိုးအဘွား ဘယ်နှစ်ဆက်လဲ」→ <b>၂</b>（本人→父母→祖父母）။ မြေးလည်း ၂။"],
+["t4","<b>ပြော：</b>「မောင်နှမ ကို ဂရုစိုက်ပါ — တိုက်ရိုက် မရေတွက်ရ။ မိဘဆီ တက် (၁) ပြီး ဆင်း (၁) = ၂ ဆက်။」 လက်နဲ့ မျဉ်းကို လိုက်ပြပါ။"],
+["t5","<b>❓</b>「ဦးလေး ဘယ်နှစ်ဆက်လဲ」→ မိဘ(၁)→အဘိုး(၂)→ဦးလေး(၃) = <b>၃</b>။ တူ・တူမ = မောင်နှမ(၂)+၁ = <b>၃</b>။"],
+["t6","<b>❓</b>「ဝမ်းကွဲ ဆို」→ ဦးလေး(၃)+၁ = <b>၄</b>။ 💡 ကျောင်းသားကို ကိုယ့်မိသားစု ပုံ ဆွဲခိုင်းပါ။"],
+["t7","<b>ပြော：</b>「အိမ်ထောင်ဖက်ကို 親等 မရေတွက်ဘူး၊ ဒါပေမယ့် ဆွေမျိုးထဲ ပါတယ်။ အိမ်ထောင်ဖက်ရဲ့ မိသားစု = 姻族။ ယောက္ခမ = ၁၊ သူ့မောင်နှမ = ၂။」"],
+["q1","<b>ပြော：</b>「ဖြေကြည့်ကြ။」 ကျောင်းသား ဖြေပြီးမှ 次 ကို နှိပ်ပါ။"],
+["a1","<b>အဖြေ：</b>２親等။ မှန်တဲ့သူကို ချီးမွမ်းပါ「すごい！」"],
+["kei","<b>ပြော：</b>「ဒေါင်လိုက် (အထက်အောက်) = 直系။ ဘေးကို ခွဲထွက်ရင် = 傍系။ မောင်နှမ၊ ဦးလေး၊ ဝမ်းကွဲ = 傍系။」"],
+["shinzoku","<b>ပြော：</b>「ဥပဒေအရ ဆွေမျိုး ၃ မျိုး — ‘၆・配・၃’。」<br><b>❓</b>「အိမ်ထောင်ဖက်ရဲ့ ဝမ်းကွဲ (姻族 ၄) က ဆွေမျိုးလား」→ <b>မဟုတ်</b>（姻族 က ၃ အထိ）"],
+["fuyo","<b>ပြော：</b>「直系血族 နဲ့ 兄弟姉妹 တို့ အချင်းချင်း ထောက်ပံ့ရမယ့် တာဝန် ရှိတယ်။ ဦးလေး၊ ဝမ်းကွဲ က မပါဘူး။」"],
+["teii","<b>ပြော：</b>「定位 = မွေးလာတဲ့နေရာ၊ 創設 = အသစ် ဆောက်တာ။」<br><b>❓</b>「မြန်မာက ကိုယ့်မိဘ မိသားစု က ဘာလဲ」→ 定位家族"],
+["yakuwari","<b>ပြော：</b>「手段的 = အပြင်လောက (အလုပ်)၊ 表出的 = အိမ်တွင်း (စိတ်ခံစားမှု)။」 ဒါ စာမေးပွဲမှာ အတွဲလိုက် မေးတတ်တယ်။"],
+["dinks","<b>ပြော：</b>「DINKs = No Kids၊ DEWKs = With Kids။ N နဲ့ W ကို မှတ်ပါ။」"],
+["setai","<b>ပြော：</b>「世帯 = အတူနေ + ငွေ အတူသုံး။ 核家族 မှာ အဘိုးအဘွား မပါဘူး — ပါရင် 三世代။」"],
+["ch1","<b>ပြော：</b>「၁၉၈၆ ခုနှစ်မှာ အိမ်တစ်အိမ် ပျမ်းမျှ ၃.၂၂ ယောက်။」 <b>❓</b>「အခု ဘယ်လောက် ထင်လဲ」"],
+["ch2","<b>ပြော：</b>「၂၀၂၄ မှာ ၂.၂၀ ယောက်ပဲ။ မိသားစု သေးလာတယ်။」"],
+["tandoku","<b>ပြော：</b>「အများဆုံးက တစ်ယောက်တည်း နေတဲ့ အိမ် ၃၄.၆%။」"],
+["koreisha","<b>ပြော：</b>「အိမ်ထောင်စု တစ်ဝက်မှာ ၆၅ နှစ်အထက် ရှိတယ်။ အဲ့ထဲမှာလည်း တစ်ယောက်တည်း အများဆုံး။」<br>💡「ဒါကြောင့် ကျွန်တော်တို့ အလုပ် အရေးကြီးတယ်」လို့ ချိတ်ပြောပါ။"],
+["sansedai","<b>ပြော：</b>「မျိုးဆက် ၃ ဆက် အတူနေတာ ၄၄.၈% က ၆.၃% အထိ လျော့သွားတယ်။」"],
+["q2","ကျောင်းသား ဖြေပြီးမှ 次 ကို နှိပ်ပါ။"],["a2","<b>အဖြေ：</b>定位家族"],
+["q3","ကျောင်းသား ဖြေပြီးမှ 次 ကို နှိပ်ပါ။"],["a3","<b>အဖြေ：</b>DEWKs（W = With）"],
+["q4","ကျောင်းသား ဖြေပြီးမှ 次 ကို နှိပ်ပါ။"],["a4","<b>အဖြေ：</b>単独世帯"],
+["end","<b>ပြော：</b>「ဒီနေ့ ကောင်းကောင်း လုပ်နိုင်ခဲ့တယ်။ အိမ်မှာ ပရင့်ထုတ်နဲ့ ပြန်လေ့လာပါ။」"]];
+let i=0;try{i=Math.min(S.length-1,+localStorage.getItem("lesson-kazoku")||0)}catch(e){}
+let noteOn=false;
+S.forEach(s=>{const im=new Image();im.src=s[0]+".jpg"});
+function show(){const s=S[i];const im=document.getElementById("img");im.style.opacity=0;setTimeout(()=>{im.src=s[0]+".jpg";im.style.opacity=1},120);
+ document.getElementById("note").innerHTML='<span class="mm">'+s[1]+'</span>';document.getElementById("cnt").textContent=(i+1)+" / "+S.length;
+ document.querySelector("#prog i").style.width=((i+1)/S.length*100)+"%";try{localStorage.setItem("lesson-kazoku",i)}catch(e){}}
+function go(d){i=Math.max(0,Math.min(S.length-1,i+d));show()}
+function tn(){noteOn=!noteOn;document.getElementById("note").classList.toggle("on",noteOn);document.getElementById("nb").textContent=noteOn?"📝 メモ ON":"📝 メモ"}
+addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key===" ")go(1);if(e.key==="ArrowLeft")go(-1)});
+let sx=null;addEventListener("touchstart",e=>sx=e.touches[0].clientX,{passive:true});addEventListener("touchend",e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>60)go(dx<0?1:-1);sx=null});
+show();
+</script></body></html>

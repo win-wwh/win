@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>国家試験 練習問題：親族・家族・世帯</title><meta name="robots" content="noindex">
+<style>
+:root{--main:#3b5bdb;--ink:#1f2a44;--sub:#64708a;--bg:#f3f5fb}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+.wrap{max-width:640px;margin:auto;padding:14px 14px 90px}
+.mmt{font-family:"Noto Sans Myanmar","Myanmar Sangam MN",sans-serif;color:#6741d9;font-size:14px;line-height:1.7}
+body.nomm .mmt{display:none}body.nofuri rt{display:none}
+rt{font-size:.5em;color:#c2410c}
+a.back{display:inline-block;color:#2f9e8f;font-weight:800;text-decoration:none;margin-bottom:8px}
+h1{font-size:21px;margin:0 0 4px}.sub{color:var(--sub);font-size:13px;margin-bottom:12px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.tabs button{border:0;border-radius:14px;padding:12px 8px;font-size:15px;font-weight:800;background:#fff;color:var(--ink);box-shadow:0 2px 6px #0000000d;line-height:1.9}
+.tabs button.on{background:var(--main);color:#fff}.tabs button.on rt{color:#ffe8cc}
+.card{background:#fff;border-radius:20px;padding:16px;box-shadow:0 2px 10px #0000000d}
+.hud{display:flex;justify-content:space-between;font-weight:800;color:var(--sub);font-size:14px;margin-bottom:6px}
+.bar{height:8px;background:#e7eaf5;border-radius:4px;overflow:hidden;margin-bottom:12px}.bar i{display:block;height:100%;background:var(--main)}
+.qn{font-weight:900;color:var(--main);font-size:14px}
+.q{font-size:var(--fs,19px);line-height:2.1;font-weight:700;margin:4px 0 6px}
+.ch{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:2px solid #e3e6ef;background:#fff;border-radius:14px;padding:10px 12px;margin:8px 0;font-size:calc(var(--fs,19px)*.9);line-height:2;color:var(--ink);font-family:inherit}
+.ch .n{flex:none;width:28px;height:28px;border-radius:50%;background:#eef1fb;color:var(--main);font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:6px}
+.ch.ok{border-color:#2f9e44;background:#ebfbee}.ch.ok .n{background:#2f9e44;color:#fff}
+.ch.ng{border-color:#e03131;background:#fff5f5}.ch.ng .n{background:#e03131;color:#fff}
+.ex{margin-top:10px;border-radius:14px;padding:12px 14px;line-height:2;font-size:calc(var(--fs,19px)*.85)}
+.ex.ok{background:#ebfbee}.ex.ng{background:#fff5f5}.ex b{font-size:1.1em}
+.btn{border:0;border-radius:14px;padding:14px;font-size:16px;font-weight:800;background:var(--main);color:#fff;width:100%;margin-top:12px}
+.btn.g{background:#e7ebfb;color:var(--main)}
+.res{text-align:center}.res .big{font-size:64px}.res h2{font-size:28px;margin:6px 0}
+#tool{position:fixed;right:12px;bottom:14px;display:flex;gap:8px}#tool button{border:0;border-radius:24px;background:#3b5bdb;color:#fff;font-size:17px;font-weight:800;width:50px;height:46px;box-shadow:0 4px 10px #0003}
+</style></head><body><div class="wrap">
+<a class="back" href="../">‹ 先生の部屋</a>
+<h1>国家試験 練習問題</h1><div class="sub">親族・家族・世帯 ／ 5つの中から 1つ 選ぶ（本番と 同じ 形）<br>※ 試験の ポイントで 作った オリジナル問題です</div>
+<div class="tabs"><button id="t1" onclick="start('p1')"></button><button id="t2" onclick="start('p2')"></button></div>
+<div class="card" id="box"></div></div>
+<div id="tool"><button onclick="fs(-2)">A−</button><button onclick="fs(2)">A＋</button><button onclick="document.body.classList.toggle('nofuri')">ふ</button><button onclick="document.body.classList.toggle('nomm')" style="font-family:Noto Sans Myanmar,sans-serif">မ</button></div>
+<script src="mondai-data.js"></script>
+<script>
+const $=s=>document.querySelector(s);let P="p1",L=[],I=0,OK=0,WR=[];
+$("#t1").innerHTML=MONDAI.p1.t;$("#t2").innerHTML=MONDAI.p2.t;
+function start(p,only){P=p;$("#t1").classList.toggle("on",p==="p1");$("#t2").classList.toggle("on",p==="p2");
+ L=only||MONDAI[p].q.map((_,k)=>k);I=0;OK=0;WR=[];show();scrollTo({top:0})}
+function show(){const q=MONDAI[P].q[L[I]];
+ $("#box").innerHTML=`<div class="hud"><span>問題 ${I+1} / ${L.length}</span><span>⭕ ${OK}</span></div><div class="bar"><i style="width:${I/L.length*100}%"></i></div>
+ <div class="qn">問題 ${L[I]+1}</div><div class="q">${q.q}</div><div class="mmt">${q.qm}</div>
+ <div id="chs">${q.c.map((c,k)=>`<button class="ch" onclick="ans(${k+1})"><span class="n">${k+1}</span><span>${c}</span></button>`).join("")}</div><div id="ex"></div>`}
+function ans(k){const q=MONDAI[P].q[L[I]];const bs=document.querySelectorAll("#chs .ch");if(bs[0].disabled)return;
+ bs.forEach((b,j)=>{b.disabled=true;if(j+1===q.a)b.classList.add("ok");else if(j+1===k)b.classList.add("ng")});
+ const ok=k===q.a;if(ok)OK++;else WR.push(L[I]);
+ $("#ex").innerHTML=`<div class="ex ${ok?"ok":"ng"}"><b>${ok?"⭕ 正解！":"❌ ざんねん。正解は "+q.a}</b><br>${q.e}<div class="mmt">${q.em}</div></div><button class="btn" onclick="next()">${I<L.length-1?"次の 問題 ›":"結果を 見る"}</button>`;
+ $("#ex").scrollIntoView({behavior:"smooth",block:"nearest"})}
+function next(){I++;if(I<L.length){show();scrollTo({top:0,behavior:"smooth"})}else res()}
+function res(){const n=L.length;$("#box").innerHTML=`<div class="res"><div class="big">${OK===n?"🏆":OK>=n*.6?"🌟":"💪"}</div><h2>${OK} / ${n} 正解</h2><p>${OK===n?"全問 正解！ すばらしい！":OK>=n*.6?"合格ライン（6割）を こえました！":"もう一度 台本を 読んで チャレンジ！"}</p>
+ ${WR.length?`<button class="btn" onclick="start('${P}',[${WR}])">❌ まちがえた 問題だけ もう一度（${WR.length}問）</button>`:""}<button class="btn g" onclick="start('${P}')">🔁 最初から</button><button class="btn g" onclick="start('${P==="p1"?"p2":"p1"}')">➡ ${P==="p1"?"②":"①"}の 問題へ</button></div>`;scrollTo({top:0})}
+let f=19;try{f=+localStorage.getItem("mondai-fs")||19}catch(e){}function fs(d){f=Math.max(14,Math.min(28,f+d));document.documentElement.style.setProperty("--fs",f+"px");try{localStorage.setItem("mondai-fs",f)}catch(e){}}fs(0);
+start(new URLSearchParams(location.search).get("p")==="2"?"p2":"p1");
+</script></body></html>

@@ -5,6 +5,7 @@ window.LESSONS=[
  {k:"daihon",icon:"📜",t:"台本② 世帯の数字のページ",s:"ふりがな・ミャンマー語つき",url:"kazoku/daihon2.html"},
  {k:"mondai",icon:"📝",t:"国家試験 練習問題① 親族・家族（10問）",s:"5択・解説・ミャンマー語つき",url:"kazoku/mondai.html"},
  {k:"mondai",icon:"📝",t:"国家試験 練習問題② 世帯の数字（10問）",s:"5択・解説・ミャンマー語つき",url:"kazoku/mondai.html?p=2"},
+ {k:"seito",icon:"📖",t:"生徒用 スライド（送る用）",s:"先生メモなし・問題とビデオつき",url:"kazoku/seito.html"},
  {k:"slide",icon:"👩‍🏫",t:"先生モード（スライド）",s:"タップで 進む・先生メモつき",url:"kazoku/"},
  {k:"video",icon:"🎥",t:"説明ビデオ（約3分）",s:"生徒に 送れる",url:"kazoku/video.mp4"},
  {k:"print",icon:"📄",t:"勉強プリント・先生用説明",s:"Claude のドキュメント（ログインが 必要）",url:"https://claude.ai/artifact/56j517UJw76VG8SEx8qf5g"},

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>わたしの翻訳ノート</title>
+<meta name="description" content="書類の日本語を、ミャンマー語に。介護のことばには ふりがなと 意味が つきます。">
+<meta property="og:title" content="わたしの翻訳ノート"><meta property="og:description" content="書類の日本語をミャンマー語に・介護のことば1006語つき">
+<meta property="og:url" content="https://winlabjp.com/honyaku/"><meta property="og:image" content="https://winlabjp.com/honyaku/icon-512.png">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#7048e8">
+<style>
+:root{--main:#7048e8;--ink:#22223a;--sub:#6b6b85;--bg:#f4f2fb}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;background:var(--bg);color:var(--ink)}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Sangam MN",sans-serif;color:#7a5aa8}
+.wrap{max-width:600px;margin:auto;padding:14px 14px 60px}
+header{display:flex;align-items:center;gap:10px;padding:6px 2px 10px}header h1{margin:0;font-size:21px;flex:1;line-height:1.3}header h1 small{display:block;font-size:12px;font-weight:600}
+.card{background:#fff;border-radius:20px;padding:16px;margin:12px 0;box-shadow:0 2px 8px #0000000d}
+.card h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.n{background:var(--main);color:#fff;border-radius:50%;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+textarea{width:100%;min-height:170px;border:2px solid #e2def2;border-radius:14px;padding:12px;font-size:16px;line-height:1.7;font-family:inherit;resize:vertical}
+textarea:focus{outline:none;border-color:var(--main)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{border:0;border-radius:14px;padding:12px 14px;font-size:15px;font-weight:800;background:#efeafd;color:var(--main);flex:1;min-width:120px}
+.btn.pri{background:var(--main);color:#fff;box-shadow:0 4px 0 #5233c4}.btn.g{background:#e7f6ee;color:#1f8a5b}
+.help{background:#faf8ff;border-radius:14px;padding:10px 12px;font-size:13px;line-height:1.7;color:var(--sub);margin-top:10px}
+.help b{color:var(--ink)}
+#ocrbar{height:10px;background:#eee;border-radius:6px;overflow:hidden;margin-top:10px;display:none}#ocrbar i{display:block;height:100%;width:0;background:var(--main);transition:width .2s}
+#ocrmsg{font-size:13px;color:var(--sub);margin-top:6px}
+#preview{font-size:16px;line-height:2;white-space:pre-wrap;word-break:break-all;max-height:320px;overflow:auto;background:#fcfbff;border-radius:12px;padding:10px 12px}
+mark{background:#fff1b8;border-radius:4px;padding:0 2px;cursor:pointer}
+.chips{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.chip{display:flex;align-items:center;gap:10px;background:#faf8ff;border-radius:12px;padding:8px 10px}
+.chip ruby{font-size:18px;font-weight:900}.chip rt{font-size:10px;color:var(--main)}.chip .mm{flex:1;font-size:13px}
+.say{border:0;background:#efeafd;border-radius:50%;width:34px;height:34px;flex:none}
+.doc{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #eee}.doc:first-child{border-top:0}
+.doc b{flex:1;font-size:15px}.doc small{color:var(--sub);font-size:12px}
+.doc button{border:0;background:#efeafd;border-radius:10px;padding:8px 10px;font-weight:800;color:var(--main)}
+input[type=text]{width:100%;border:2px solid #e2def2;border-radius:12px;padding:10px;font-size:16px}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#22223a;color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;opacity:0;transition:.3s;pointer-events:none;z-index:9}.toast.on{opacity:1}
+#pop{position:fixed;left:12px;right:12px;bottom:20px;background:#22223a;color:#fff;border-radius:16px;padding:14px 16px;display:none;z-index:8;box-shadow:0 10px 30px #0004}
+#pop .mm{color:#d8c8ff}#pop ruby{font-size:22px;font-weight:900}#pop rt{color:#c9b6ff;font-size:11px}
+</style></head><body><div class="wrap">
+<header><span style="font-size:32px">📄</span><h1>わたしの翻訳ノート<small class="mm">ကိုယ်ပိုင် ဘာသာပြန် မှတ်စု</small></h1></header>
+
+<div class="card"><h2><span class="n">1</span>書類の 文字を 入れる <span class="mm" style="font-size:12px">စာသား ထည့်ပါ</span></h2>
+<textarea id="src" placeholder="ここに 書類の 日本語を 貼りつけ（または 入力）"></textarea>
+<div class="row"><button class="btn" onclick="pasteIt()">📋 貼りつけ</button><button class="btn" onclick="document.getElementById('file').click()">📷 写真から 読む</button><button class="btn" style="flex:0;min-width:56px" onclick="clearIt()">🗑</button></div>
+<input type="file" id="file" accept="image/*" hidden onchange="ocr(this.files)" multiple>
+<div id="ocrbar"><i></i></div><div id="ocrmsg"></div>
+<div class="help"><b>いちばん きれいに 読める 方法（iPhone）</b><br>① 写真アプリで 書類の 写真を 開く<br>② 文字を 長押し →「すべてを選択」→「コピー」<br>③ ここで「📋 貼りつけ」<div class="mm" style="margin-top:4px">ဓာတ်ပုံထဲက စာကို ဖိထားပြီး “ကော်ပီ” → ဒီမှာ 📋 နှိပ်ပါ</div></div></div>
+
+<div class="card"><h2><span class="n">2</span>翻訳する <span class="mm" style="font-size:12px">ဘာသာပြန်ပါ</span></h2>
+<div id="tbtns" class="row"></div>
+<div class="row"><button class="btn" onclick="tr('en')">🇬🇧 英語に</button><button class="btn" onclick="sayAll()">🔊 日本語を 聞く</button><button class="btn" onclick="copyIt()">📄 コピー</button></div>
+<div class="help">Google翻訳（無料）が 開きます。むずかしい 言葉は、下の「介護の ことば」も 見てください。</div></div>
+
+<div class="card"><h2><span class="n">3</span>介護の ことば <span class="mm" style="font-size:12px">ပြုစုရေး စကားလုံး</span> <span id="cnt" style="margin-left:auto;font-size:13px;color:var(--sub)"></span></h2>
+<div id="preview"><span style="color:var(--sub)">文字を 入れると、介護の ことばに 色が つきます。タップすると 意味が 出ます。</span></div>
+<div class="chips" id="chips"></div></div>
+
+<div class="card"><h2><span class="n">4</span>保存 <span class="mm" style="font-size:12px">သိမ်းဆည်း</span></h2>
+<div class="row" style="margin-top:0"><input type="text" id="title" placeholder="名前（例：申し送り 11/27）" style="flex:1"><button class="btn g" style="flex:0;min-width:90px" onclick="saveDoc()">💾 保存</button></div>
+<div id="docs" style="margin-top:8px"></div></div>
+<p style="font-size:12px;color:var(--sub);line-height:1.7;padding:0 6px">書類の 文字は この iPhoneの 中だけに 保存されます。「Google翻訳」を 押すと、その文字が Googleに 送られます。利用者さんの 名前など 個人情報は 消してから 翻訳してください。</p>
+</div><div id="pop" onclick="this.style.display='none'"></div><div class="toast" id="toast"></div>
+<script src="glossary.js"></script>
+<script>
+const $=s=>document.querySelector(s),src=$("#src");
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1700)}
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// 用語の 索引（2文字以上、長い順）
+const IDX=new Map();GLOSS.filter(g=>g[0].length>=2&&!/[〜~]/.test(g[0])).sort((a,b)=>b[0].length-a[0].length).forEach((g,i)=>{const c=g[0][0];if(!IDX.has(c))IDX.set(c,[]);IDX.get(c).push(g)});
+let found=[];
+function analyze(){const t=src.value;found=[];let html="",i=0;const seen=new Map();
+ while(i<t.length){const list=IDX.get(t[i]);let hit=null;if(list)for(const g of list)if(t.startsWith(g[0],i)){hit=g;break}
+  if(hit){let k=seen.get(hit[0]);if(k==null){k=found.length;found.push(hit);seen.set(hit[0],k)}html+=`<mark data-k="${k}">${esc(hit[0])}</mark>`;i+=hit[0].length}else{html+=esc(t[i]);i++}}
+ $("#preview").innerHTML=t?html:'<span style="color:var(--sub)">文字を 入れると、介護の ことばに 色が つきます。</span>';
+ $("#cnt").textContent=found.length?found.length+"語":"";
+ $("#chips").innerHTML=found.map((g,k)=>`<div class="chip"><ruby>${g[0]}<rt>${g[1]}</rt></ruby><span class="mm">${g[2]}</span><button class="say" onclick="say('${g[1].replace(/'/g,"")}')">🔊</button></div>`).join("");
+ document.querySelectorAll("#preview mark").forEach(m=>m.onclick=()=>{const g=found[+m.dataset.k];const p=$("#pop");p.innerHTML=`<ruby>${g[0]}<rt>${g[1]}</rt></ruby><div class="mm" style="margin-top:6px;font-size:15px">${g[2]}</div>`;p.style.display="block";say(g[1])});
+ buildTr();try{localStorage.setItem("honyaku-draft",t)}catch(e){}}
+let tm;src.addEventListener("input",()=>{clearTimeout(tm);tm=setTimeout(analyze,250)});
+function chunks(t,n=1800){const out=[];let s=t.trim();while(s.length>n){let cut=s.lastIndexOf("。",n);if(cut<n*.5)cut=s.lastIndexOf("\n",n);if(cut<n*.5)cut=n;out.push(s.slice(0,cut+1));s=s.slice(cut+1)}if(s)out.push(s);return out}
+function buildTr(){const c=chunks(src.value);$("#tbtns").innerHTML=c.length?c.map((x,k)=>`<button class="btn pri" onclick="tr('my',${k})">🇲🇲 ミャンマー語に${c.length>1?` (${k+1}/${c.length})`:""}</button>`).join(""):`<button class="btn pri" onclick="toast('先に 文字を 入れてください')">🇲🇲 ミャンマー語に</button>`}
+function tr(lang,k=0){const c=chunks(src.value);if(!c.length){toast("先に 文字を 入れてください");return}
+ if(lang==="en"&&c.length>1)toast("長いので 前から 分けて 開きます");
+ open("https://translate.google.com/?sl=ja&tl="+lang+"&op=translate&text="+encodeURIComponent(c[k]),"_blank")}
+async function pasteIt(){try{const t=await navigator.clipboard.readText();if(t){src.value=(src.value?src.value+"\n":"")+t;analyze();toast("貼りつけました")}}catch(e){src.focus();toast("文字の 中を 長押し →「ペースト」")}}
+function clearIt(){if(src.value&&!confirm("文字を 消しますか？"))return;src.value="";analyze()}
+async function copyIt(){try{await navigator.clipboard.writeText(src.value);toast("コピーしました")}catch(e){toast("コピーできませんでした")}}
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ja-JP";u.rate=.9;speechSynthesis.speak(u)}catch(e){}}
+function sayAll(){const t=src.value.trim();if(!t){toast("先に 文字を 入れてください");return}say(t.slice(0,1500))}
+// 写真から 読む（Tesseract.js、インターネットが 必要）
+function loadTess(){return new Promise((ok,ng)=>{if(window.Tesseract)return ok();const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";s.onload=ok;s.onerror=ng;document.head.appendChild(s)})}
+async function ocr(files){if(!files||!files.length)return;const bar=$("#ocrbar"),msg=$("#ocrmsg");bar.style.display="block";
+ try{msg.textContent="準備中…（はじめは 1分ぐらい かかります）";await loadTess();
+  const w=await Tesseract.createWorker("jpn",1,{logger:m=>{if(m.status==="recognizing text"){bar.firstChild.style.width=Math.round(m.progress*100)+"%";msg.textContent="読んでいます… "+Math.round(m.progress*100)+"%"}}});
+  for(const f of files){const {data}=await w.recognize(f);let t=data.text.replace(/([^\x00-\x7F]) (?=[^\x00-\x7F])/g,"$1").replace(/\n{3,}/g,"\n\n").trim();src.value=(src.value?src.value+"\n\n":"")+t}
+  await w.terminate();analyze();msg.textContent="できました。まちがいが あれば 直してください。";toast("読みました")}
+ catch(e){msg.textContent="読めませんでした。インターネットを 確認するか、iPhoneの「コピー」の方法を 使ってください。"}
+ finally{setTimeout(()=>{bar.style.display="none";bar.firstChild.style.width=0},800);$("#file").value=""}}
+// 保存
+const LS=()=>{try{return JSON.parse(localStorage.getItem("honyaku-docs"))||[]}catch(e){return[]}};
+function saveDoc(){const t=src.value.trim();if(!t){toast("先に 文字を 入れてください");return}const d=LS();const name=$("#title").value.trim()||t.slice(0,14)+"…";
+ d.unshift({name,t,at:new Date().toLocaleString("ja-JP",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"})});try{localStorage.setItem("honyaku-docs",JSON.stringify(d.slice(0,50)))}catch(e){}$("#title").value="";docs();toast("💾 保存しました")}
+function docs(){const d=LS();$("#docs").innerHTML=d.length?d.map((x,k)=>`<div class="doc"><b>${esc(x.name)}<br><small>${x.at}</small></b><button onclick="openDoc(${k})">開く</button><button onclick="delDoc(${k})">🗑</button></div>`).join(""):'<div style="color:var(--sub);font-size:13px">まだ ありません</div>'}
+function openDoc(k){src.value=LS()[k].t;analyze();scrollTo({top:0,behavior:"smooth"})}
+function delDoc(k){if(!confirm("消しますか？"))return;const d=LS();d.splice(k,1);localStorage.setItem("honyaku-docs",JSON.stringify(d));docs()}
+try{src.value=localStorage.getItem("honyaku-draft")||""}catch(e){}analyze();docs();
+if("serviceWorker"in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{});
+</script></body></html>

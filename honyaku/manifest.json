@@ -1,0 +1,1 @@
+{"name": "わたしの翻訳ノート", "short_name": "翻訳ノート", "start_url": "./", "scope": "./", "display": "standalone", "background_color": "#f4f2fb", "theme_color": "#7048e8", "icons": [{"src": "icon-180.png", "sizes": "180x180", "type": "image/png"}, {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}]}

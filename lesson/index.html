@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>先生の部屋</title><meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#2f9e8f">
+<style>
+:root{--main:#2f9e8f;--ink:#22303a;--sub:#6b7a80;--bg:#f2f7f5}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+.mm{font-family:"Noto Sans Myanmar","Myanmar Sangam MN",sans-serif;color:#6741d9}
+.wrap{max-width:620px;margin:auto;padding:16px 14px 80px}
+header{display:flex;align-items:center;gap:12px;margin:4px 2px 14px}header h1{margin:0;font-size:24px}header small{display:block;font-size:13px;font-weight:600}
+input[type=search]{width:100%;border:2px solid #d5e6e1;border-radius:14px;padding:12px 14px;font-size:16px;background:#fff}
+.les{background:#fff;border-radius:20px;margin:14px 0;box-shadow:0 2px 8px #0000000d;overflow:hidden}
+.les .hd{padding:14px 16px;background:linear-gradient(135deg,#2f9e8f,#3bb39f);color:#fff}
+.les .hd .ch{font-size:12px;opacity:.9;font-weight:700}.les .hd b{font-size:20px;display:block;margin-top:2px}.les .hd .mm{color:#e6dcff;font-size:13px}
+a.it{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid #eef3f1;color:inherit;text-decoration:none}
+a.it:active{background:#f4faf8}
+a.it .ic{font-size:26px;width:36px;text-align:center}a.it .tx{flex:1}a.it b{font-size:16px;display:block}a.it span{font-size:12px;color:var(--sub)}
+a.it .go{color:var(--main);font-size:22px}
+h2{font-size:16px;margin:22px 4px 8px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tools a{background:#fff;border-radius:16px;padding:14px;text-decoration:none;color:inherit;font-weight:800;font-size:14px;box-shadow:0 2px 8px #0000000a;display:flex;gap:8px;align-items:center}
+.tools a span{font-size:24px}
+.my{background:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 2px 8px #0000000d}
+.my input{width:100%;border:2px solid #d5e6e1;border-radius:12px;padding:10px;font-size:16px;margin:4px 0}
+.btn{border:0;border-radius:14px;padding:12px;font-size:15px;font-weight:800;background:var(--main);color:#fff;width:100%;margin-top:6px}
+.del{border:0;background:#fde8e8;color:#c92a2a;border-radius:10px;padding:6px 10px;font-weight:800}
+.empty{color:var(--sub);font-size:13px;padding:6px 0}
+.tip{font-size:13px;color:var(--sub);line-height:1.7;margin:16px 6px}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#22303a;color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;opacity:0;transition:.3s;pointer-events:none}.toast.on{opacity:1}
+</style></head><body><div class="wrap">
+<header><span style="font-size:40px">👩‍🏫</span><h1>先生の部屋<small class="mm">ဆရာ့ အခန်း</small></h1></header>
+<input type="search" id="q" placeholder="🔍 さがす（例：親族、台本）" oninput="render()">
+<div id="list"></div>
+<h2>⭐ わたしの リンク <span class="mm" style="font-size:12px">ကိုယ်ပိုင် လင့်ခ်</span></h2>
+<div class="my"><div id="mine"></div>
+<input type="text" id="mt" placeholder="名前（例：認知症の 台本）"><input type="url" id="mu" placeholder="https://..." inputmode="url">
+<button class="btn" onclick="addMine()">＋ 追加する</button><button class="btn" style="background:#e3f2ef;color:#2f9e8f" onclick="pasteUrl()">📋 コピーした リンクを 貼る</button></div>
+<h2>🧰 勉強アプリ</h2><div class="tools" id="tools"></div>
+<p class="tip">💡 この ページを ホーム画面に 入れると、いつでも すぐ 開けます。新しい 台本や ビデオを 作ったら、ここに 追加されます。<br>「ログインが 必要」の ものは、Claude に ログインしている 人だけ 見られます（win さん 用）。</p>
+</div><div class="toast" id="toast"></div>
+<script src="lessons.js"></script>
+<script>
+const $=s=>document.querySelector(s);const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");setTimeout(()=>e.classList.remove("on"),1600)}
+const ext=u=>/^https?:/.test(u)&&!u.includes("winlabjp.com");
+function render(){const q=$("#q").value.trim();
+ $("#list").innerHTML=LESSONS.map(L=>{const its=L.items.filter(i=>!q||(L.title+L.ch+i.t+i.s).includes(q));if(!its.length)return"";
+  return `<div class="les"><div class="hd"><div class="ch">${L.ch} ・ ${L.date}</div><b>${L.title}</b><div class="mm">${L.mm}</div></div>${its.map(i=>`<a class="it" href="${i.url}" ${ext(i.url)?'target="_blank" rel="noopener"':""}><div class="ic">${i.icon}</div><div class="tx"><b>${i.t}</b><span>${i.s}</span></div><div class="go">›</div></a>`).join("")}</div>`}).join("")||'<p class="empty">見つかりません</p>';
+ $("#tools").innerHTML=TOOLS.map(t=>`<a href="${t.url}"><span>${t.icon}</span>${t.t}</a>`).join("");mine()}
+const LS=()=>{try{return JSON.parse(localStorage.getItem("lesson-mine"))||[]}catch(e){return[]}};
+function mine(){const m=LS();$("#mine").innerHTML=m.length?m.map((x,k)=>`<div style="display:flex;align-items:center;gap:8px"><a class="it" style="flex:1;padding:10px 0;border:0" href="${esc(x.u)}" target="_blank" rel="noopener"><div class="ic">🔗</div><div class="tx"><b>${esc(x.t)}</b><span>${esc(x.u.slice(0,40))}</span></div></a><button class="del" onclick="delMine(${k})">🗑</button></div>`).join(""):'<div class="empty">まだ ありません。下に 名前と リンクを 入れて 追加できます。</div>'}
+function addMine(){const t=$("#mt").value.trim(),u=$("#mu").value.trim();if(!/^https?:\/\//.test(u)){toast("リンク（https://…）を 入れてください");return}
+ const m=LS();m.unshift({t:t||u,u});try{localStorage.setItem("lesson-mine",JSON.stringify(m))}catch(e){}$("#mt").value="";$("#mu").value="";mine();toast("⭐ 追加しました")}
+function delMine(k){if(!confirm("消しますか？"))return;const m=LS();m.splice(k,1);localStorage.setItem("lesson-mine",JSON.stringify(m));mine()}
+async function pasteUrl(){try{const t=await navigator.clipboard.readText();const m=t.match(/https?:\/\/\S+/);if(m){$("#mu").value=m[0];toast("貼りました。名前を 入れて 追加")}else toast("リンクが ありません")}catch(e){$("#mu").focus();toast("長押しで ペーストしてください")}}
+render();
+</script></body></html>

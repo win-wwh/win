@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>内容 チェック表：親族・家族・世帯</title><meta name="robots" content="noindex">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f7f6;color:#1f2a2a;font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+.wrap{max-width:760px;margin:auto;padding:14px 10px 40px}a.back{color:#2f9e8f;font-weight:800;text-decoration:none}
+h1{font-size:22px;margin:6px 0 2px}.sub{color:#5c6b6b;font-size:13px;line-height:1.7;margin-bottom:10px}
+.box{background:#fff;border-radius:14px;padding:10px 12px;margin-bottom:12px;font-size:13.5px;line-height:1.8;box-shadow:0 2px 8px #0000000d}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px #0000000d;font-size:13px}
+th{background:#2f9e8f;color:#fff;padding:7px 4px;font-size:11.5px;position:sticky;top:0}
+td{border-bottom:1px solid #edf2f1;padding:7px 4px;text-align:center;vertical-align:middle}
+td.p{text-align:left;font-weight:700;line-height:1.5}td.p small{display:block;font-weight:400;color:#5c6b6b}
+tr.sec td{background:#e6fcf5;font-weight:900;text-align:left;color:#087f5b}
+a.s{display:inline-block;background:#e6fcf5;color:#087f5b;border-radius:8px;padding:2px 6px;font-weight:800;text-decoration:none;font-size:12px;margin:1px}
+.ok{color:#2b8a3e;font-weight:900}.no{color:#ced4da}
+</style></head><body><div class="wrap">
+<a class="back" href="../">‹ 先生の部屋</a><h1>✅ 内容 チェック表</h1>
+<div class="sub">台本で 先生が 説明する ことが、生徒の 資料の どこに あるか 一目で 分かります。</div>
+<div class="box">📌 <b>先生モード・生徒用 スライド・説明ビデオ は 同じ スライド</b>です（先生モードには メモが つきます）。<br>
+<b>台本</b>＝台本①②　<b>スライド</b>＝番号を 押すと その スライドが 開きます　<b>プリント</b>＝勉強プリント（生徒用）　<b>ことば</b>＝試験に 出る ことば　<b>問題</b>＝練習問題①②　<b>ゲーム</b>＝○✕・親等タッチ<br>
+<span class="ok">✔</span>＝ある　<span class="no">－</span>＝ない（台本と スライドだけで 教える ところ）</div>
+<table><thead><tr><th style="width:34%">説明する こと</th><th>台本</th><th>スライド</th><th>プリント</th><th>ことば</th><th>問題</th><th>ゲーム</th></tr></thead><tbody id="tb"></tbody></table>
+<div class="sub" style="margin-top:10px">数字は 厚生労働省「国民生活基礎調査」（2024年）です。</div>
+</div>
+<script>
+const S=["title","rule","t1","t2","t3","t4","t5","t6","t7","t8","q1","a1","kei","shinzoku","shinzoku2","fuyo","teii","yakuwari","dinks","setai","kazu","ch1","ch2","tandoku","kozo","koreisha","koreisetai","sansedai","shigoto","matome1","matome2","q2","a2","q3","a3","q4","a4","end"];
+// [説明, 小さい説明, 台本(1/2), スライドid[], プリント, ことば, 問題, ゲーム]
+const R=[
+["sec","台本① 親族・家族のページ"],
+["介護で 家族を 知る 大切さ","",1,["title"],0,0,0,0],
+["親等の 数え方（親子 1つ ＝ 1）","本人から 数える",1,["rule","t1"],1,1,1,1],
+["父母・子＝1、祖父母・孫＝2","",1,["t2","t3","q1","a1"],1,1,0,1],
+["兄弟姉妹＝2（上がって 下りる）","赤い 矢印",1,["t4"],1,1,0,1],
+["おじ・おば＝3、おい・めい＝3、いとこ＝4","",1,["t5","t6"],1,1,1,1],
+["直系血族（緑・たて）","父母・祖父母・子・孫",1,["t2","t3","kei"],1,1,1,1],
+["傍系血族（オレンジ・よこ）","兄弟姉妹・おじ・おば・おい・めい・いとこ",1,["t4","t5","t6","kei"],1,1,0,1],
+["姻族（ピンク）、義父母＝姻族1、配偶者の兄弟姉妹＝姻族2","配偶者の 場所から 数える",1,["t7","t8"],1,1,0,1],
+["配偶者は 親等なし（でも 親族）","",1,["t8"],1,1,0,1],
+["民法の 親族「6・配・3」","",1,["shinzoku"],1,1,1,1],
+["配偶者の いとこは 親族では ない","ひっかけ",1,["shinzoku2"],1,0,0,1],
+["養子＝法定血族","",1,["shinzoku2"],1,1,0,0],
+["扶養義務＝直系血族と 兄弟姉妹","おじ・いとこは ない",1,["fuyo"],1,1,1,1],
+["親族間の 扶け合い＝直系血族と 同居の 親族","",1,["fuyo"],1,1,0,0],
+["定位家族・創設家族","",1,["teii","q2","a2"],1,1,1,1],
+["手段的役割・表出的役割","",1,["yakuwari"],1,1,1,1],
+["家族の 機能","生命維持・生活維持・パーソナリティ安定化・ケア",1,["yakuwari"],1,0,0,0],
+["DINKs・DEWKs","N＝No、W＝With",1,["dinks","q3","a3"],1,1,1,1],
+["ステップファミリー","",1,["dinks"],1,1,0,0],
+["世帯（住む所と 生計が 同じ）","",1,["setai"],1,1,1,1],
+["核家族世帯 3つ・三世代世帯","",1,["setai"],1,1,1,1],
+["高齢者世帯（65歳以上・18歳未満）","",1,["setai"],1,1,1,1],
+["sec","台本② 世帯の 数字のページ"],
+["世帯の 数 3754万 → 5483万（ふえた）","",2,["kazu"],1,0,1,0],
+["平均世帯人員 3.22人 → 2.20人（へった）","紫の 線",2,["kazu","ch1","ch2"],1,1,1,1],
+["どうして？ → 単独世帯が ふえた","",2,["kazu"],1,0,0,0],
+["構造別：単独34.6%・夫婦のみ24.7%・夫婦と未婚の子24.1%","水色＝単独世帯",2,["tandoku","kozo"],1,1,1,1],
+["類型別：高齢者世帯31.4%・母子1.1%・父子0.1%","",2,["kozo"],1,1,0,0],
+["高齢者世帯の 中：単独52.5%（女33.6%・男18.9%）、夫婦のみ43.6%","",2,["koreisetai"],1,0,1,0],
+["65歳以上の人が いる 世帯 2760万・50.3%（1986年26.0%）","",2,["koreisha","q4","a4"],1,0,1,1],
+["65歳以上の 人だけの 世帯 62.3%","",2,["koreisha"],1,0,0,0],
+["65歳以上が いる 世帯：単独32.7%・夫婦のみ31.8%","",2,["koreisha"],1,0,1,1],
+["三世代世帯 44.8% → 6.3%","1986年は 一番 多かった",2,["sansedai"],1,0,1,1],
+["介護の 仕事との つながり","",2,["shigoto"],1,0,0,0],
+["まとめ","",3,["matome1","matome2"],0,0,0,0]];
+const mk=v=>v?'<span class="ok">✔</span>':'<span class="no">－</span>';
+document.getElementById("tb").innerHTML=R.map(r=>r[0]==="sec"?`<tr class="sec"><td colspan="7">${r[1]}</td></tr>`:
+ `<tr><td class="p">${r[0]}${r[1]?`<small>${r[1]}</small>`:""}</td><td>${r[2]===3?'<span class="ok">①②</span>':`<a class="s" href="daihon${r[2]===2?"2":""}.html">${r[2]===2?"②":"①"}</a>`}</td><td>${r[3].map(id=>`<a class="s" href="./?s=all#${id}" onclick="go('${id}');return false">${S.indexOf(id)+1}</a>`).join("")}</td><td>${mk(r[4])}</td><td>${mk(r[5])}</td><td>${mk(r[6])}</td><td>${mk(r[7])}</td></tr>`).join("");
+function go(id){location.href="./?s=all&id="+id}
+</script></body></html>
